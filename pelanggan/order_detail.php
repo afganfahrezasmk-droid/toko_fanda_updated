@@ -18,9 +18,9 @@ if (!isset($_SESSION['role'])) {
    CEK ROLE KASIR
 ========================= */
 
-if ($_SESSION['role'] != 'kasir') {
+if ($_SESSION['role'] != 'pelanggan') {
 
-    header("location:../index.php?pesan=bukan_kasir");
+    header("location:../index.php?pesan=bukan_pelanggan");
     exit;
 }
 

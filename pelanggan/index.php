@@ -769,15 +769,17 @@ $ticker_items = array_merge($ticker_raw,$ticker_raw,$ticker_raw,$ticker_raw);
         <?php endforeach; ?>
     </ul>
     <div class="nav-right">
-        <form method="post" action="../kasir/order_tambah.php">
+        <form method="post" action="order_tambah.php">
         <button class="nav-icon-btn" title="Keranjang">
             <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             <span class="cart-badge">0</span>
         </button>
         </form>
+        <form method="post" action="akun.php">
         <button class="nav-icon-btn" title="Akun">
             <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         </button>
+        </form>
         <form method="post" action="../index.php">
         <button class="btn-keluar">Keluar</button>
         </form>
@@ -871,8 +873,7 @@ $ticker_items = array_merge($ticker_raw,$ticker_raw,$ticker_raw,$ticker_raw);
             <img
                 src="<?= htmlspecialchars($c['photo']) ?>"
                 alt="<?= htmlspecialchars($c['name']) ?>"
-                loading="lazy"
-            />
+                loading="lazy"/>
             <div class="cat-label">
                 <span class="cat-lname"><?= htmlspecialchars($c['name']) ?></span>
                 <span class="cat-lcount"><?= $c['count'] ?> produk</span>
@@ -913,8 +914,7 @@ $ticker_items = array_merge($ticker_raw,$ticker_raw,$ticker_raw,$ticker_raw);
                 <img
                     src="<?= htmlspecialchars($p['photo']) ?>"
                     alt="<?= htmlspecialchars($p['name']) ?>"
-                    loading="lazy"
-                />
+                    loading="lazy"/>
                 <div class="p-overlay">
                     <button class="p-overlay-btn">
                         <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>

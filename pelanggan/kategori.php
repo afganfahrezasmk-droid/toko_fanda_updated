@@ -1,9 +1,10 @@
 <?php
 include 'header.php';
 include '../koneksi.php';
+/** @var mysqli $koneksi */
 
 if (!isset($_SESSION['role'])) { header("location:../index.php?pesan=belum_login"); exit; }
-if ($_SESSION['role'] != 'admin') { header("location:../index.php?pesan=bukan_admin"); exit; }
+if ($_SESSION['role'] != 'pelanggan') { header("location:../index.php?pesan=bukan_pelanggan"); exit; }
 ?>
 
 <div class="page-title">

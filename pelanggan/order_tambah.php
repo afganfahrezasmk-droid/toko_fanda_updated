@@ -15,12 +15,12 @@ if (!isset($_SESSION['role'])) {
 }
 
 /* =========================
-   CEK ROLE KASIR
+   CEK ROLE PELANGGAN
 ========================= */
 
-if ($_SESSION['role'] != 'kasir') {
+if ($_SESSION['role'] != 'pelanggan') {
 
-    header("location:../index.php?pesan=bukan_kasir");
+    header("location:../index.php?pesan=bukan_pelanggan");
     exit;
 }
 ?>
@@ -30,18 +30,19 @@ if ($_SESSION['role'] != 'kasir') {
     <div class="panel">
 
         <div class="panel-heading">
-            <h4>Tambah Order</h4>
+            <br><br>
         </div>
 
         <div class="panel-body">
 
             <div class="col-md-10 col-md-offset-1">
+            <br>
+                <div class="text-end">
+                    <a href="index.php" class="btn btn-sm btn-info">
+                        Kembali
+                    </a>
 
-                <!-- BUTTON KEMBALI -->
-                <a href="order.php" class="btn btn-sm btn-info pull-right">
-                    Kembali
-                </a>
-
+                </div>
                 <br><br>
 
                 <form method="POST" action="order_aksi.php">
@@ -127,6 +128,7 @@ if ($_SESSION['role'] != 'kasir') {
                     <table class="table table-bordered">
 
                         <tr>
+                            <th>Gambar</th>
                             <th>Produk</th>
                             <th>Harga</th>
                             <th width="20%">Qty</th>
@@ -143,11 +145,18 @@ if ($_SESSION['role'] != 'kasir') {
 
                             <td>
 
+                                <img src="../gambar/<?php echo $p['gambar']; ?>" 
+                                    width="150">
+
+                            </td>
+
+                            <td>
+
                                 <?php echo $p['nama_produk']; ?>
 
                                 <input type="hidden"
-                                       name="produk_id[]"
-                                       value="<?php echo $p['produk_id']; ?>">
+                                    name="produk_id[]"
+                                    value="<?php echo $p['produk_id']; ?>">
 
                             </td>
 
