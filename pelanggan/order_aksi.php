@@ -1,126 +1,92 @@
 <?php
+session_start();
 include '../koneksi.php';
-
 /** @var mysqli $koneksi */
 
-session_start();
 
-/* ===============================
-   AMBIL DATA FORM
-================================ */
+header('Content-Type: application/json');
 
-$user_id           = $_POST['user_id'];
-$invoice           = $_POST['invoice'];
-$metode_pembayaran = $_POST['metode_pembayaran'];
+$data = json_decode(file_get_contents('php://input'), true);
 
-$produk_id = $_POST['produk_id'];
-$qty       = $_POST['qty'];
+if(!$data){
+    echo json_encode([
+        'status' => 'error',
+        'message' => 'Data tidak valid'
+    ]);
+    exit;
+}
+
+$cart    = $data['cart'];
+$metode  = $data['metode'];
+$user_id = $_SESSION['user_id'] ?? 0;
+
+$invoice = 'INV-' . date('YmdHis');
 
 $total = 0;
-$pajak = 0;
 
-/* ===============================
-   HITUNG TOTAL + CEK STOK
-================================ */
-
-for($i = 0; $i < count($produk_id); $i++){
-
-    if($qty[$i] > 0){
-
-        $q = mysqli_query($koneksi,
-            "SELECT harga, stok
-             FROM produk
-             WHERE produk_id='$produk_id[$i]'");
-
-        $p = mysqli_fetch_array($q);
-
-        // CEK STOK
-        if($p['stok'] < $qty[$i]){
-
-            echo "
-            <script>
-                alert('Stok produk tidak mencukupi!');
-                window.location='order_tambah.php';
-            </script>
-            ";
-
-            exit;
-        }
-
-        $subtotal = $p['harga'] * $qty[$i];
-
-        $total += $subtotal;
-    }
+foreach($cart as $item){
+    $subtotal = $item['harga'] * $item['qty'];
+    $total += $subtotal;
 }
 
-/* ===============================
-   HITUNG PAJAK
-================================ */
+$pajak = round($total * 0.1);
+$grand_total = $total + $pajak;
 
-$pajak = $total * 0.10;
+mysqli_query($koneksi, "
+INSERT INTO orders(
+    invoice,
+    user_id,
+    metode_pembayaran,
+    subtotal,
+    pajak,
+    total,
+    created_at
+)
+VALUES(
+    '$invoice',
+    '$user_id',
+    '$metode',
+    '$total',
+    '$pajak',
+    '$grand_total',
+    NOW()
+)
+");
 
-/* ===============================
-   SIMPAN KE ORDERS
-================================ */
+$order_id = mysqli_insert_id($koneksi);
 
-mysqli_query($koneksi,
-    "INSERT INTO orders
-    (invoice, user_id, total, pajak, metode_pembayaran, status)
-    VALUES
-    ('$invoice', '$user_id', '$total', '$pajak', '$metode_pembayaran', 'pending')");
+foreach($cart as $id => $item){
 
-/* ===============================
-   AMBIL ID ORDER TERBARU
-================================ */
+    $produk_id = (int)$id;
+    $qty       = (int)$item['qty'];
+    $harga     = (int)$item['harga'];
+    $subtotal  = $harga * $qty;
 
-$orders_id = mysqli_insert_id($koneksi);
+    mysqli_query($koneksi, "
+    INSERT INTO order_detail(
+        order_id,
+        produk_id,
+        qty,
+        harga,
+        subtotal
+    )
+    VALUES(
+            '$order_id',
+        '$produk_id',
+        '$qty',
+        '$harga',
+        '$subtotal'
+    )
+    ");
 
-/* ===============================
-   SIMPAN ORDER ITEMS
-================================ */
-
-for($i = 0; $i < count($produk_id); $i++){
-
-    if($qty[$i] > 0){
-
-        $q = mysqli_query($koneksi,
-            "SELECT harga, stok
-             FROM produk
-             WHERE produk_id='$produk_id[$i]'");
-
-        $p = mysqli_fetch_array($q);
-
-        $harga    = $p['harga'];
-        $subtotal = $harga * $qty[$i];
-
-        /* ===============================
-           INSERT ORDER ITEMS
-        ================================ */
-
-        mysqli_query($koneksi,
-            "INSERT INTO order_items
-            (orders_id, produk_id, qty, harga, subtotal)
-            VALUES
-            ('$orders_id',
-             '$produk_id[$i]',
-             '$qty[$i]',
-             '$harga',
-             '$subtotal')");
-
-        /* ===============================
-           KURANGI STOK
-        ================================ */
-
-        mysqli_query($koneksi,
-            "UPDATE produk
-             SET stok = stok - $qty[$i]
-             WHERE produk_id = '$produk_id[$i]'");
-    }
+    mysqli_query($koneksi, "
+    UPDATE produk
+    SET stok = stok - $qty
+    WHERE produk_id = '$produk_id'
+    ");
 }
 
-/* ===============================
-   REDIRECT
-================================ */
-
-header("location:index.php");
-?>
+echo json_encode([
+    'status' => 'success',
+    'invoice' => $invoice
+]);

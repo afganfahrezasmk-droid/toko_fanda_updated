@@ -1,1159 +1,809 @@
-<?php
-// ============================================================
-//  Toko Kue Fanda — Homepage Pelanggan
-//  Aesthetic: French Patisserie × Editorial Luxury
-// ============================================================
-$store_name   = "Toko Kue Fanda";
-$current_year = date('Y');
-
-$nav_links = [
-    ['label' => 'Beranda',     'href' => '#'],
-    ['label' => 'Menu',        'href' => '#menu'],
-    ['label' => 'Kontak',      'href' => '#footer'],
-    ['label' => 'Tentang Kami','href' => '#tentang'],
-];
-
-// Kategori sesuai tabel `kategori` di database
-$categories = [
-    ['name' => 'Semua',           'count' => '7+', 'photo' => '../gambar/nastar.jpeg'],
-    ['name' => 'Kue Kering',      'count' => '3',  'photo' => '../gambar/kastangel.jpeg'],
-    ['name' => 'Kue Basah',       'count' => '4',  'photo' => '../gambar/brownis.jpeg'],
-    ['name' => 'Cookies',         'count' => '3',  'photo' => '../gambar/chocolate_butter.jpeg'],
-    ['name' => 'Cake & Brownies', 'count' => '1',  'photo' => '../gambar/brownis.jpeg'],
-    ['name' => 'Snack Manis',     'count' => '2',  'photo' => '../gambar/strawberry_thumb.jpeg'],
-];
-
-// Produk sesuai tabel `produk` di database
-$products = [
-    [
-        'cat'   => 'KUE KERING',
-        'name'  => 'Nastar Klasik',
-        'desc'  => 'Kue nastar lembut dengan isian selai nanas premium',
-        'price' => '85.000',
-        'stok'  => 47,
-        'photo' => '../gambar/nastar.jpeg',
-    ],
-    [
-        'cat'   => 'KUE KERING',
-        'name'  => 'Kastengel Keju',
-        'desc'  => 'Kue kastengel gurih dengan keju edam dan cheddar',
-        'price' => '60.000',
-        'stok'  => 38,
-        'photo' => '../gambar/kastangel.jpeg',
-    ],
-    [
-        'cat'   => 'KUE KERING',
-        'name'  => 'Putri Salju',
-        'desc'  => 'Kue lembut dengan taburan gula halus seperti salju',
-        'price' => '80.000',
-        'stok'  => 40,
-        'photo' => '../gambar/putri_salju.jpeg',
-    ],
-    [
-        'cat'   => 'KUE BASAH',
-        'name'  => 'Chocolate Butter Cookies',
-        'desc'  => 'Cookies butter lembut dengan rasa coklat yang rich dan aroma khas mentega',
-        'price' => '70.000',
-        'stok'  => 53,
-        'photo' => '../gambar/chocolate_butter.jpeg',
-    ],
-    [
-        'cat'   => 'KUE BASAH',
-        'name'  => 'Brownies Panggang',
-        'desc'  => 'Brownies lembut dengan rasa coklat pekat',
-        'price' => '95.000',
-        'stok'  => 29,
-        'photo' => '../gambar/brownis.jpeg',
-    ],
-    [
-        'cat'   => 'KUE BASAH',
-        'name'  => 'Palm Cheese Cookies',
-        'desc'  => 'Cookies lembut dengan perpaduan rasa manis gula palm dan gurih keju',
-        'price' => '75.000',
-        'stok'  => 49,
-        'photo' => '../gambar/palm_cheese.jpeg',
-    ],
-    [
-        'cat'   => 'KUE BASAH',
-        'name'  => 'Strawberry Thumb',
-        'desc'  => 'Cookies dengan isian selai stroberi di tengah, rasa manis dan sedikit asam segar',
-        'price' => '72.000',
-        'stok'  => 52,
-        'photo' => '../gambar/strawberry_thumb.jpeg',
-    ],
-];
-
-$testimonials = [
-    ['text'=>'Nastar Klasiknya lembut banget, isian nanasnya pas dan tidak terlalu manis. Udah langganan tiap minggu, gak pernah kecewa!',   'name'=>'Niny',    'role'=>'Pelanggan Setia',   'stars'=>5],
-    ['text'=>'Brownies Panggangnya juara! Teksturnya fudgy dan coklatnya pekat banget. Cocok buat oleh-oleh atau hadiah ulang tahun.',        'name'=>'Agan',    'role'=>'Food Enthusiast',   'stars'=>5],
-    ['text'=>'Kastengel Kejunya enak parah, gurih dan renyah. Packaging cantik, pengiriman cepat dan aman. My go-to untuk kue premium!',      'name'=>'Ayuna',   'role'=>'Pelanggan Setia',   'stars'=>5],
-];
-
-$ticker_raw = ['Fresh Baked Daily','Premium Quality','Pengiriman ke Seluruh Wilayah','Rating 4.9 Bintang','Dipanggang Dengan Cinta'];
-$ticker_items = array_merge($ticker_raw,$ticker_raw,$ticker_raw,$ticker_raw);
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= htmlspecialchars($store_name) ?> — Freshly Baked, Made With Love</title>
-    <meta name="description" content="Nikmati aneka kue premium buatan tangan yang dibuat segar setiap hari di Semarang.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toko Kue Fanda — Freshly Baked, Made With Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --esp:    #1C0A00;
+  --esp-2:  #2D1507;
+  --brown:  #4A2510;
+  --car:    #C07B3A;
+  --gold:   #E8B46D;
+  --cream:  #F8F2E5;
+  --cream2: #EFE3CE;
+  --blush:  #F5CECC;
+  --blush2: #EDB8B4;
+  --white:  #FFFCF7;
+  --muted:  #9B7A5A;
+  --r:      20px;
+  --pill:   100px;
+  --ease:   cubic-bezier(.22,.68,0,1.2);
+  --es:     cubic-bezier(.25,.46,.45,.94);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--esp);overflow-x:hidden;cursor:none}
+img{display:block;max-width:100%;height:auto}
+a{text-decoration:none}ul{list-style:none}
+button{font-family:inherit;cursor:none;border:none}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+/* CURSOR */
+#cur{position:fixed;width:11px;height:11px;background:var(--car);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:multiply}
+#cur-r{position:fixed;width:42px;height:42px;border:2px solid var(--car);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.4;transition:width .3s var(--es),height .3s var(--es)}
+body.h #cur{width:18px;height:18px}
+body.h #cur-r{width:60px;height:60px;opacity:.18}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--car);border-radius:2px}
 
-    <style>
-    :root {
-        --cream:      #F8F1E5;
-        --cream-2:    #EFE3CE;
-        --cream-3:    #E4D2B8;
-        --espresso:   #1C0A00;
-        --espresso-2: #2D1507;
-        --caramel:    #C07D3A;
-        --caramel-lt: #D4993F;
-        --gold:       #E8B86D;
-        --brown:      #6B3E26;
-        --muted:      #9B8A7A;
-        --muted-2:    #C4B5A5;
-        --white:      #FFFCF7;
-        --r-lg:       24px;
-        --r-sm:       12px;
-        --r-pill:     100px;
-        --shadow:     0 20px 60px rgba(28,10,0,.12);
-        --shadow-xl:  0 30px 80px rgba(28,10,0,.20);
-        --ease:       cubic-bezier(.25,.46,.45,.94);
-        --dur:        .4s;
-    }
+/* NAVBAR */
+.nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:22px 64px;display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--es)}
+.nav.stuck{padding:13px 64px;background:rgba(28,10,0,.94);backdrop-filter:blur(18px)}
+.nav-logo{font-family:'Kaushan Script',cursive;font-size:1.6rem;color:var(--white)}
+.nav-links{display:flex;gap:34px}
+.nav-links a{font-size:.82rem;font-weight:400;letter-spacing:.05em;color:rgba(255,252,247,.65);position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1.5px;background:var(--gold);transition:width .35s var(--es)}
+.nav-links a:hover{color:var(--white)}
+.nav-links a:hover::after{width:100%}
+.nav-r{display:flex;gap:10px;align-items:center}
+.nav-icon{width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(255,252,247,.2);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .3s;position:relative}
+.nav-icon:hover{background:rgba(255,252,247,.12);border-color:rgba(255,252,247,.5)}
+.nav-icon svg{width:18px;height:18px;stroke:var(--white);fill:none;stroke-width:1.6}
+.cart-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--gold);color:var(--esp);font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.btn-keluar{padding:10px 24px;border-radius:var(--pill);background:transparent;color:var(--white);font-size:.82rem;font-weight:500;border:1.5px solid rgba(255,252,247,.35);transition:all .3s}
+.btn-keluar:hover{background:var(--white);color:var(--esp)}
 
-    *,*::before,*::after { margin:0;padding:0;box-sizing:border-box; }
-    html { scroll-behavior:smooth;font-size:16px; }
-    body { font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--espresso);overflow-x:hidden;cursor:none; }
-    img  { display:block;max-width:100%;height:auto; }
-    a    { text-decoration:none; }
-    ul   { list-style:none; }
-    button { font-family:inherit;cursor:none;border:none; }
+/* ══════════════════════════════════════
+   HERO — Teks di tengah, roti terbang masuk
+══════════════════════════════════════ */
+.hero{min-height:100vh;background:var(--esp-2);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 64px 90px;text-align:center}
 
-    body::before {
-        content:'';
-        position:fixed;inset:0;
-        z-index:9998;
-        pointer-events:none;
-        opacity:.04;
-        background-image:
-            url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-        background-size:220px 220px;
-    }
+/* Roti terbang — wrapper untuk fly-in, inner untuk float */
+.hf-wrap{position:absolute;pointer-events:none;z-index:1}
+.hf-img{border-radius:50%;object-fit:cover;display:block;box-shadow:0 24px 60px rgba(0,0,0,.5)}
 
-    #cur-dot {
-        position:fixed;width:10px;height:10px;
-        background:var(--caramel);border-radius:50%;
-        pointer-events:none;z-index:10000;
-        transform:translate(-50%,-50%);
-        transition:width .25s var(--ease),height .25s var(--ease);
-        mix-blend-mode:multiply;
-    }
-    #cur-ring {
-        position:fixed;width:38px;height:38px;
-        border:1.5px solid var(--caramel);border-radius:50%;
-        pointer-events:none;z-index:9999;
-        transform:translate(-50%,-50%);
-        opacity:.55;
-        transition:width .3s var(--ease),height .3s var(--ease),opacity .3s;
-    }
-    body.c-hover #cur-dot  { width:16px;height:16px; }
-    body.c-hover #cur-ring { width:58px;height:58px;opacity:.25; }
+/* Posisi akhir masing-masing */
+.hf-wrap.tl{top:-2%;left:-1%}
+.hf-wrap.tr{top:2%;right:-1%}
+.hf-wrap.bl{bottom:0%;left:3%}
+.hf-wrap.br{bottom:2%;right:2%}
+.hf-wrap.ml{top:42%;left:-2%;transform:translateY(-50%)}
+.hf-wrap.mr{top:42%;right:-2%;transform:translateY(-50%)}
 
-    ::-webkit-scrollbar           { width:5px; }
-    ::-webkit-scrollbar-track     { background:var(--cream); }
-    ::-webkit-scrollbar-thumb     { background:var(--caramel);border-radius:3px; }
+.hf-wrap.tl .hf-img{width:clamp(170px,16vw,240px);height:clamp(170px,16vw,240px)}
+.hf-wrap.tr .hf-img{width:clamp(190px,18vw,270px);height:clamp(190px,18vw,270px)}
+.hf-wrap.bl .hf-img{width:clamp(155px,14vw,215px);height:clamp(155px,14vw,215px)}
+.hf-wrap.br .hf-img{width:clamp(175px,16vw,250px);height:clamp(175px,16vw,250px)}
+.hf-wrap.ml .hf-img{width:clamp(110px,10vw,155px);height:clamp(110px,10vw,155px)}
+.hf-wrap.mr .hf-img{width:clamp(120px,11vw,165px);height:clamp(120px,11vw,165px)}
 
-    /* NAVBAR */
-    .nav {
-        position:fixed;top:0;left:0;right:0;z-index:900;
-        padding:22px 64px;
-        display:flex;align-items:center;justify-content:space-between;
-        transition:padding var(--dur) var(--ease), background var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
-    }
-    .nav.stuck {
-        padding:13px 64px;
-        background:rgba(248,241,229,.92);
-        backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-        box-shadow:0 1px 0 rgba(28,10,0,.07);
-    }
-    .nav-logo {
-        font-family:'Cormorant Garamond',serif;
-        font-size:1.5rem;font-weight:700;letter-spacing:-.02em;
-        color:var(--espresso);
-    }
-    .nav-logo em { color:var(--caramel);font-style:italic; }
+/* FLY IN animations */
+.hf-wrap.tl{animation:flyTL 1.1s .1s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.tr{animation:flyTR 1.2s .0s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.bl{animation:flyBL 1.1s .25s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.br{animation:flyBR 1.2s .15s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.ml{animation:flyML 1.0s .35s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.mr{animation:flyMR 1.0s .3s cubic-bezier(.22,.68,0,1) forwards}
 
-    .nav-center { display:flex;gap:36px; }
-    .nav-center a {
-        font-size:.85rem;font-weight:400;letter-spacing:.025em;
-        color:var(--espresso);opacity:.6;
-        position:relative;transition:opacity var(--dur);
-    }
-    .nav-center a::after {
-        content:'';position:absolute;bottom:-2px;left:0;
-        width:0;height:1px;background:var(--caramel);
-        transition:width var(--dur) var(--ease);
-    }
-    .nav-center a:hover { opacity:1; }
-    .nav-center a:hover::after { width:100%; }
+@keyframes flyTL{from{opacity:0;transform:translate(-130%,-110%) rotate(-20deg)}to{opacity:1;transform:translate(0,0) rotate(-8deg)}}
+@keyframes flyTR{from{opacity:0;transform:translate(130%,-100%) rotate(18deg)}to{opacity:1;transform:translate(0,0) rotate(6deg)}}
+@keyframes flyBL{from{opacity:0;transform:translate(-120%,110%) rotate(14deg)}to{opacity:1;transform:translate(0,0) rotate(10deg)}}
+@keyframes flyBR{from{opacity:0;transform:translate(120%,100%) rotate(-16deg)}to{opacity:1;transform:translate(0,0) rotate(-7deg)}}
+@keyframes flyML{from{opacity:0;transform:translateY(-50%) translateX(-120%)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
+@keyframes flyMR{from{opacity:0;transform:translateY(-50%) translateX(120%)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
 
-    .nav-right { display:flex;align-items:center;gap:10px; }
-    .nav-icon-btn {
-        width:40px;height:40px;border-radius:50%;
-        border:1.5px solid rgba(28,10,0,.14);
-        background:transparent;
-        display:flex;align-items:center;justify-content:center;
-        transition:background var(--dur),border-color var(--dur);
-        position:relative;
-    }
-    .nav-icon-btn:hover { background:var(--espresso);border-color:var(--espresso); }
-    .nav-icon-btn:hover svg { stroke:var(--white); }
-    .nav-icon-btn svg { width:18px;height:18px;stroke:var(--espresso);fill:none;stroke-width:1.6;transition:stroke var(--dur); }
-    .cart-badge {
-        position:absolute;top:-4px;right:-4px;
-        width:17px;height:17px;border-radius:50%;
-        background:var(--caramel);color:#fff;
-        font-size:.6rem;font-weight:600;
-        display:flex;align-items:center;justify-content:center;
-    }
-    .btn-keluar {
-        padding:11px 26px;border-radius:var(--r-pill);
-        background:var(--espresso);color:var(--white);
-        font-size:.85rem;font-weight:500;letter-spacing:.02em;
-        border:2px solid var(--espresso);
-        transition:background var(--dur),color var(--dur),transform .2s;
-    }
-    .btn-keluar:hover { background:var(--caramel);border-color:var(--caramel);transform:translateY(-1px); }
+/* FLOAT setelah fly in (pakai delay = durasi fly-in) */
+.hf-wrap.tl .hf-img{animation:flt1 7s 1.2s ease-in-out infinite}
+.hf-wrap.tr .hf-img{animation:flt2 8s 1.2s ease-in-out infinite}
+.hf-wrap.bl .hf-img{animation:flt3 6.5s 1.35s ease-in-out infinite}
+.hf-wrap.br .hf-img{animation:flt4 7.5s 1.35s ease-in-out infinite}
+.hf-wrap.ml .hf-img{animation:flt5 9s 1.35s ease-in-out infinite}
+.hf-wrap.mr .hf-img{animation:flt6 8.5s 1.3s ease-in-out infinite}
 
-    /* HERO */
-    .hero {
-        min-height:100vh;
-        display:grid;grid-template-columns:55% 45%;
-        align-items:center;
-        padding:130px 64px 80px;
-        position:relative;overflow:hidden;gap:0;
-    }
-    .hero::before,.hero::after {
-        content:'';position:absolute;border-radius:50%;pointer-events:none;
-    }
-    .hero::before {
-        width:700px;height:700px;
-        top:-200px;right:-150px;
-        background:radial-gradient(circle,rgba(193,125,58,.13) 0%,transparent 65%);
-    }
-    .hero::after {
-        width:400px;height:400px;
-        bottom:-60px;left:120px;
-        background:radial-gradient(circle,rgba(193,125,58,.08) 0%,transparent 65%);
-    }
-    .hero-ghost {
-        position:absolute;
-        bottom:20px;right:-20px;
-        font-family:'Cormorant Garamond',serif;
-        font-size:clamp(100px,18vw,240px);
-        font-weight:700;letter-spacing:-.05em;line-height:1;
-        color:transparent;
-        -webkit-text-stroke:1.5px rgba(28,10,0,.055);
-        pointer-events:none;user-select:none;
-        animation:ghostDrift 12s ease-in-out infinite alternate;
-    }
-    @keyframes ghostDrift { from{transform:translateY(0)} to{transform:translateY(-14px)} }
+@keyframes flt1{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-18px) rotate(-4deg)}}
+@keyframes flt2{0%,100%{transform:translateY(0) rotate(6deg)}50%{transform:translateY(-22px) rotate(10deg)}}
+@keyframes flt3{0%,100%{transform:translateY(0) rotate(10deg)}50%{transform:translateY(-14px) rotate(5deg)}}
+@keyframes flt4{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-20px) rotate(-12deg)}}
+@keyframes flt5{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes flt6{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
 
-    .hero-left { position:relative;z-index:2; }
-    .hero-badge {
-        display:inline-flex;align-items:center;gap:9px;
-        background:var(--espresso);color:var(--gold);
-        font-size:.68rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
-        padding:8px 18px;border-radius:var(--r-pill);
-        margin-bottom:30px;
-        opacity:0;animation:fadeUp .7s .2s ease forwards;
-    }
-    .hero-badge i {
-        width:6px;height:6px;background:var(--gold);border-radius:50%;
-        animation:blink 2s infinite;
-    }
-    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
+/* Hero center content */
+.hero-inner{position:relative;z-index:2}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,252,247,.1);border:1px solid rgba(255,252,247,.18);color:var(--gold);font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;padding:8px 20px;border-radius:var(--pill);margin-bottom:22px;opacity:0;animation:fadeUp .6s .9s forwards}
+.bdot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.6)}}
+.hero-name{font-family:'Kaushan Script',cursive;font-size:clamp(72px,13vw,180px);color:var(--blush);line-height:.92;letter-spacing:-.01em;opacity:0;animation:fadeUp .9s .6s var(--es) forwards;position:relative;z-index:2}
+.hero-tagline{font-family:'Playfair Display',serif;font-size:clamp(14px,2vw,22px);font-style:italic;color:rgba(255,252,247,.55);margin-top:8px;opacity:0;animation:fadeUp .6s .8s forwards}
 
-    .hero-h1 {
-        font-family:'Cormorant Garamond',serif;
-        font-size:clamp(46px,5.5vw,88px);
-        font-weight:600;line-height:1.04;letter-spacing:-.03em;
-        color:var(--espresso);margin-bottom:22px;
-    }
-    .hero-h1 em { font-style:italic;color:var(--caramel);display:block; }
-    .word-wrap { overflow:hidden;display:inline-block; }
-    .word {
-        display:inline-block;
-        opacity:0;transform:translateY(105%);
-        animation:wordReveal .75s var(--ease) forwards;
-    }
-    .w0{animation-delay:.35s}.w1{animation-delay:.45s}
-    .w2{animation-delay:.52s}.w3{animation-delay:.60s}.w4{animation-delay:.68s}
-    @keyframes wordReveal { to{opacity:1;transform:translateY(0)} }
+/* Tag button "Jelajahi Menu" — seperti di Courante */
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--white);color:var(--esp);
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1rem;letter-spacing:.02em;
+  padding:14px 32px;border-radius:6px;
+  margin-top:32px;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+  cursor:none;transition:transform .3s var(--ease),box-shadow .3s;
+  opacity:0;animation:fadeUp .6s 1.05s forwards;
+}
+.hero-tag:hover{transform:translateY(-3px) rotate(-1deg);box-shadow:0 14px 40px rgba(0,0,0,.4)}
+.hero-tag svg{width:16px;height:16px;stroke:var(--car);fill:none;stroke-width:2.5}
 
-    .hero-desc {
-        font-size:.97rem;line-height:1.75;color:var(--muted);
-        max-width:420px;margin-bottom:38px;
-        opacity:0;animation:fadeUp .7s .95s ease forwards;
-    }
-    .hero-cta {
-        display:flex;gap:14px;align-items:center;
-        opacity:0;animation:fadeUp .7s 1.05s ease forwards;
-    }
-    .btn-fill {
-        display:inline-flex;align-items:center;gap:10px;
-        padding:15px 36px;border-radius:var(--r-pill);
-        background:var(--espresso);color:var(--white);
-        font-size:.9rem;font-weight:500;letter-spacing:.02em;
-        border:2px solid var(--espresso);
-        position:relative;overflow:hidden;transition:color var(--dur);
-    }
-    .btn-fill::before {
-        content:'';position:absolute;inset:0;
-        background:var(--caramel);
-        transform:translateX(-100%);
-        transition:transform .4s var(--ease);
-    }
-    .btn-fill:hover::before { transform:translateX(0); }
-    .btn-fill span,.btn-fill svg { position:relative;z-index:1; }
-    .btn-fill svg { width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .3s; }
-    .btn-fill:hover svg { transform:translateX(4px); }
+.hero-stats{display:flex;gap:52px;justify-content:center;margin-top:60px;padding-top:36px;border-top:1px solid rgba(255,252,247,.1);opacity:0;animation:fadeUp .6s 1.2s forwards}
+.stat{display:flex;flex-direction:column;align-items:center;gap:4px}
+.stat-n{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;color:var(--blush);line-height:1;letter-spacing:-.02em}
+.stat-n sup{font-size:1.2rem;color:var(--gold)}
+.stat-l{font-size:.7rem;color:rgba(255,252,247,.4);letter-spacing:.1em;text-transform:uppercase}
 
-    .btn-outline {
-        display:inline-flex;align-items:center;gap:8px;
-        padding:15px 28px;border-radius:var(--r-pill);
-        background:transparent;color:var(--espresso);
-        font-size:.9rem;font-weight:500;letter-spacing:.02em;
-        border:2px solid rgba(28,10,0,.18);
-        transition:border-color var(--dur),background var(--dur);
-    }
-    .btn-outline:hover { border-color:var(--espresso);background:rgba(28,10,0,.04); }
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
 
-    .hero-stats {
-        display:flex;gap:40px;
-        margin-top:56px;padding-top:38px;
-        border-top:1px solid rgba(28,10,0,.1);
-        opacity:0;animation:fadeUp .7s 1.15s ease forwards;
-    }
-    .stat { display:flex;flex-direction:column; }
-    .stat-n {
-        font-family:'Cormorant Garamond',serif;
-        font-size:2.25rem;font-weight:700;line-height:1;
-        letter-spacing:-.03em;color:var(--espresso);
-    }
-    .stat-n sup { color:var(--caramel);font-size:1.4rem; }
-    .stat-l { font-size:.72rem;color:var(--muted);margin-top:5px;font-weight:400; }
+/* TICKER */
+.ticker{background:var(--esp);padding:13px 0;overflow:hidden;display:flex;border-top:1px solid rgba(232,180,109,.1)}
+.ticker-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:20px;padding:0 22px;white-space:nowrap;color:var(--gold);font-size:.7rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+.ticker-dot{width:4px;height:4px;background:var(--car);border-radius:50%;flex-shrink:0}
 
-    .hero-right {
-        position:relative;z-index:2;
-        display:flex;justify-content:center;align-items:center;
-    }
-    .img-frame {
-        position:relative;
-        width:clamp(300px,38vw,460px);height:clamp(300px,38vw,460px);
-        opacity:0;animation:popIn 1s .55s var(--ease) forwards;
-    }
-    @keyframes popIn { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+/* ══════════════════════════════════════
+   MENU SECTION — Pink bg, gambar lingkaran, zoom hover (Image 3 style)
+══════════════════════════════════════ */
+.menu-section{padding:90px 64px 100px;background:var(--blush)}
+.menu-head{text-align:center;margin-bottom:20px}
+.menu-head .stag{display:block;font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--brown);margin-bottom:8px}
+.menu-head .sh{font-family:'Kaushan Script',cursive;font-size:clamp(40px,5vw,68px);color:var(--esp);line-height:1}
+.menu-desc{text-align:center;font-size:.92rem;line-height:1.8;color:var(--brown);max-width:560px;margin:0 auto 58px;font-style:italic}
 
-    .ring-a,.ring-b { position:absolute;border-radius:50%;pointer-events:none; }
-    .ring-a {
-        inset:-22px;
-        border:1.5px dashed rgba(193,125,58,.45);
-        animation:spin 32s linear infinite;
-    }
-    .ring-b {
-        inset:-42px;
-        border:1px solid rgba(193,125,58,.15);
-        animation:spin 22s linear infinite reverse;
-    }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    .ring-a::before,.ring-a::after {
-        content:'';position:absolute;
-        width:9px;height:9px;background:var(--caramel);border-radius:50%;
-    }
-    .ring-a::before { top:-4.5px;left:calc(50% - 4.5px); }
-    .ring-a::after  { bottom:-4.5px;left:calc(50% - 4.5px); }
-    .img-frame img { width:100%;height:100%;object-fit:cover;border-radius:50%; }
+/* Circular product grid */
+.circle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 24px}
+.c-card{
+  display:flex;flex-direction:column;align-items:center;
+  cursor:none;
+  opacity:0;transform:translateY(32px);
+}
+.c-card.show{animation:cardIn .65s var(--es) forwards}
+.c-card:nth-child(2).show{animation-delay:.1s}
+.c-card:nth-child(3).show{animation-delay:.18s}
+.c-card:nth-child(4).show{animation-delay:.26s}
+.c-card:nth-child(5).show{animation-delay:.08s}
+.c-card:nth-child(6).show{animation-delay:.16s}
+.c-card:nth-child(7).show{animation-delay:.24s}
+@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
 
-    .float-card {
-        position:absolute;
-        background:var(--white);border-radius:var(--r-lg);
-        padding:14px 18px;box-shadow:var(--shadow);
-        display:flex;align-items:center;gap:12px;
-        animation:floatY 5s ease-in-out infinite;
-    }
-    .float-card.fc-1 { bottom:30px;left:-44px;animation-delay:0s; }
-    .float-card.fc-2 { top:50px;right:-48px;animation-delay:2.5s; }
-    @keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-    .fc-icon { font-size:1.6rem;line-height:1; }
-    .fc-body { display:flex;flex-direction:column; }
-    .fc-val {
-        font-family:'Cormorant Garamond',serif;
-        font-size:1.15rem;font-weight:700;
-        color:var(--espresso);line-height:1;
-    }
-    .fc-lbl { font-size:.68rem;color:var(--muted);margin-top:3px; }
+.c-img-wrap{
+  width:clamp(160px,18vw,230px);height:clamp(160px,18vw,230px);
+  border-radius:50%;overflow:hidden;position:relative;
+  box-shadow:0 12px 40px rgba(74,37,16,.25);
+  transition:transform .45s var(--ease),box-shadow .45s;
+  flex-shrink:0;
+}
+.c-card:hover .c-img-wrap{transform:scale(1.1) translateY(-8px);box-shadow:0 24px 60px rgba(74,37,16,.4)}
+.c-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--es)}
+.c-card:hover .c-img-wrap img{transform:scale(1.08)}
+.c-stok{position:absolute;top:12px;right:12px;font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 11px;border-radius:var(--pill)}
+.stok-aman{background:rgba(255,252,247,.9);color:var(--esp)}
+.stok-tipis{background:rgba(232,180,109,.92);color:var(--esp)}
+.stok-habis{background:rgba(200,60,60,.9);color:#fff}
+.c-cat{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--car);margin-top:20px;margin-bottom:4px}
+.c-name{font-family:'Playfair Display',serif;font-size:1.18rem;font-weight:700;color:var(--esp);text-align:center;line-height:1.2}
+.c-price{font-family:'Playfair Display',serif;font-size:1.15rem;font-style:italic;font-weight:400;color:var(--brown);margin-top:6px}
+.c-add{
+  margin-top:12px;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 20px;border-radius:var(--pill);
+  background:var(--esp);color:var(--white);
+  font-size:.75rem;font-weight:500;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .3s,transform .3s,background .3s;
+}
+.c-card:hover .c-add{opacity:1;transform:translateY(0)}
+.c-add:hover{background:var(--car)}
+.c-add svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5}
 
-    @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+/* See all link */
+.see-all-wrap{text-align:center;margin-top:48px}
+.see-all{display:inline-flex;align-items:center;gap:8px;color:var(--esp);font-size:.88rem;font-weight:600;letter-spacing:.04em;border-bottom:1.5px solid var(--esp);padding-bottom:2px;transition:gap .3s,color .3s}
+.see-all:hover{gap:14px;color:var(--car);border-color:var(--car)}
+.see-all svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
 
-    /* TICKER */
-    .ticker {
-        background:var(--espresso-2);
-        padding:13px 0;overflow:hidden;display:flex;
-        border-top:1px solid rgba(255,252,247,.06);
-    }
-    .ticker-track {
-        display:flex;gap:0;width:max-content;
-        animation:marquee 28s linear infinite;
-    }
-    .ticker-track:hover { animation-play-state:paused; }
-    @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
-    .ticker-item {
-        display:flex;align-items:center;gap:20px;
-        white-space:nowrap;padding:0 20px;
-        color:var(--gold);
-        font-size:.72rem;font-weight:400;letter-spacing:.1em;text-transform:uppercase;
-    }
-    .ticker-gem { width:4px;height:4px;background:var(--caramel);border-radius:50%;flex-shrink:0; }
+/* ══════════════════════════════════════
+   PROMO BANNER
+══════════════════════════════════════ */
+.promo-wrap{padding:0 64px;background:var(--blush);padding-bottom:90px}
+.promo{border-radius:24px;background:var(--esp-2);overflow:hidden;display:grid;grid-template-columns:55% 45%;min-height:440px;position:relative}
+.promo::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;top:-160px;left:-120px;background:radial-gradient(circle,rgba(192,123,58,.15) 0%,transparent 65%);pointer-events:none}
+.promo-left{padding:60px 56px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.promo-tag{display:flex;align-items:center;gap:10px;font-size:.68rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--car);margin-bottom:14px}
+.promo-tag::before{content:'';display:block;width:22px;height:1.5px;background:var(--car)}
+.promo-h{font-family:'Kaushan Script',cursive;font-size:clamp(38px,5vw,68px);line-height:1.05;color:var(--white);margin-bottom:14px}
+.promo-body{font-size:.88rem;line-height:1.8;color:rgba(255,252,247,.45);max-width:340px;margin-bottom:36px}
+.btn-promo{display:inline-flex;align-items:center;gap:11px;padding:14px 36px;border-radius:var(--pill);background:var(--blush);color:var(--esp);font-size:.88rem;font-weight:600;width:fit-content;cursor:none;transition:background .3s,color .3s}
+.btn-promo:hover{background:transparent;color:var(--white)}
+.btn-promo svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .3s}
+.btn-promo:hover svg{transform:translateX(5px)}
+.promo-right{position:relative;overflow:hidden}
+.promo-imgs{position:absolute;inset:0;display:grid;grid-template-rows:1fr 1fr;gap:2px}
+.promo-imgs img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--es)}
+.promo:hover .promo-imgs img{transform:scale(1.07)}
 
-    /* SECTION SHARED */
-    .section-tag {
-        display:block;
-        font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;
-        color:var(--caramel);margin-bottom:10px;
-    }
-    .section-title {
-        font-family:'Cormorant Garamond',serif;
-        font-size:clamp(34px,4.5vw,58px);
-        font-weight:600;letter-spacing:-.025em;line-height:1.08;
-        color:var(--espresso);
-    }
+/* ══════════════════════════════════════
+   TESTIMONIAL — Roti besar di sisi, teks besar (Image 2 & 4 style)
+══════════════════════════════════════ */
+.testi-section{background:var(--esp-2);overflow:hidden;position:relative}
 
-    /* CATEGORIES */
-    .cat-section { padding:80px 0 60px; }
-    .cat-head { padding:0 64px 36px; }
-    .cat-track {
-        display:flex;gap:16px;
-        padding:4px 64px 24px;
-        overflow-x:auto;scroll-snap-type:x mandatory;
-        -ms-overflow-style:none;scrollbar-width:none;
-    }
-    .cat-track::-webkit-scrollbar { display:none; }
-    .cat-card {
-        flex-shrink:0;width:155px;height:205px;
-        border-radius:var(--r-lg);overflow:hidden;
-        position:relative;scroll-snap-align:start;
-        cursor:none;transition:transform .35s var(--ease),box-shadow .35s var(--ease);
-        border:2px solid transparent;
-    }
-    .cat-card.is-active {
-        border-color:var(--caramel);
-        box-shadow:0 0 0 4px rgba(193,125,58,.15);
-    }
-    .cat-card:hover { transform:translateY(-5px);box-shadow:var(--shadow); }
-    .cat-card img {
-        width:100%;height:100%;object-fit:cover;
-        transition:transform .55s var(--ease);
-    }
-    .cat-card:hover img { transform:scale(1.1); }
-    .cat-card::after {
-        content:'';position:absolute;inset:0;
-        background:linear-gradient(to top,rgba(28,10,0,.78) 0%,rgba(28,10,0,.08) 55%,transparent 100%);
-    }
-    .cat-label {
-        position:absolute;bottom:0;left:0;right:0;z-index:1;
-        padding:18px 14px 16px;color:#fff;
-    }
-    .cat-lname {
-        font-family:'Cormorant Garamond',serif;
-        font-size:1.18rem;font-weight:600;display:block;line-height:1.2;
-    }
-    .is-active .cat-lname { color:var(--gold); }
-    .cat-lcount { font-size:.68rem;opacity:.65;margin-top:2px;display:block; }
+/* Satu slide testimonial */
+.testi-slide{
+  min-height:75vh;
+  display:grid;grid-template-columns:360px 1fr 360px;
+  align-items:center;
+  padding:80px 0;
+  position:relative;
+}
+.testi-slide:nth-child(even){background:rgba(0,0,0,.12)}
 
-    /* STOK BADGE */
-    .stok-badge {
-        position:absolute;top:14px;right:14px;z-index:2;
-        font-size:.6rem;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
-        padding:4px 11px;border-radius:var(--r-pill);
-    }
-    .stok-aman  { background:rgba(255,252,247,.9);color:var(--espresso); }
-    .stok-tipis { background:rgba(255,190,100,.9);color:var(--espresso-2); }
-    .stok-habis { background:rgba(200,60,60,.9);color:#fff; }
+/* Gambar roti di sisi — besar, seperti Courante */
+.testi-food{
+  width:100%;height:100%;
+  display:flex;align-items:flex-end;
+  overflow:hidden;
+  position:relative;
+}
+.testi-food.left{justify-content:flex-end;padding-right:0}
+.testi-food.right{justify-content:flex-start;padding-left:0}
+.testi-food img{
+  width:clamp(250px,28vw,380px);
+  height:clamp(300px,36vw,460px);
+  object-fit:cover;border-radius:50%;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  flex-shrink:0;
+  transition:transform .6s var(--es);
+}
+.testi-food.left img{transform:translate(-15%, 15%) rotate(-8deg)}
+.testi-food.right img{transform:translate(15%, 15%) rotate(8deg)}
+.testi-slide:hover .testi-food.left img{transform:translate(-10%, 8%) rotate(-5deg)}
+.testi-slide:hover .testi-food.right img{transform:translate(10%, 8%) rotate(5deg)}
 
-    /* MENU / PRODUCTS */
-    .menu-section { padding:80px 64px 100px;background:var(--white); }
-    .menu-head {
-        display:flex;align-items:flex-end;justify-content:space-between;
-        margin-bottom:46px;
-    }
-    .see-all {
-        display:flex;align-items:center;gap:7px;
-        color:var(--caramel);font-size:.85rem;font-weight:500;letter-spacing:.02em;
-        transition:gap .3s;
-    }
-    .see-all:hover { gap:12px; }
-    .see-all svg { width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2; }
+/* Label di atas gambar slide pertama */
+.testi-label-tag{
+  position:absolute;top:40px;left:50%;transform:translateX(-50%);
+  background:var(--white);color:var(--esp);
+  font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;
+  padding:11px 28px;border-radius:5px;
+  box-shadow:0 6px 24px rgba(0,0,0,.25);
+  white-space:nowrap;z-index:2;
+}
 
-    .products-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:22px; }
+/* Section label (kiri atas) */
+.testi-section-label{
+  position:absolute;top:44px;left:64px;
+  font-family:'Kaushan Script',cursive;font-size:1.45rem;
+  color:rgba(255,252,247,.3);
+}
 
-    .p-card {
-        border-radius:var(--r-lg);overflow:hidden;
-        background:var(--white);
-        border:1px solid rgba(28,10,0,.07);
-        transition:box-shadow .4s var(--ease),transform .4s var(--ease);
-        cursor:none;
-        opacity:0;transform:translateY(34px);
-    }
-    .p-card.show { animation:cardIn .65s var(--ease) forwards; }
-    .p-card:nth-child(2).show { animation-delay:.1s; }
-    .p-card:nth-child(3).show { animation-delay:.2s; }
-    .p-card:nth-child(4).show { animation-delay:.05s; }
-    .p-card:nth-child(5).show { animation-delay:.15s; }
-    .p-card:nth-child(6).show { animation-delay:.25s; }
-    .p-card:nth-child(7).show { animation-delay:.3s; }
-    @keyframes cardIn { to{opacity:1;transform:translateY(0)} }
-    .p-card:hover { box-shadow:var(--shadow-xl);transform:translateY(-6px); }
+/* Teks tengah testimonial */
+.testi-center{
+  padding:0 40px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;z-index:1;
+}
+.testi-sub-label{
+  font-family:'Kaushan Script',cursive;
+  font-size:clamp(1.2rem,2.5vw,1.8rem);
+  color:rgba(255,252,247,.4);
+  margin-bottom:20px;
+}
+.testi-quote-text{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,3.5vw,46px);
+  font-weight:700;line-height:1.2;
+  color:var(--white);margin-bottom:28px;
+}
+.testi-quote-text em{color:var(--gold);font-style:italic}
+.testi-name{font-size:.88rem;font-weight:500;color:rgba(255,252,247,.45);letter-spacing:.1em;text-transform:uppercase}
+.testi-stars{display:flex;gap:3px;justify-content:center;margin-bottom:6px}
+.testi-stars span{color:var(--gold);font-size:.85rem}
 
-    .p-img-wrap { position:relative;aspect-ratio:4/3;overflow:hidden; }
-    .p-img-wrap img {
-        width:100%;height:100%;object-fit:cover;
-        transition:transform .6s var(--ease);
-    }
-    .p-card:hover .p-img-wrap img { transform:scale(1.09); }
+/* Section label bawah slide */
+.testi-bottom-label{
+  text-align:center;padding:40px;
+  font-family:'Kaushan Script',cursive;
+  font-size:clamp(28px,5vw,56px);
+  color:rgba(255,252,247,.12);
+  border-top:1px solid rgba(255,252,247,.06);
+}
 
-    .p-badge {
-        position:absolute;top:14px;left:14px;z-index:1;
-        background:var(--espresso);color:var(--gold);
-        font-size:.58rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
-        padding:5px 13px;border-radius:var(--r-pill);
-    }
+/* ══════════════════════════════════════
+   GALLERY
+══════════════════════════════════════ */
+.gallery-section{padding:90px 0 80px;background:var(--cream2);overflow:hidden}
+.gallery-head{padding:0 64px 42px;text-align:left}
+.gallery-head .stag{display:block;font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--car);margin-bottom:8px}
+.gallery-head .sh{font-family:'Playfair Display',serif;font-size:clamp(34px,4.5vw,58px);font-weight:900;color:var(--esp);line-height:1.05}
+.gallery-head .sh em{font-style:italic}
+.gallery-track{display:flex;gap:16px;padding:0 64px 10px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.gallery-track::-webkit-scrollbar{display:none}
+.g-img{flex-shrink:0;width:240px;height:290px;border-radius:18px;overflow:hidden;cursor:none}
+.g-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--es)}
+.g-img:hover img{transform:scale(1.1)}
+.gallery-hint{text-align:center;margin-top:18px;font-size:.72rem;color:var(--muted);letter-spacing:.1em}
 
-    .p-overlay {
-        position:absolute;inset:0;z-index:2;
-        background:rgba(28,10,0,.35);
-        display:flex;align-items:center;justify-content:center;
-        opacity:0;transition:opacity .35s;
-        backdrop-filter:blur(2px);
-    }
-    .p-card:hover .p-overlay { opacity:1; }
-    .p-overlay-btn {
-        display:inline-flex;align-items:center;gap:8px;
-        padding:12px 24px;border-radius:var(--r-pill);
-        background:var(--white);color:var(--espresso);
-        font-size:.82rem;font-weight:500;
-        border:none;cursor:none;
-        transform:translateY(10px);transition:transform .35s var(--ease) .05s;
-    }
-    .p-card:hover .p-overlay-btn { transform:translateY(0); }
-    .p-overlay-btn svg { width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2; }
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(232,180,109,.08)}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:52px;margin-bottom:52px;padding-bottom:48px;border-bottom:1px solid rgba(255,252,247,.08)}
+.f-logo{font-family:'Kaushan Script',cursive;font-size:1.75rem;color:var(--gold);display:block;margin-bottom:14px}
+.f-desc{font-size:.85rem;line-height:1.8;color:rgba(255,252,247,.36);max-width:230px;margin-bottom:22px}
+.f-social{display:flex;gap:10px}
+.f-soc{width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(255,252,247,.15);display:flex;align-items:center;justify-content:center;transition:all .3s;cursor:none}
+.f-soc:hover{background:var(--car);border-color:var(--car)}
+.f-soc svg{width:15px;height:15px;stroke:rgba(255,252,247,.5);fill:none;stroke-width:1.6;transition:stroke .3s}
+.f-soc:hover svg{stroke:#fff}
+.f-col-title{font-size:.85rem;font-weight:500;color:var(--white);margin-bottom:18px}
+.f-links{display:flex;flex-direction:column;gap:9px}
+.f-links a{font-size:.8rem;color:rgba(255,252,247,.35);transition:color .3s,padding-left .3s;cursor:none}
+.f-links a:hover{color:var(--gold);padding-left:5px}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between}
+.f-copy{font-size:.78rem;color:rgba(255,252,247,.22)}
+.f-copy strong{color:rgba(255,252,247,.5);font-weight:500}
 
-    .p-body { padding:22px 22px 20px; }
-    .p-name {
-        font-family:'Cormorant Garamond',serif;
-        font-size:1.3rem;font-weight:600;letter-spacing:-.01em;line-height:1.2;
-        color:var(--espresso);margin-bottom:7px;
-    }
-    .p-desc { font-size:.8rem;line-height:1.65;color:var(--muted);margin-bottom:18px; }
-    .p-foot { display:flex;align-items:center;justify-content:space-between; }
-    .p-price { display:flex;align-items:center;gap:7px; }
-    .price-dot {
-        width:20px;height:20px;border-radius:50%;
-        background:var(--caramel);
-        display:flex;align-items:center;justify-content:center;flex-shrink:0;
-    }
-    .price-dot svg { width:10px;height:10px;stroke:#fff;fill:none;stroke-width:2; }
-    .p-price-val {
-        font-family:'Cormorant Garamond',serif;
-        font-size:1.1rem;font-weight:700;color:var(--espresso);
-    }
-    .btn-add {
-        width:36px;height:36px;border-radius:50%;
-        background:var(--espresso);
-        display:flex;align-items:center;justify-content:center;
-        transition:background .3s,transform .4s var(--ease);
-    }
-    .btn-add:hover { background:var(--caramel);transform:rotate(90deg) scale(1.1); }
-    .btn-add svg { width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2.5; }
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .7s var(--es),transform .7s var(--es)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-l{opacity:0;transform:translateX(-36px);transition:opacity .7s var(--es),transform .7s var(--es)}
+.reveal-l.in{opacity:1;transform:translateX(0)}
 
-    /* PROMO */
-    .promo-wrap { padding:0 64px; }
-    .promo {
-        border-radius:var(--r-lg);
-        background:var(--espresso-2);overflow:hidden;
-        display:grid;grid-template-columns:1fr 1fr;
-        min-height:460px;position:relative;
-    }
-    .promo::before {
-        content:'';position:absolute;
-        width:500px;height:500px;border-radius:50%;
-        top:-160px;left:-120px;
-        background:radial-gradient(circle,rgba(193,125,58,.18) 0%,transparent 65%);
-        pointer-events:none;
-    }
-    .promo-left {
-        padding:64px 56px;
-        display:flex;flex-direction:column;justify-content:center;
-        position:relative;z-index:2;
-    }
-    .promo-tag-line {
-        display:flex;align-items:center;gap:10px;
-        font-size:.68rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;
-        color:var(--caramel);margin-bottom:16px;
-    }
-    .promo-tag-line::before { content:'';display:block;width:22px;height:1px;background:var(--caramel); }
-    .promo-h {
-        font-family:'Cormorant Garamond',serif;
-        font-size:clamp(38px,4.5vw,68px);font-weight:700;line-height:1.05;
-        letter-spacing:-.03em;color:var(--white);margin-bottom:14px;
-    }
-    .promo-h em { color:var(--gold);font-style:italic; }
-    .promo-body {
-        font-size:.875rem;line-height:1.75;
-        color:rgba(255,252,247,.48);max-width:360px;margin-bottom:38px;
-    }
-    .btn-promo {
-        display:inline-flex;align-items:center;gap:12px;
-        padding:15px 36px;border-radius:var(--r-pill);
-        background:var(--white);color:var(--espresso);
-        font-size:.875rem;font-weight:500;width:fit-content;
-        border:2px solid var(--white);cursor:none;
-        transition:background .3s,color .3s;
-    }
-    .btn-promo:hover { background:transparent;color:var(--white); }
-    .btn-promo svg { width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .3s; }
-    .btn-promo:hover svg { transform:translateX(5px); }
-    .promo-right { position:relative;overflow:hidden; }
-    .promo-imgs { position:absolute;inset:0;display:grid;grid-template-rows:1fr 1fr;gap:3px; }
-    .promo-imgs img { width:100%;height:100%;object-fit:cover;transition:transform .6s var(--ease); }
-    .promo:hover .promo-imgs img { transform:scale(1.06); }
-
-    /* TESTIMONIALS */
-    .testi-section { padding:100px 64px; }
-    .testi-head {
-        display:flex;align-items:flex-end;justify-content:space-between;
-        margin-bottom:48px;
-    }
-    .testi-meta { text-align:right; }
-    .testi-stars { display:flex;gap:3px;justify-content:flex-end;margin-bottom:4px; }
-    .testi-stars span { color:var(--gold);font-size:1.1rem; }
-    .testi-num {
-        font-family:'Cormorant Garamond',serif;
-        font-size:2.1rem;font-weight:700;line-height:1;color:var(--espresso);
-    }
-    .testi-total { font-size:.75rem;color:var(--muted); }
-    .testi-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:18px; }
-    .t-card {
-        background:var(--white);border-radius:var(--r-lg);
-        padding:34px 30px;
-        border:1px solid transparent;
-        transition:border-color .35s,box-shadow .35s,transform .35s;
-        cursor:none;
-        opacity:0;transform:translateY(24px);
-    }
-    .t-card.show { animation:cardIn .6s var(--ease) forwards; }
-    .t-card:nth-child(2).show { animation-delay:.1s; }
-    .t-card:nth-child(3).show { animation-delay:.2s; }
-    .t-card:hover { border-color:var(--cream-3);box-shadow:0 20px 50px rgba(28,10,0,.08);transform:translateY(-4px); }
-    .t-quote {
-        font-family:'Cormorant Garamond',serif;
-        font-size:4.5rem;line-height:.7;
-        color:var(--caramel);opacity:.28;margin-bottom:10px;
-    }
-    .t-text {
-        font-size:.865rem;line-height:1.8;
-        color:var(--espresso);opacity:.78;margin-bottom:22px;
-    }
-    .t-author { display:flex;align-items:center;gap:11px; }
-    .t-avatar {
-        width:44px;height:44px;border-radius:50%;
-        background:var(--cream-3);flex-shrink:0;
-        display:flex;align-items:center;justify-content:center;
-        font-family:'Cormorant Garamond',serif;
-        font-size:1.1rem;font-weight:700;color:var(--brown);
-    }
-    .t-name { font-size:.85rem;font-weight:500;color:var(--espresso); }
-    .t-role { font-size:.72rem;color:var(--muted);margin-top:2px; }
-    .t-stars { margin-left:auto;display:flex;gap:2px; }
-    .t-stars span { font-size:.65rem;color:var(--gold); }
-
-    /* FOOTER */
-    footer {
-        background:var(--espresso-2);
-        padding:76px 64px 38px;
-        border-top:1px solid rgba(255,252,247,.05);
-    }
-    .footer-grid {
-        display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;
-        gap:56px;margin-bottom:56px;padding-bottom:52px;
-        border-bottom:1px solid rgba(255,252,247,.09);
-    }
-    .f-logo {
-        font-family:'Cormorant Garamond',serif;
-        font-size:1.6rem;font-weight:700;letter-spacing:-.02em;
-        color:var(--white);display:block;margin-bottom:14px;
-    }
-    .f-logo em { color:var(--caramel);font-style:italic; }
-    .f-desc {
-        font-size:.845rem;line-height:1.75;
-        color:rgba(255,252,247,.4);max-width:230px;margin-bottom:22px;
-    }
-    .f-social { display:flex;gap:10px; }
-    .f-soc-btn {
-        width:36px;height:36px;border-radius:50%;
-        border:1.5px solid rgba(255,252,247,.14);
-        display:flex;align-items:center;justify-content:center;
-        transition:background .3s,border-color .3s;cursor:none;
-    }
-    .f-soc-btn:hover { background:var(--caramel);border-color:var(--caramel); }
-    .f-soc-btn svg { width:15px;height:15px;stroke:rgba(255,252,247,.65);fill:none;stroke-width:1.6;transition:stroke .3s; }
-    .f-soc-btn:hover svg { stroke:#fff; }
-    .f-col-title { font-size:.85rem;font-weight:500;color:var(--white);margin-bottom:18px; }
-    .f-links { display:flex;flex-direction:column;gap:9px; }
-    .f-links a {
-        font-size:.8rem;color:rgba(255,252,247,.4);
-        transition:color .3s,padding-left .3s;cursor:none;
-    }
-    .f-links a:hover { color:var(--gold);padding-left:4px; }
-    .footer-bottom { display:flex;align-items:center;justify-content:space-between; }
-    .f-copy { font-size:.78rem;color:rgba(255,252,247,.28); }
-    .f-copy strong { color:var(--caramel);font-weight:500; }
-
-    .reveal-ready { opacity:0;transform:translateY(28px);transition:opacity .6s var(--ease),transform .6s var(--ease); }
-    .reveal-ready.revealed { opacity:1;transform:translateY(0); }
-
-    @media(max-width:960px){
-        .hero        { grid-template-columns:1fr;padding:110px 28px 70px;gap:50px;text-align:center; }
-        .hero-right  { order:-1;justify-content:center; }
-        .img-frame   { width:280px;height:280px; }
-        .float-card  { display:none; }
-        .hero-cta    { justify-content:center; }
-        .hero-stats  { justify-content:center; }
-        .hero-desc   { margin:0 auto 38px; }
-        .nav         { padding:14px 22px; }
-        .nav-center  { display:none; }
-        .nav.stuck   { padding:12px 22px; }
-        .cat-head, .menu-head { padding-left:22px;padding-right:22px; }
-        .cat-track  { padding-left:22px;padding-right:22px; }
-        .menu-section { padding:60px 22px 80px; }
-        .products-grid { grid-template-columns:1fr; }
-        .testi-section { padding:70px 22px; }
-        .testi-grid { grid-template-columns:1fr; }
-        .promo-wrap { padding:0 22px; }
-        .promo      { grid-template-columns:1fr; }
-        .promo-right { height:220px; }
-        .promo-left { padding:44px 30px; }
-        footer      { padding:56px 22px 30px; }
-        .footer-grid { grid-template-columns:1fr 1fr;gap:36px; }
-        .footer-bottom { flex-direction:column;gap:8px;text-align:center; }
-    }
-    </style>
+/* RESPONSIVE */
+@media(max-width:960px){
+  .nav{padding:14px 22px}
+  .nav.stuck{padding:12px 22px}
+  .nav-links{display:none}
+  .hero{padding:100px 22px 80px}
+  .hf-wrap.ml,.hf-wrap.mr{display:none}
+  .hf-wrap.tl .hf-img,.hf-wrap.tr .hf-img{width:120px;height:120px}
+  .hf-wrap.bl .hf-img,.hf-wrap.br .hf-img{width:110px;height:110px}
+  .menu-section{padding:70px 22px 80px}
+  .circle-grid{grid-template-columns:repeat(2,1fr);gap:24px 16px}
+  .promo-wrap{padding:0 22px 70px}
+  .promo{grid-template-columns:1fr}
+  .promo-right{height:200px}
+  .promo-left{padding:40px 28px}
+  .testi-slide{grid-template-columns:1fr;padding:60px 22px}
+  .testi-food{display:none}
+  .testi-section-label{left:22px}
+  .gallery-section{padding:70px 0}
+  .gallery-head{padding:0 22px 32px}
+  .gallery-track{padding:0 22px 10px}
+  footer{padding:56px 22px 30px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+}
+</style>
 </head>
 <body>
 
-<div id="cur-dot"></div>
-<div id="cur-ring"></div>
+<div id="cur"></div>
+<div id="cur-r"></div>
 
-<!-- NAVBAR -->
+<!-- ════ NAVBAR ════ -->
 <nav class="nav" id="mainNav">
-    <a href="#" class="nav-logo">Toko Kue <em>Fanda</em></a>
-    <ul class="nav-center">
-        <?php foreach ($nav_links as $nl): ?>
-        <li><a href="<?= htmlspecialchars($nl['href']) ?>"><?= htmlspecialchars($nl['label']) ?></a></li>
-        <?php endforeach; ?>
-    </ul>
-    <div class="nav-right">
-        <form method="post" action="order_tambah.php">
-        <button class="nav-icon-btn" title="Keranjang">
-            <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
-            <span class="cart-badge">0</span>
-        </button>
-        </form>
-        <form method="post" action="akun.php">
-        <button class="nav-icon-btn" title="Akun">
-            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-        </button>
-        </form>
-        <form method="post" action="../index.php">
-        <button class="btn-keluar">Keluar</button>
-        </form>
-    </div>
+  <a href="#" class="nav-logo">Toko Kue Fanda</a>
+  <ul class="nav-links">
+    <li><a href="#">Beranda</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#footer">Kontak</a></li>
+    <li><a href="#tentang">Ulasan</a></li>
+  </ul>
+  <div class="nav-r">
+    <button class="nav-icon" title="Keranjang" onclick="window.location.href='order_tambah.php'">
+      <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="nav-icon" title="Akun" onclick="window.location.href='akun.php'">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </button>
+    <button class="btn-keluar" onclick="window.location.href='../index.php'">Keluar</button>
+  </div>
 </nav>
 
-<!-- HERO -->
+<!-- ════ HERO — Teks tengah + roti terbang masuk ════ -->
 <section class="hero" id="beranda">
-    <div class="hero-ghost" aria-hidden="true">FANDA</div>
-    <div class="hero-left">
-        <div class="hero-badge"><i></i> Fresh Baked Daily</div>
-        <h1 class="hero-h1">
-            <span class="word-wrap"><span class="word w0">Freshly&nbsp;</span></span><span class="word-wrap"><span class="word w1">Baked,</span></span>
-            <br>
-            <em>
-                <span class="word-wrap"><span class="word w2">Made&nbsp;</span></span><span class="word-wrap"><span class="word w3">With&nbsp;</span></span><span class="word-wrap"><span class="word w4">Love</span></span>
-            </em>
-        </h1>
-        <p class="hero-desc">Nikmati aneka kue premium buatan tangan yang dibuat segar setiap hari. Dari Nastar Klasik hingga Brownies Panggang yang bikin nagih.</p>
-        <div class="hero-cta">
-            <a href="#menu" class="btn-fill">
-                <span>Pesan Sekarang</span>
-                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-            </a>
-            <a href="#menu" class="btn-outline">Lihat Menu</a>
-        </div>
-        <div class="hero-stats">
-            <div class="stat">
-                <span class="stat-n"><span class="ctr" data-to="7">0</span><sup>+</sup></span>
-                <span class="stat-l">Menu Pilihan</span>
-            </div>
-            <div class="stat">
-                <span class="stat-n">4.9<sup>★</sup></span>
-                <span class="stat-l">Rating Pelanggan</span>
-            </div>
-            <div class="stat">
-                <!-- Total qty dari order_items = 13 item, 4 orders -->
-                <span class="stat-n"><span class="ctr" data-to="4">0</span><sup>+</sup></span>
-                <span class="stat-l">Pesanan Masuk</span>
-            </div>
-        </div>
+
+  <!-- Roti kiri atas -->
+  <div class="hf-wrap tl">
+    <img class="hf-img" src="../gambar/nastar.jpeg" alt="">
+  </div>
+  <!-- Roti kanan atas -->
+  <div class="hf-wrap tr">
+    <img class="hf-img" src="../gambar/kastangel.jpeg" alt="">
+  </div>
+  <!-- Roti kiri bawah -->
+  <div class="hf-wrap bl">
+    <img class="hf-img" src="../gambar/brownis.jpeg" alt="">
+  </div>
+  <!-- Roti kanan bawah -->
+  <div class="hf-wrap br">
+    <img class="hf-img" src="../gambar/chocolate_butter.jpeg" alt="">
+  </div>
+  <!-- Roti kiri tengah -->
+  <div class="hf-wrap ml">
+    <img class="hf-img" src="../gambar/putri_salju.jpeg" alt="">
+  </div>
+  <!-- Roti kanan tengah -->
+  <div class="hf-wrap mr">
+    <img class="hf-img" src="../gambar/strawberry_thumb.jpeg" alt="">
+  </div>
+
+  <!-- Konten tengah -->
+  <div class="hero-inner">
+    <div class="hero-badge"><span class="bdot"></span>Fresh Baked Daily · Semarang</div>
+    <h1 class="hero-name">Toko Kue Fanda</h1>
+    <p class="hero-tagline">Artisanal Bakery &amp; Kue Buatan Tangan</p>
+    <a href="#menu" class="hero-tag">
+      Jelajahi Menu
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-n"><span class="ctr" data-to="7">0</span><sup>+</sup></span>
+        <span class="stat-l">Menu Pilihan</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n">4.9<sup>★</sup></span>
+        <span class="stat-l">Rating</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n"><span class="ctr" data-to="100">0</span><sup>+</sup></span>
+        <span class="stat-l">Pelanggan Puas</span>
+      </div>
     </div>
-    <div class="hero-right">
-        <div class="img-frame">
-            <div class="ring-a"></div>
-            <div class="ring-b"></div>
-            <img
-                src="../gambar/logo.jpeg"
-                alt="Aneka Kue Premium Fanda"
-                loading="eager"
-            />
-            <div class="float-card fc-1">
-                <div class="fc-icon">🍪</div>
-                <div class="fc-body">
-                    <span class="fc-val">Rp 72rb</span>
-                    <span class="fc-lbl">Mulai dari</span>
-                </div>
-            </div>
-            <div class="float-card fc-2">
-                <div class="fc-icon">🛍️</div>
-                <div class="fc-body">
-                    <span class="fc-val">Promo</span>
-                    <span class="fc-lbl">Min. 3 item</span>
-                </div>
-            </div>
-        </div>
-    </div>
+  </div>
 </section>
 
 <!-- TICKER -->
 <div class="ticker" aria-hidden="true">
-    <div class="ticker-track">
-        <?php foreach ($ticker_items as $ti): ?>
-        <div class="ticker-item">
-            <?= htmlspecialchars($ti) ?>
-            <span class="ticker-gem"></span>
-        </div>
-        <?php endforeach; ?>
-    </div>
+  <div class="ticker-track">
+    <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Pengiriman ke Seluruh Wilayah<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Rating 4.9 Bintang<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Pengiriman ke Seluruh Wilayah<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Rating 4.9 Bintang<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
+  </div>
 </div>
 
-<!-- CATEGORIES -->
-<section class="cat-section">
-    <div class="cat-head">
-        <span class="section-tag">Kategori</span>
-        <h2 class="section-title">Pilih Favoritmu</h2>
-    </div>
-    <div class="cat-track" id="catTrack">
-        <?php foreach ($categories as $i => $c): ?>
-        <div class="cat-card<?= $i === 0 ? ' is-active' : '' ?>" onclick="setActive(this)">
-            <img
-                src="<?= htmlspecialchars($c['photo']) ?>"
-                alt="<?= htmlspecialchars($c['name']) ?>"
-                loading="lazy"/>
-            <div class="cat-label">
-                <span class="cat-lname"><?= htmlspecialchars($c['name']) ?></span>
-                <span class="cat-lcount"><?= $c['count'] ?> produk</span>
-            </div>
-        </div>
-        <?php endforeach; ?>
-    </div>
-</section>
-
-<!-- MENU / PRODUCTS -->
+<!-- ════ MENU — Pink bg, lingkaran, zoom hover ════ -->
 <section class="menu-section" id="menu">
-    <div class="menu-head">
-        <div>
-            <span class="section-tag">Menu Kami</span>
-            <h2 class="section-title">Semua Menu</h2>
-        </div>
-        <a href="#" class="see-all">
-            Lihat Semua
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-        </a>
+  <div class="menu-head reveal">
+    <span class="stag">Menu Unggulan Kami</span>
+    <h2 class="sh">Langsung dari Dapur Kami</h2>
+  </div>
+  <p class="menu-desc reveal">Dari kue kering renyah hingga brownies fudgy yang pekat — setiap item dibuat dari bahan pilihan, dipanggang segar setiap hari.</p>
+
+  <div class="circle-grid" id="circleGrid">
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 47</span>
+        <img src="../gambar/nastar.jpeg" alt="Nastar Klasik" loading="lazy">
+      </div>
+      <span class="c-cat">Kue Kering</span>
+      <h3 class="c-name">Nastar Klasik</h3>
+      <span class="c-price">Rp 85.000</span>
+      <button class="c-add btn-add-cart" data-name="Nastar Klasik">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
     </div>
 
-    <div class="products-grid" id="productsGrid">
-        <?php foreach ($products as $p):
-            // Tentukan badge stok
-            if ($p['stok'] <= 0) {
-                $stok_class = 'stok-habis'; $stok_label = 'Habis';
-            } elseif ($p['stok'] <= 10) {
-                $stok_class = 'stok-tipis'; $stok_label = 'Stok Tipis';
-            } else {
-                $stok_class = 'stok-aman'; $stok_label = 'Stok ' . $p['stok'];
-            }
-        ?>
-        <div class="p-card">
-            <div class="p-img-wrap">
-                <span class="p-badge"><?= htmlspecialchars($p['cat']) ?></span>
-                <span class="stok-badge <?= $stok_class ?>"><?= $stok_label ?></span>
-                <img
-                    src="<?= htmlspecialchars($p['photo']) ?>"
-                    alt="<?= htmlspecialchars($p['name']) ?>"
-                    loading="lazy"/>
-                <div class="p-overlay">
-                    <button class="p-overlay-btn">
-                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                        Tambah ke Keranjang
-                    </button>
-                </div>
-            </div>
-            <div class="p-body">
-                <h3 class="p-name"><?= htmlspecialchars($p['name']) ?></h3>
-                <p class="p-desc"><?= htmlspecialchars($p['desc']) ?></p>
-                <div class="p-foot">
-                    <div class="p-price">
-                        <div class="price-dot">
-                            <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-                        </div>
-                        <span class="p-price-val">Rp <?= htmlspecialchars($p['price']) ?></span>
-                    </div>
-                    <button class="btn-add" title="Tambah">
-                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <?php endforeach; ?>
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 38</span>
+        <img src="../gambar/kastangel.jpeg" alt="Kastengel Keju" loading="lazy">
+      </div>
+      <span class="c-cat">Kue Kering</span>
+      <h3 class="c-name">Kastengel Keju</h3>
+      <span class="c-price">Rp 60.000</span>
+      <button class="c-add btn-add-cart" data-name="Kastengel Keju">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
     </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 40</span>
+        <img src="../gambar/putri_salju.jpeg" alt="Putri Salju" loading="lazy">
+      </div>
+      <span class="c-cat">Kue Kering</span>
+      <h3 class="c-name">Putri Salju</h3>
+      <span class="c-price">Rp 80.000</span>
+      <button class="c-add btn-add-cart" data-name="Putri Salju">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 53</span>
+        <img src="../gambar/chocolate_butter.jpeg" alt="Chocolate Butter Cookies" loading="lazy">
+      </div>
+      <span class="c-cat">Cookies</span>
+      <h3 class="c-name">Chocolate Butter Cookies</h3>
+      <span class="c-price">Rp 70.000</span>
+      <button class="c-add btn-add-cart" data-name="Chocolate Butter Cookies">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-tipis">Stok Tipis</span>
+        <img src="../gambar/brownis.jpeg" alt="Brownies Panggang" loading="lazy">
+      </div>
+      <span class="c-cat">Cake & Brownies</span>
+      <h3 class="c-name">Brownies Panggang</h3>
+      <span class="c-price">Rp 95.000</span>
+      <button class="c-add btn-add-cart" data-name="Brownies Panggang">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 49</span>
+        <img src="../gambar/palm_cheese.jpeg" alt="Palm Cheese Cookies" loading="lazy">
+      </div>
+      <span class="c-cat">Cookies</span>
+      <h3 class="c-name">Palm Cheese Cookies</h3>
+      <span class="c-price">Rp 75.000</span>
+      <button class="c-add btn-add-cart" data-name="Palm Cheese Cookies">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 52</span>
+        <img src="../gambar/strawberry_thumb.jpeg" alt="Strawberry Thumb" loading="lazy">
+      </div>
+      <span class="c-cat">Cookies</span>
+      <h3 class="c-name">Strawberry Thumb</h3>
+      <span class="c-price">Rp 72.000</span>
+      <button class="c-add btn-add-cart" data-name="Strawberry Thumb">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+  </div>
+
+  <div class="see-all-wrap reveal">
+    <a href="order_tambah.php" class="see-all">
+      Pesan Sekarang
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+  </div>
 </section>
 
-<!-- PROMO BANNER -->
-<div class="promo-wrap" style="padding-bottom:100px;">
-    <div class="promo reveal-ready" id="promoBanner">
-        <div class="promo-left">
-            <span class="promo-tag-line">Promo Spesial</span>
-            <h2 class="promo-h">Beli 3 Item,<br><em>Gratis Ongkir</em></h2>
-            <p class="promo-body">Dapatkan gratis ongkos kirim untuk setiap pembelian minimal 3 item. Berlaku setiap hari ke seluruh wilayah Semarang dan sekitarnya.</p>
-            <a href="#menu" class="btn-promo">
-                Pesan Sekarang
-                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-            </a>
-        </div>
-        <div class="promo-right">
-            <div class="promo-imgs">
-                <img src="../gambar/kastangel.jpeg" alt="Nastar Klasik" loading="lazy">
-                <img src="../gambar/brownis.jpeg" alt="Brownies Panggang" loading="lazy">
-            </div>
-        </div>
+<!-- ════ PROMO BANNER ════ -->
+<div class="promo-wrap">
+  <div class="promo reveal" id="promoBanner">
+    <div class="promo-left">
+      <span class="promo-tag">Promo Spesial</span>
+      <h2 class="promo-h">Beli 3 Item,<br>Gratis Ongkir!</h2>
+      <p class="promo-body">Dapatkan gratis ongkos kirim untuk setiap pembelian minimal 3 item. Berlaku setiap hari ke seluruh wilayah Semarang.</p>
+      <a href="#menu" class="btn-promo">
+        Pesan Sekarang
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </a>
     </div>
+    <div class="promo-right">
+      <div class="promo-imgs">
+        <img src="../gambar/kastangel.jpeg" alt="" loading="lazy">
+        <img src="../gambar/brownis.jpeg" alt="" loading="lazy">
+      </div>
+    </div>
+  </div>
 </div>
 
-<!-- TESTIMONIALS -->
+<!-- ════ TESTIMONIAL — Roti besar di sisi, teks besar (Image 2 & 4 style) ════ -->
 <section class="testi-section" id="tentang">
-    <div class="testi-head">
-        <div>
-            <span class="section-tag">Ulasan</span>
-            <h2 class="section-title">Kata Mereka</h2>
-        </div>
-        <div class="testi-meta">
-            <div class="testi-stars">
-                <?php for ($i=0;$i<5;$i++): ?><span>★</span><?php endfor; ?>
-            </div>
-            <div class="testi-num">4.9</div>
-            <div class="testi-total">dari pelanggan kami</div>
-        </div>
+
+  <!-- Label kiri atas -->
+  <div class="testi-section-label">Toko Kue Fanda</div>
+
+  <!-- Slide 1 — seperti Image 2 -->
+  <div class="testi-slide">
+    <div class="testi-food left">
+      <img src="../gambar/nastar.jpeg" alt="Nastar" loading="lazy">
     </div>
-    <div class="testi-grid">
-        <?php foreach ($testimonials as $t): ?>
-        <div class="t-card">
-            <div class="t-quote">"</div>
-            <p class="t-text"><?= htmlspecialchars($t['text']) ?></p>
-            <div class="t-author">
-                <div class="t-avatar"><?= mb_substr($t['name'], 0, 1) ?></div>
-                <div>
-                    <div class="t-name"><?= htmlspecialchars($t['name']) ?></div>
-                    <div class="t-role"><?= htmlspecialchars($t['role']) ?></div>
-                </div>
-                <div class="t-stars">
-                    <?php for ($i=0;$i<$t['stars'];$i++): ?><span>★</span><?php endfor; ?>
-                </div>
-            </div>
-        </div>
-        <?php endforeach; ?>
+    <div class="testi-center">
+      <div class="testi-label-tag">Kata Pelanggan Kami</div>
+      <div class="testi-sub-label">Dari Tetangga Kami</div>
+      <p class="testi-quote-text">"Nastar Klasiknya lembut banget, isian nanasnya pas. Udah langganan tiap minggu, <em>gak pernah kecewa!</em>"</p>
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <span class="testi-name">Niny — Pelanggan Setia</span>
     </div>
+    <div class="testi-food right">
+      <img src="../gambar/kastangel.jpeg" alt="Kastengel" loading="lazy">
+    </div>
+  </div>
+
+  <!-- Slide 2 — seperti Image 4 -->
+  <div class="testi-slide">
+    <div class="testi-food left">
+      <img src="../gambar/brownis.jpeg" alt="Brownies" loading="lazy">
+    </div>
+    <div class="testi-center">
+      <div class="testi-sub-label">Dari Tetangga Kami</div>
+      <p class="testi-quote-text">"Brownies Panggang-nya <em>juara!</em> Fudgy, coklat pekat, cocok buat oleh-oleh atau hadiah ulang tahun."</p>
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <span class="testi-name">Agan — Food Enthusiast</span>
+    </div>
+    <div class="testi-food right">
+      <img src="../gambar/chocolate_butter.jpeg" alt="Cookies" loading="lazy">
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="testi-slide">
+    <div class="testi-food left">
+      <img src="../gambar/strawberry_thumb.jpeg" alt="Strawberry" loading="lazy">
+    </div>
+    <div class="testi-center">
+      <div class="testi-sub-label">Dari Tetangga Kami</div>
+      <p class="testi-quote-text">"Kastengel Keju-nya gurih dan <em>renyah banget.</em> Packaging cantik, pengiriman cepat. My go-to kue premium!"</p>
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <span class="testi-name">Ayuna — Pelanggan Setia</span>
+    </div>
+    <div class="testi-food right">
+      <img src="../gambar/putri_salju.jpeg" alt="Putri Salju" loading="lazy">
+    </div>
+  </div>
+
+  <div class="testi-bottom-label">Dapur Kami, Untuk Kamu</div>
 </section>
 
-<!-- FOOTER -->
+<!-- ════ GALLERY ════ -->
+<section class="gallery-section">
+  <div class="gallery-head reveal">
+    <span class="stag">Galeri</span>
+    <h2 class="sh">Dari <em>Dapur Kami</em></h2>
+  </div>
+  <div class="gallery-track">
+    <div class="g-img"><img src="../gambar/nastar.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/kastangel.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/brownis.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/chocolate_butter.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/strawberry_thumb.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/putri_salju.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/palm_cheese.jpeg" alt="" loading="lazy"></div>
+  </div>
+  <p class="gallery-hint">← Geser untuk lihat lebih →</p>
+</section>
+
+<!-- ════ FOOTER ════ -->
 <footer id="footer">
-    <div class="footer-grid">
-        <div>
-            <span class="f-logo">Toko Kue <em>Fanda</em></span>
-            <p class="f-desc">Kue premium buatan tangan, dipanggang segar setiap hari dengan bahan-bahan pilihan terbaik. Dikirim langsung ke pintumu.</p>
-            <div class="f-social">
-                <a href="#" class="f-soc-btn" title="Facebook">
-                    <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
-                </a>
-                <a href="#" class="f-soc-btn" title="Instagram">
-                    <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
-                </a>
-                <a href="#" class="f-soc-btn" title="WhatsApp">
-                    <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg>
-                </a>
-            </div>
-        </div>
-        <div>
-            <h4 class="f-col-title">Menu</h4>
-            <ul class="f-links">
-                <li><a href="#">Kue Kering</a></li>
-                <li><a href="#">Kue Basah</a></li>
-                <li><a href="#">Cookies</a></li>
-                <li><a href="#">Cake &amp; Brownies</a></li>
-                <li><a href="#">Snack Manis</a></li>
-            </ul>
-        </div>
-        <div>
-            <h4 class="f-col-title">Info</h4>
-            <ul class="f-links">
-                <li><a href="#">Tentang Kami</a></li>
-                <li><a href="#">Cara Order</a></li>
-                <li><a href="#">FAQ</a></li>
-                <li><a href="#">Blog</a></li>
-            </ul>
-        </div>
-        <div>
-            <h4 class="f-col-title">Kontak</h4>
-            <ul class="f-links">
-                <li><a href="#">📍 Semarang, Jawa Tengah</a></li>
-                <li><a href="#">📞 +62 812-3456-7890</a></li>
-                <li><a href="#">✉️ hello@tokokuefanda.id</a></li>
-                <li><a href="#">⏰ Buka Setiap Hari</a></li>
-            </ul>
-        </div>
+  <div class="footer-grid">
+    <div>
+      <span class="f-logo">Toko Kue Fanda</span>
+      <p class="f-desc">Kue premium buatan tangan, dipanggang segar setiap hari dengan bahan-bahan pilihan terbaik.</p>
+      <div class="f-social">
+        <a href="#" class="f-soc"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+        <a href="#" class="f-soc"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" class="f-soc"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
+      </div>
     </div>
-    <div class="footer-bottom">
-        <span class="f-copy">© <?= $current_year ?> <strong>Toko Kue Fanda</strong>. All rights reserved.</span>
-        <span class="f-copy">Made with ❤️ in Semarang</span>
+    <div>
+      <h4 class="f-col-title">Menu</h4>
+      <ul class="f-links">
+        <li><a href="#">Kue Kering</a></li>
+        <li><a href="#">Kue Basah</a></li>
+        <li><a href="#">Cookies</a></li>
+        <li><a href="#">Cake &amp; Brownies</a></li>
+        <li><a href="#">Snack Manis</a></li>
+      </ul>
     </div>
+    <div>
+      <h4 class="f-col-title">Info</h4>
+      <ul class="f-links">
+        <li><a href="#">Tentang Kami</a></li>
+        <li><a href="#">Cara Order</a></li>
+        <li><a href="#">FAQ</a></li>
+        <li><a href="#">Promo</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="f-col-title">Kontak</h4>
+      <ul class="f-links">
+        <li><a href="#">📍 Semarang, Jawa Tengah</a></li>
+        <li><a href="#">📞 +62 812-3456-7890</a></li>
+        <li><a href="#">✉️ hello@tokokuefanda.id</a></li>
+        <li><a href="#">⏰ Buka Setiap Hari</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="f-copy">© 2025 <strong>Toko Kue Fanda</strong>. All rights reserved.</span>
+    <span class="f-copy">Made with ❤️ in Semarang</span>
+  </div>
 </footer>
 
 <script>
-/* Custom Cursor */
-const dot  = document.getElementById('cur-dot');
-const ring = document.getElementById('cur-ring');
+/* CURSOR */
+const cur=document.getElementById('cur'),curR=document.getElementById('cur-r');
 let mx=0,my=0,rx=0,ry=0;
-
-document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left = mx + 'px';
-    dot.style.top  = my + 'px';
-});
-(function loop(){
-    rx += (mx - rx) * .11;
-    ry += (my - ry) * .11;
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
-    requestAnimationFrame(loop);
-})();
-
-const hoverEls = document.querySelectorAll('a,button,.cat-card,.p-card,.t-card');
-hoverEls.forEach(el => {
-    el.addEventListener('mouseenter', () => document.body.classList.add('c-hover'));
-    el.addEventListener('mouseleave', () => document.body.classList.remove('c-hover'));
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop)})();
+document.querySelectorAll('a,button,.c-card,.g-img,.testi-slide').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('h'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('h'));
 });
 
-/* Navbar */
-const nav = document.getElementById('mainNav');
-window.addEventListener('scroll', () => {
-    nav.classList.toggle('stuck', window.scrollY > 55);
-}, {passive:true});
+/* NAVBAR */
+const nav=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>nav.classList.toggle('stuck',window.scrollY>55),{passive:true});
 
-/* Intersection Observer */
-const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (e.isIntersecting) {
-            if (e.target.classList.contains('reveal-ready')) {
-                e.target.classList.add('revealed');
-            } else {
-                e.target.classList.add('show');
-            }
-            io.unobserve(e.target);
-        }
+/* SCROLL REVEAL */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const t=e.target;
+    if(t.classList.contains('c-card')){t.classList.add('show')}
+    else{t.classList.add('in')}
+    io.unobserve(t);
+  });
+},{threshold:0.12});
+document.querySelectorAll('.c-card,.reveal,.reveal-l').forEach(el=>io.observe(el));
+
+/* COUNTER */
+const cio=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.querySelectorAll('.ctr').forEach(el=>{
+      const tgt=+el.dataset.to,dur=1800,s=performance.now();
+      const tick=n=>{const t=Math.min((n-s)/dur,1);el.textContent=Math.floor((1-Math.pow(1-t,3))*tgt);if(t<1)requestAnimationFrame(tick)};
+      requestAnimationFrame(tick);
     });
-}, { threshold: 0.14 });
+    cio.unobserve(e.target);
+  });
+},{threshold:.5});
+const st=document.querySelector('.hero-stats');if(st)cio.observe(st);
 
-document.querySelectorAll('.p-card, .t-card, .reveal-ready').forEach(el => io.observe(el));
-
-/* Counter Animation */
-const cio = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-        if (!e.isIntersecting) return;
-        e.target.querySelectorAll('.ctr').forEach(el => {
-            const target = +el.dataset.to;
-            const dur    = 1600;
-            const start  = performance.now();
-            const tick = now => {
-                const t = Math.min((now - start) / dur, 1);
-                const eased = 1 - Math.pow(1 - t, 3);
-                el.textContent = Math.floor(eased * target);
-                if (t < 1) requestAnimationFrame(tick);
-            };
-            requestAnimationFrame(tick);
-        });
-        cio.unobserve(e.target);
-    });
-}, { threshold:.5 });
-
-const statsEl = document.querySelector('.hero-stats');
-if (statsEl) cio.observe(statsEl);
-
-/* Category Active */
-function setActive(el){
-    document.querySelectorAll('.cat-card').forEach(c => c.classList.remove('is-active'));
-    el.classList.add('is-active');
+/* CART */
+let cart=JSON.parse(localStorage.getItem('fanda_cart')||'{}');
+function updateBadge(){
+  const b=document.getElementById('cartBadge');
+  const n=Object.values(cart).reduce((s,q)=>s+q,0);
+  if(b){b.textContent=n;b.style.transform='scale(1.4)';setTimeout(()=>b.style.transform='',250)}
 }
-
-/* Add-to-cart */
-document.querySelectorAll('.btn-add, .p-overlay-btn').forEach(btn => {
-    btn.addEventListener('click', e => {
-        e.stopPropagation();
-        btn.style.transform = 'scale(.88)';
-        btn.style.background = 'var(--caramel)';
-        setTimeout(() => {
-            btn.style.transform = '';
-            btn.style.background = '';
-        }, 300);
-        const badge = document.querySelector('.cart-badge');
-        if (badge) {
-            badge.textContent = +badge.textContent + 1;
-            badge.style.transform = 'scale(1.4)';
-            setTimeout(() => badge.style.transform = '', 250);
-        }
-    });
+updateBadge();
+document.querySelectorAll('.btn-add-cart').forEach(btn=>{
+  btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    const name=btn.dataset.name||'produk';
+    cart[name]=(cart[name]||0)+1;
+    localStorage.setItem('fanda_cart',JSON.stringify(cart));
+    btn.style.background='var(--gold)';btn.style.color='var(--esp)';
+    setTimeout(()=>{btn.style.background='';btn.style.color='';},350);
+    updateBadge();
+    setTimeout(()=>window.location.href='order_tambah.php',420);
+  });
 });
-
-/* Parallax */
-window.addEventListener('scroll', () => {
-    const img = document.querySelector('.img-frame img');
-    if (img) {
-        const offset = window.scrollY * 0.12;
-        img.style.transform = `translateY(${offset}px)`;
-    }
-}, {passive:true});
 </script>
 </body>
 </html>

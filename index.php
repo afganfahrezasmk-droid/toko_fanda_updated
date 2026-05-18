@@ -6,391 +6,687 @@
     <title>Toko Kue Fanda — Masuk</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;900&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <style>
-        :root {
-            --brown-dark:  #3B2314;
-            --brown-mid:   #5C3D2E;
-            --brown-bg:    #4A2C1A;
-            --accent-gold: #C9883C;
-            --accent-rose: #C97B8C;
-            --cream-bg:    #F5EFE6;
-            --cream-card:  #F0E8DD;
-            --cream-border:#E0D5C8;
-            --text-dark:   #1A1008;
-            --text-mid:    #4A3728;
-            --text-muted:  #9A7B6A;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html {
+            scroll-behavior: smooth;
+        }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #2a1810 0%, #1f0f08 25%, #3d2817 50%, #1a0a04 75%, #2d1810 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
             min-height: 100vh;
-            background: var(--cream-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Animated background particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(212, 165, 116, 0.3);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.5;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Glow orbs */
+        .glow-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-orb-1 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.15) 0%, transparent 70%);
+            top: -100px;
+            right: -100px;
+            animation: orbFloat1 20s ease-in-out infinite;
+        }
+
+        .glow-orb-2 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 132, 156, 0.1) 0%, transparent 70%);
+            bottom: -50px;
+            left: -50px;
+            animation: orbFloat2 25s ease-in-out infinite;
+        }
+
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(50px, -50px); }
+        }
+
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-50px, 50px); }
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            max-width: 1300px;
+            width: 90%;
+            position: relative;
+            z-index: 1;
+            align-items: center;
+        }
+
+        /* LEFT SECTION */
+        .left-section {
+            animation: slideInLeft 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .left-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1.05;
+            letter-spacing: -1px;
+        }
+
+        .left-section > p {
+            color: rgba(255, 255, 255, 0.65);
+            font-size: 1.05rem;
+            margin-bottom: 50px;
+            line-height: 1.7;
+            font-weight: 300;
+            letter-spacing: 0.3px;
+        }
+
+        .role-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .role-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding: 20px 24px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            cursor: pointer;
+            position: relative;
             overflow: hidden;
         }
 
-        /* NAVBAR */
-        .top-nav {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            height: 68px;
-            background: rgba(255,255,255,.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--cream-border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 48px;
-            z-index: 100;
-            animation: slideDown .5s ease both;
+        .role-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
         }
 
-        @keyframes slideDown {
-            from { transform: translateY(-100%); opacity: 0; }
-            to   { transform: translateY(0); opacity: 1; }
+        .role-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateX(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
 
-        .nav-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
+        .role-item:hover::before {
+            left: 100%;
+        }
+
+        .role-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-top: 3px;
+            flex-shrink: 0;
+            box-shadow: 0 0 12px currentColor;
+        }
+
+        .role-dot.admin {
+            background: #5B9BFF;
+            color: #5B9BFF;
+        }
+
+        .role-dot.kasir {
+            background: #4ECB71;
+            color: #4ECB71;
+        }
+
+        .role-dot.pelanggan {
+            background: #FFB84D;
+            color: #FFB84D;
+        }
+
+        .role-content h3 {
+            color: #fff;
+            font-size: 1rem;
             font-weight: 700;
-            color: var(--text-dark);
-            text-decoration: none;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
         }
 
-        .nav-logo span { color: var(--accent-gold); }
+        .role-content p {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.85rem;
+            margin: 0;
+            line-height: 1.5;
+            font-weight: 300;
+        }
 
-        .nav-links {
+        /* RIGHT SECTION - LOGIN CARD */
+        .right-section {
             display: flex;
-            gap: 36px;
-            list-style: none;
+            justify-content: center;
+            animation: slideInRight 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-mid);
-            font-size: .9rem;
-            font-weight: 500;
-            transition: color .2s;
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
 
-        .nav-links a:hover { color: var(--brown-dark); }
+        .login-card {
+            background: rgba(60, 40, 30, 0.5);
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 28px;
+            padding: 56px 48px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 
+                0 0 60px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
 
-        .nav-right {
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(212, 165, 116, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .login-card::after {
+            content: '';
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 250px;
+            height: 250px;
+            background: radial-gradient(circle, rgba(212, 132, 156, 0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .login-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 12px;
+            text-align: center;
+            letter-spacing: -0.5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .login-card-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+            margin-bottom: 36px;
+            font-weight: 300;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .form-group label {
+            display: block;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            font-weight: 400;
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .form-group input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(212, 165, 116, 0.6);
+            box-shadow: 
+                0 0 0 4px rgba(212, 165, 116, 0.12),
+                inset 0 1px 2px rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group input:hover {
+            border-color: rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #FFB84D 0%, #FF9E1B 50%, #FF8C00 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            margin-top: 16px;
             display: flex;
             align-items: center;
-            gap: 16px;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 12px 32px rgba(255, 184, 77, 0.35);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.5px;
         }
 
-        .nav-right a {
-            color: var(--text-mid);
-            font-size: 1.1rem;
-            text-decoration: none;
-            transition: color .2s;
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.6s ease;
         }
 
-        .nav-right a:hover { color: var(--brown-dark); }
-
-        .btn-masuk {
-            background: var(--brown-dark);
-            color: #fff !important;
-            padding: 9px 22px;
-            border-radius: 9px;
-            font-size: .88rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all .25s;
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 48px rgba(255, 184, 77, 0.45);
         }
 
-        .btn-masuk:hover {
-            background: var(--brown-mid);
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:active {
             transform: translateY(-1px);
         }
 
-        /* MAIN LAYOUT */
-        .login-page {
-            min-height: 100vh;
-            padding-top: 68px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-        }
-
-        /* LEFT: brown hero */
-        .login-hero {
-            background: var(--brown-dark);
+        .divider {
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 60px 56px;
-            position: relative;
-            overflow: hidden;
-            animation: fadeSlideLeft .6s .2s ease both;
-        }
-
-        @keyframes fadeSlideLeft {
-            from { opacity: 0; transform: translateX(-30px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Decorative circle */
-        .login-hero::before {
-            content: '';
-            position: absolute;
-            top: -120px; right: -120px;
-            width: 400px; height: 400px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.04);
-        }
-
-        .login-hero::after {
-            content: '';
-            position: absolute;
-            bottom: -80px; left: -80px;
-            width: 300px; height: 300px;
-            border-radius: 50%;
-            background: rgba(201,136,60,.1);
-        }
-
-        .hero-img {
-            width: 280px; height: 280px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 6px solid rgba(255,255,255,.15);
-            margin-bottom: 36px;
-            box-shadow: 0 20px 60px rgba(0,0,0,.3);
-            animation: floatImg 4s ease-in-out infinite;
-        }
-
-        @keyframes floatImg {
-            0%, 100% { transform: translateY(0); }
-            50%       { transform: translateY(-10px); }
-        }
-
-        .hero-subtitle {
-            font-size: .95rem;
-            color: var(--accent-rose);
+            margin: 32px 0;
+            gap: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 0.85rem;
             font-weight: 500;
-            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%);
+        }
+
+        .demo-section {
+            position: relative;
+            z-index: 2;
+        }
+
+        .demo-section h3 {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
             text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .hero-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.6rem;
-            font-weight: 900;
-            color: #fff;
-            line-height: 1.15;
-            margin-bottom: 8px;
-        }
-
-        .hero-italic {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 2.2rem;
-            color: var(--accent-rose);
-            line-height: 1.2;
-            margin-bottom: 20px;
-        }
-
-        .hero-desc {
-            color: rgba(255,255,255,.6);
-            font-size: .88rem;
-            line-height: 1.6;
-            max-width: 340px;
+            letter-spacing: 1.5px;
+            margin-bottom: 14px;
             text-align: center;
-        }
-
-        /* RIGHT: login form */
-        .login-form-side {
-            background: var(--cream-bg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 60px 80px;
-            animation: fadeSlideRight .6s .3s ease both;
-        }
-
-        @keyframes fadeSlideRight {
-            from { opacity: 0; transform: translateX(30px); }
-            to   { opacity: 1; transform: translateX(0); }
-        }
-
-        .form-card {
-            background: var(--cream-card);
-            border-radius: 20px;
-            padding: 44px 40px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 8px 40px rgba(59,35,20,.12);
-        }
-
-        .form-card-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2rem;
             font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 4px;
         }
 
-        .form-card-sub {
-            color: var(--text-muted);
-            font-size: .88rem;
-            margin-bottom: 28px;
-        }
-
-        .form-label {
-            font-size: .85rem;
-            font-weight: 600;
-            color: var(--text-mid);
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid var(--cream-border);
-            border-radius: 10px;
-            font-size: .9rem;
-            font-family: 'DM Sans', sans-serif;
-            background: #fff;
-            color: var(--text-dark);
-            transition: border-color .2s, box-shadow .2s;
-            margin-bottom: 20px;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--brown-mid);
-            box-shadow: 0 0 0 3px rgba(92,61,46,.12);
-        }
-
-        .btn-submit {
-            width: 100%;
-            background: var(--brown-dark);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 14px;
-            font-size: 1rem;
-            font-weight: 600;
-            font-family: 'DM Sans', sans-serif;
-            cursor: pointer;
-            transition: all .25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .demo-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
-            margin-top: 8px;
         }
 
-        .btn-submit:hover {
-            background: var(--brown-mid);
+        .btn-demo {
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-demo:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #fff;
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(59,35,20,.25);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
         }
 
-        .btn-submit:active { transform: translateY(0); }
+        .btn-demo:active {
+            transform: translateY(0);
+        }
 
         /* Alert messages */
         .alert-msg {
-            background: rgba(192,57,43,.1);
-            color: #c0392b;
-            padding: 12px 16px;
-            border-radius: 10px;
-            font-size: .85rem;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInAlert 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 2;
             font-weight: 500;
-            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-msg.error {
+            background: rgba(220, 53, 69, 0.25);
+            color: #FF6B6B;
+            border: 1px solid rgba(220, 53, 69, 0.4);
         }
 
         .alert-msg.success {
-            background: rgba(34,139,34,.1);
-            color: #1a6b1a;
+            background: rgba(40, 167, 69, 0.25);
+            color: #51CF66;
+            border: 1px solid rgba(40, 167, 69, 0.4);
+        }
+
+        @keyframes slideInAlert {
+            from {
+                opacity: 0;
+                transform: translateY(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                gap: 60px;
+            }
+
+            .left-section h1 {
+                font-size: 3.2rem;
+            }
+
+            .login-card {
+                padding: 48px 40px;
+            }
         }
 
         @media (max-width: 768px) {
-            .login-page { grid-template-columns: 1fr; }
-            .login-hero { display: none; }
-            .top-nav .nav-links { display: none; }
-            .top-nav { padding: 0 20px; }
-            .login-form-side { padding: 40px 20px; }
-            .form-card { padding: 32px 24px; }
+            .container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .left-section h1 {
+                font-size: 2.5rem;
+            }
+
+            .left-section > p {
+                font-size: 0.95rem;
+            }
+
+            .login-card {
+                max-width: 100%;
+                padding: 40px 32px;
+            }
+
+            .login-card h2 {
+                font-size: 2rem;
+            }
+
+            .demo-buttons {
+                grid-template-columns: 1fr 1fr;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
-<nav class="top-nav">
-    <a href="#" class="nav-logo">Toko Kue <span>Fanda</span></a>
+<!-- Animated background -->
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="particles" id="particles"></div>
 
-    <ul class="nav-links">
-        <li><a href="#">Beranda</a></li>
-        <li><a href="#">Menu</a></li>
-        <li><a href="#">Kontak</a></li>
-        <li><a href="#">Tentang Kami</a></li>
-    </ul>
+<div class="container">
+    <!-- LEFT SECTION -->
+    <div class="left-section">
+        <h1>Toko Kue Fanda</h1>
+        <p>Platform toko kue modern untuk admin, kasir, dan pelanggan. Kelola bisnis dengan mudah dan efisien.</p>
 
-    <div class="nav-right">
-        <a href="#"><i class="fas fa-cart-shopping"></i></a>
-        <a href="#"><i class="fas fa-user"></i></a>
-        <a href="pelanggan/index.php" class="btn-masuk">Masuk</a>
-    </div>
-</nav>
+        <div class="role-list">
+            <div class="role-item">
+                <div class="role-dot admin"></div>
+                <div class="role-content">
+                    <h3>Admin</h3>
+                    <p>Kelola produk, user, laporan & dashboard</p>
+                </div>
+            </div>
 
-<!-- LOGIN PAGE -->
-<div class="login-page">
+            <div class="role-item">
+                <div class="role-dot kasir"></div>
+                <div class="role-content">
+                    <h3>Kasir</h3>
+                    <p>Input transaksi, POS, cetak struk</p>
+                </div>
+            </div>
 
-    <!-- LEFT: Hero -->
-    <div class="login-hero">
-        <img src="gambar/logo.jpeg" alt="Kue Fanda" class="hero-img">
-        <p class="hero-subtitle">Toko Kue Fanda</p>
-        <h1 class="hero-title">Sistem Informasi</h1>
-        <p class="hero-italic">Toko kue Fanda</p>
-        <p class="hero-desc">Platform terintegrasi untuk mengelola pesanan, produk, dan transaksi toko kue secara efisien.</p>
-    </div>
-
-    <!-- RIGHT: Form -->
-    <div class="login-form-side">
-        <?php
-            if (isset($_GET['pesan'])) {
-                if ($_GET['pesan'] == 'gagal') {
-                    echo "<div class='alert-msg'>Login gagal! Username atau password salah.</div>";
-                } elseif ($_GET['pesan'] == 'logout') {
-                    echo "<div class='alert-msg success'>Anda telah berhasil logout.</div>";
-                } elseif ($_GET['pesan'] == 'belum_login') {
-                    echo "<div class='alert-msg'>Anda harus login untuk mengakses halaman tersebut.</div>";
-                } elseif ($_GET['pesan'] == 'bukan_admin') {
-                    echo "<div class='alert-msg'>Akses ditolak. Halaman khusus admin.</div>";
-                }
-            }
-            ?>
-        <div class="form-card">
-
-            <h2 class="form-card-title">Log In 🔑</h2>
-            <form method="post" action="login.php">
-            <button type="submit" class="btn-submit">Login<i class="fas fa"></i></button>
-            </form>
-            <br>
-            <h2 class="form-card-title">📝 Sign Up</h2>
-            <form method="post" action="signup.php">
-            <button type="submit" class="btn-submit">Sign Up<i class="fas fa"></i></button>
-            </form>
-
+            <div class="role-item">
+                <div class="role-dot pelanggan"></div>
+                <div class="role-content">
+                    <h3>Pelanggan</h3>
+                    <p>Browse menu & order online</p>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- RIGHT SECTION -->
+    <div class="right-section">
+        <div class="login-card">
+            <?php
+            if (isset($_GET['pesan'])) {
+                if ($_GET['pesan'] == 'gagal') {
+                    echo "<div class='alert-msg error'><i class='fas fa-exclamation-circle'></i> Login gagal! Username atau password salah.</div>";
+                } elseif ($_GET['pesan'] == 'logout') {
+                    echo "<div class='alert-msg success'><i class='fas fa-check-circle'></i> Anda telah berhasil logout.</div>";
+                } elseif ($_GET['pesan'] == 'belum_login') {
+                    echo "<div class='alert-msg error'><i class='fas fa-lock'></i> Anda harus login untuk mengakses halaman tersebut.</div>";
+                } elseif ($_GET['pesan'] == 'bukan_admin') {
+                    echo "<div class='alert-msg error'><i class='fas fa-ban'></i> Akses ditolak. Halaman khusus admin.</div>";
+                }
+            }
+            ?>
+
+            <h2>Login</h2>
+            <p class="login-card-subtitle">Masuk ke akun Anda sekarang</p>
+
+            <form method="post" action="login_aksi.php">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Masukkan username Anda" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required>
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Masuk
+                </button>
+            </form>
+
+            <div class="divider">atau</div>
+
+            <div class="demo-section">
+                <h3>Demo:</h3>
+                <div class="demo-buttons">
+                    <button type="button" class="btn-demo" onclick="fillDemo('admin', 'admin123')">Admin</button>
+                    <button type="button" class="btn-demo" onclick="fillDemo('kasir', 'kasir123')">Kasir</button>
+                    <button type="button" class="btn-demo" onclick="fillDemo('user', 'user123')">User</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Create animated particles
+    function createParticles() {
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 30;
+
+        for (let i = 0; i < particleCount; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = (15 + Math.random() * 20) + 's';
+            particlesContainer.appendChild(particle);
+        }
+    }
+
+    // Fill demo credentials
+    function fillDemo(username, password) {
+        document.getElementById('username').value = username;
+        document.getElementById('password').value = password;
+        document.getElementById('username').focus();
+    }
+
+    // Initialize
+    createParticles();
+</script>
+
 </body>
 </html>

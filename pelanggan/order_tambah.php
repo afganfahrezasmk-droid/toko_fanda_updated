@@ -1,200 +1,252 @@
 <?php
 include 'header.php';
 include '../koneksi.php';
-
 /** @var mysqli $koneksi */
-
-/* =========================
-   CEK LOGIN
-========================= */
-
-if (!isset($_SESSION['role'])) {
-
-    header("location:../index.php?pesan=belum_login");
-    exit;
-}
-
-/* =========================
-   CEK ROLE PELANGGAN
-========================= */
-
-if ($_SESSION['role'] != 'pelanggan') {
-
-    header("location:../index.php?pesan=bukan_pelanggan");
-    exit;
-}
 ?>
 
-<div class="container">
+<style>
+.keranjang-wrap{max-width:860px;margin:0 auto;padding:30px 20px 60px}
+.keranjang-judul{font-size:1.6rem;font-weight:700;margin-bottom:24px;color:var(--text-dark)}
+.keranjang-kosong{text-align:center;padding:60px 20px;color:#888}
+.keranjang-kosong .icon{font-size:3.5rem;margin-bottom:16px}
+.keranjang-kosong p{margin-bottom:20px;font-size:1rem}
+.tabel-keranjang{width:100%;border-collapse:collapse;margin-bottom:24px}
+.tabel-keranjang th{background:#f8f8f8;padding:12px 16px;text-align:left;font-size:.85rem;color:#555;border-bottom:2px solid #eee}
+.tabel-keranjang td{padding:14px 16px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.produk-info{display:flex;align-items:center;gap:14px}
+.produk-gambar{width:60px;height:60px;object-fit:cover;border-radius:10px;flex-shrink:0}
+.produk-nama{font-weight:600;font-size:.95rem;color:var(--text-dark)}
+.produk-harga{font-size:.82rem;color:#888;margin-top:2px}
+.qty-control{display:flex;align-items:center;gap:8px}
+.qty-btn{width:30px;height:30px;border-radius:50%;border:1.5px solid #ddd;background:#fff;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;font-weight:700}
+.qty-btn:hover{background:var(--accent-gold);border-color:var(--accent-gold);color:#fff}
+.qty-val{font-weight:600;font-size:1rem;min-width:28px;text-align:center}
+.btn-hapus{background:none;border:none;color:#e74c3c;cursor:pointer;font-size:.82rem;padding:4px 8px;border-radius:6px;transition:background .2s}
+.btn-hapus:hover{background:#ffeaea}
+.subtotal{font-weight:600;color:var(--text-dark)}
+.card-summary{background:#fff;border:1px solid #eee;border-radius:14px;padding:24px;margin-bottom:20px}
+.card-summary h5{font-size:1rem;font-weight:700;margin-bottom:16px;color:var(--text-dark)}
+.summary-row{display:flex;justify-content:space-between;margin-bottom:10px;font-size:.9rem;color:#555}
+.summary-row.total{border-top:2px solid #eee;padding-top:12px;margin-top:4px;font-weight:700;font-size:1rem;color:var(--text-dark)}
+.metode-wrap{margin-bottom:20px}
+.metode-wrap label{display:block;font-weight:600;margin-bottom:10px;font-size:.9rem}
+.metode-grid{display:flex;gap:10px;flex-wrap:wrap}
+.metode-btn{padding:10px 20px;border-radius:10px;border:2px solid #ddd;background:#fff;cursor:pointer;font-size:.88rem;font-weight:500;transition:all .2s;display:flex;align-items:center;gap:8px}
+.metode-btn.active,.metode-btn:hover{border-color:var(--accent-gold);background:#fff8ee;color:var(--text-dark)}
+.btn-order{width:100%;padding:15px;border-radius:12px;background:var(--accent-gold);color:#fff;font-size:1rem;font-weight:700;border:none;cursor:pointer;transition:opacity .2s;letter-spacing:.02em}
+.btn-order:hover{opacity:.88}
+.btn-order:disabled{opacity:.4;cursor:not-allowed}
+.btn-back{display:inline-flex;align-items:center;gap:6px;color:#888;font-size:.85rem;margin-bottom:20px;cursor:pointer;background:none;border:none;padding:0}
+.btn-back:hover{color:var(--text-dark)}
+</style>
 
-    <div class="panel">
+<div class="keranjang-wrap">
+    <br>
 
-        <div class="panel-heading">
-            <br><br>
+    <form method="POST" action="index.php" style="text-align:left;">
+        <button type="submit" style="background:none;border:none;padding:0;color:#777;cursor:pointer;">
+            ← Kembali Belanja
+        </button>
+    </form>
+
+    <h2 class="keranjang-judul">🛒 Keranjang Belanja</h2>
+
+    <!-- KERANJANG KOSONG -->
+    <div id="keranjangKosong" style="display:none">
+        <div class="keranjang-kosong">
+            <div class="icon">🛒</div>
+            <p>Keranjang kamu masih kosong.</p>
+            <a href="index.php" class="btn btn-primary">Lihat Menu</a>
         </div>
-
-        <div class="panel-body">
-
-            <div class="col-md-10 col-md-offset-1">
-            <br>
-                <div class="text-end">
-                    <a href="index.php" class="btn btn-sm btn-info">
-                        Kembali
-                    </a>
-
-                </div>
-                <br><br>
-
-                <form method="POST" action="order_aksi.php">
-
-                    <!-- USER -->
-                    <div class="form-group">
-
-                        <label>User</label>
-
-                        <select name="user_id" class="form-control" required>
-
-                            <option value="">
-                                -- Pilih User --
-                            </option>
-
-                            <?php
-                            $user = mysqli_query($koneksi,
-                                "SELECT * FROM user");
-
-                            while($u = mysqli_fetch_array($user)){
-                            ?>
-
-                            <option value="<?php echo $u['user_id']; ?>">
-
-                                <?php echo $u['nama']; ?>
-
-                            </option>
-
-                            <?php
-                            }
-                            ?>
-
-                        </select>
-
-                    </div>
-
-                    <!-- INVOICE -->
-                    <div class="form-group">
-
-                        <label>Invoice</label>
-
-                        <input type="text"
-                               name="invoice"
-                               class="form-control"
-                               value="INV-<?php echo rand(1000,9999); ?>"
-                               readonly>
-
-                    </div>
-
-                    <!-- METODE PEMBAYARAN -->
-                    <div class="form-group">
-
-                        <label>Metode Pembayaran</label>
-
-                        <select name="metode_pembayaran"
-                                class="form-control"
-                                required>
-
-                            <option value="">
-                                -- Pilih Metode --
-                            </option>
-
-                            <option value="Cash">
-                                Cash
-                            </option>
-
-                            <option value="Transfer">
-                                Transfer
-                            </option>
-
-                            <option value="QRIS">
-                                QRIS
-                            </option>
-
-                        </select>
-
-                    </div>
-
-                    <hr>
-
-                    <h4>Data Produk</h4>
-
-                    <table class="table table-bordered">
-
-                        <tr>
-                            <th>Gambar</th>
-                            <th>Produk</th>
-                            <th>Harga</th>
-                            <th width="20%">Qty</th>
-                        </tr>
-
-                        <?php
-                        $produk = mysqli_query($koneksi,
-                            "SELECT * FROM produk");
-
-                        while($p = mysqli_fetch_array($produk)){
-                        ?>
-
-                        <tr>
-
-                            <td>
-
-                                <img src="../gambar/<?php echo $p['gambar']; ?>" 
-                                    width="150">
-
-                            </td>
-
-                            <td>
-
-                                <?php echo $p['nama_produk']; ?>
-
-                                <input type="hidden"
-                                    name="produk_id[]"
-                                    value="<?php echo $p['produk_id']; ?>">
-
-                            </td>
-
-                            <td>
-                                Rp <?php echo number_format($p['harga']); ?>
-                            </td>
-
-                            <td>
-
-                                <input type="number"
-                                       name="qty[]"
-                                       class="form-control"
-                                       min="0"
-                                       value="0">
-
-                            </td>
-
-                        </tr>
-
-                        <?php
-                        }
-                        ?>
-
-                    </table>
-
-                    <!-- BUTTON -->
-                    <input type="submit"
-                           class="btn btn-primary"
-                           value="Simpan Order">
-
-                </form>
-
-            </div>
-
-        </div>
-
     </div>
 
+    <!-- ISI KERANJANG -->
+    <div id="keranjangIsi">
+        <div class="card shadow-sm" style="border-radius:14px;overflow:hidden;margin-bottom:20px">
+            <table class="tabel-keranjang" id="tabelKeranjang">
+                <thead>
+                    <tr>
+                        <th>Produk</th>
+                        <th>Harga</th>
+                        <th>Qty</th>
+                        <th>Subtotal</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="bodyKeranjang"></tbody>
+            </table>
+        </div>
+
+        <!-- SUMMARY & METODE -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <div>
+                <div class="metode-wrap">
+                    <label>Metode Pembayaran</label>
+                    <div class="metode-grid">
+                        <button class="metode-btn" data-metode="Cash" onclick="pilihMetode(this)">💵 Cash</button>
+                        <button class="metode-btn" data-metode="Transfer" onclick="pilihMetode(this)">🏦 Transfer</button>
+                        <button class="metode-btn" data-metode="QRIS" onclick="pilihMetode(this)">📱 QRIS</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card-summary">
+                    <h5>Ringkasan Belanja</h5>
+                    <div class="summary-row"><span>Subtotal</span><span id="sumSubtotal">Rp 0</span></div>
+                    <div class="summary-row"><span>Pajak (10%)</span><span id="sumPajak">Rp 0</span></div>
+                    <div class="summary-row total"><span>Total</span><span id="sumTotal">Rp 0</span></div>
+                </div>
+                <button class="btn-order" id="btnOrder" onclick="submitOrder()" disabled>Buat Pesanan</button>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Form tersembunyi untuk submit ke order_aksi.php -->
+<form id="formOrder" method="POST" action="order_aksi.php" style="display:none">
+    <input type="hidden" name="user_id" value="<?=htmlspecialchars($_SESSION['user_id'] ?? '')?>">
+    <input type="hidden" name="invoice" id="inputInvoice">
+    <input type="hidden" name="metode_pembayaran" id="inputMetode">
+    <div id="inputProduk"></div>
+</form>
+
+<!-- Data produk dari DB (untuk validasi stok) -->
+<script>
+const produkDB = <?php
+$data = [];
+
+$all = mysqli_query($koneksi, "SELECT produk_id,nama_produk,harga,stok,gambar FROM produk");
+
+while($r = mysqli_fetch_assoc($all)){
+    $data[$r['produk_id']] = [
+        "id"     => (int)$r['produk_id'],
+        "nama"   => $r['nama_produk'],
+        "harga"  => (int)$r['harga'],
+        "stok"   => (int)$r['stok'],
+        "gambar" => $r['gambar']
+    ];
+}
+
+echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+?>;
+
+
+let cart      = JSON.parse(localStorage.getItem('fanda_cart')) || {};
+let metodeDipilih = '';
+
+function fmt(n){ return 'Rp ' + n.toLocaleString('id-ID'); }
+
+function renderKeranjang(){
+    const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
+    if(keys.length === 0){
+        document.getElementById('keranjangKosong').style.display = '';
+        document.getElementById('keranjangIsi').style.display = 'none';
+        const badge = document.getElementById('cartBadge');
+        if(badge){
+            badge.textContent = '0';
+        }
+        return;
+    }
+    document.getElementById('keranjangKosong').style.display = 'none';
+    document.getElementById('keranjangIsi').style.display = '';
+
+    let html = '';
+    let subtotal = 0;
+    keys.forEach(id => {
+        const item = cart[id];
+        const db   = produkDB[id];
+        if(!db) return; // produk sudah tidak ada di DB
+        const sub = item.harga * item.qty;
+        subtotal += sub;
+        const gambar = `../gambar/${db.gambar}`;
+        html += `
+        <tr id="row-${id}">
+            <td>
+                <div class="produk-info">
+                    <img src="${gambar}" alt="${item.nama}" class="produk-gambar" onerror="this.src='../gambar/default.jpeg'">
+                    <div><div class="produk-nama">${item.nama}</div><div class="produk-harga">${fmt(item.harga)}</div></div>
+                </div>
+            </td>
+            <td>${fmt(item.harga)}</td>
+            <td>
+                <div class="qty-control">
+                    <button class="qty-btn" onclick="ubahQty('${id}',-1)">−</button>
+                    <span class="qty-val" id="qty-${id}">${item.qty}</span>
+                    <button class="qty-btn" onclick="ubahQty('${id}',1)">+</button>
+                </div>
+            </td>
+            <td class="subtotal" id="sub-${id}">${fmt(sub)}</td>
+            <td><button class="btn-hapus" onclick="hapusItem('${id}')">🗑 Hapus</button></td>
+        </tr>`;
+        
+    });
+    document.getElementById('bodyKeranjang').innerHTML = html;
+
+    const pajak = Math.round(subtotal * 0.1);
+    const total = subtotal + pajak;
+    document.getElementById('sumSubtotal').textContent = fmt(subtotal);
+    document.getElementById('sumPajak').textContent    = fmt(pajak);
+    document.getElementById('sumTotal').textContent    = fmt(total);
+
+    // Update badge
+    const totalQty = keys.reduce((s,k) => s + cart[k].qty, 0);
+    const badge = document.getElementById('cartBadge');
+    if(badge) badge.textContent = totalQty;
+
+    updateTombolOrder();
+}
+
+function ubahQty(id, delta){
+    if(!cart[id]) return;
+    const db   = produkDB[id];
+    const maks = db ? db.stok : 99;
+    cart[id].qty = Math.max(0, Math.min(cart[id].qty + delta, maks));
+    if(cart[id].qty === 0){ delete cart[id]; }
+    localStorage.setItem('fanda_cart', JSON.stringify(cart));
+    renderKeranjang();
+}
+
+function hapusItem(id){
+    delete cart[id];
+    localStorage.setItem('fanda_cart', JSON.stringify(cart));
+    renderKeranjang();
+}
+
+function pilihMetode(el){
+    document.querySelectorAll('.metode-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    metodeDipilih = el.dataset.metode;
+    updateTombolOrder();
+}
+
+function updateTombolOrder(){
+    const adaItem   = Object.keys(cart).filter(k => cart[k].qty > 0).length > 0;
+    const adaMetode = metodeDipilih !== '';
+    document.getElementById('btnOrder').disabled = !(adaItem && adaMetode);
+}
+
+function submitOrder(){
+    if(!metodeDipilih){ alert('Pilih metode pembayaran dulu!'); return; }
+    const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
+    if(keys.length === 0){ alert('Keranjang kosong!'); return; }
+
+    // Generate invoice
+    const invoice = 'INV-' + Math.floor(1000 + Math.random() * 9000);
+    document.getElementById('inputInvoice').value = invoice;
+    document.getElementById('inputMetode').value  = metodeDipilih;
+
+    // Build hidden inputs
+    let inputHtml = '';
+    keys.forEach(id => {
+        inputHtml += `<input type="hidden" name="produk_id[]" value="${id}">`;
+        inputHtml += `<input type="hidden" name="qty[]" value="${cart[id].qty}">`;
+    });
+    document.getElementById('inputProduk').innerHTML = inputHtml;
+
+    document.getElementById('formOrder').submit();
+}
+
+renderKeranjang();
+</script>
 
 <?php include 'footer.php'; ?>

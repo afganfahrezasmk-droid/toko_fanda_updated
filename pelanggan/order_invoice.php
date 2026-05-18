@@ -1,206 +1,190 @@
 <?php
 include 'header.php';
 include '../koneksi.php';
-
 /** @var mysqli $koneksi */
 
-/* =========================
-   CEK LOGIN
-========================= */
+$invoice = $_GET['invoice'] ?? '';
 
-if (!isset($_SESSION['role'])) {
+$order = mysqli_fetch_assoc(mysqli_query($koneksi, "
+SELECT * FROM orders
+WHERE invoice='$invoice'
+"));
 
-    header("location:../index.php?pesan=belum_login");
+if(!$order){
+    echo "<h3 style='padding:40px'>Invoice tidak ditemukan</h3>";
     exit;
 }
 
-/* =========================
-   CEK ROLE KASIR
-========================= */
+$detail = mysqli_query($koneksi, "
+SELECT od.*, p.nama_produk
+FROM order_detail od
+JOIN produk p ON od.produk_id = p.produk_id
+WHERE od.order_id = '{$order['id']}'
+");
 
-if ($_SESSION['role'] != 'pelanggan') {
-
-    header("location:../index.php?pesan=bukan_pelanggan");
-    exit;
+function rupiah($n){
+    return 'Rp ' . number_format($n,0,',','.');
 }
-
-$id = $_GET['id'];
-
-$order = mysqli_query($koneksi,
-    "SELECT orders.*, user.nama
-     FROM orders
-     JOIN user
-     ON orders.user_id = user.user_id
-     WHERE orders.orders_id='$id'");
-
-$t = mysqli_fetch_array($order);
 ?>
 
-<div class="container">
+<style>
+.invoice-wrap{
+    max-width:800px;
+    margin:40px auto;
+    background:#fff;
+    border-radius:18px;
+    padding:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
 
-    <div class="col-md-10 col-md-offset-1">
+.invoice-head{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:30px;
+    gap:20px;
+}
 
-        <center>
-            <h2>INVOICE ORDER</h2>
-        </center>
+.invoice-title{
+    font-size:2rem;
+    font-weight:700;
+}
 
-        <div class="d-flex justify-content-between">
+.invoice-info{
+    color:#777;
+    line-height:1.8;
+}
 
-            <!-- BUTTON KEMBALI -->
-            <a href="index.php"
-            class="btn btn-secondary">
+.invoice-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
 
-                ← Kembali
+.invoice-table th,
+.invoice-table td{
+    padding:14px;
+    border-bottom:1px solid #eee;
+    text-align:left;
+}
 
-            </a>
+.invoice-table th{
+    background:#fafafa;
+}
 
-            <!-- BUTTON CETAK -->
-            <a href="order_invoice_cetak.php?id=<?php echo $id; ?>"
-            target="_blank"
-            class="btn btn-primary">
+.total-box{
+    margin-top:30px;
+    margin-left:auto;
+    width:320px;
+}
 
-                <i class="glyphicon glyphicon-print"></i>
-                Cetak
+.total-row{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+}
 
-            </a>
+.total-row.final{
+    border-top:2px solid #ddd;
+    padding-top:12px;
+    font-size:1.2rem;
+    font-weight:700;
+}
 
+.btn-print{
+    margin-top:30px;
+    padding:12px 24px;
+    border:none;
+    border-radius:12px;
+    background:#c59a5d;
+    color:#fff;
+    cursor:pointer;
+    font-weight:600;
+}
+</style>
+
+<div class="invoice-wrap">
+
+    <div class="invoice-head">
+
+        <div>
+            <div class="invoice-title">Invoice</div>
+
+            <div class="invoice-info">
+                Invoice : <?= $order['invoice'] ?><br>
+                Tanggal :
+                <?= date('d M Y H:i', strtotime($order['created_at'])) ?>
+            </div>
         </div>
 
-        <br><br>
-
-        <!-- DATA ORDER -->
-        <table class="table">
-
-            <tr>
-                <th>ID Order</th>
-                <th>:</th>
-                <th><?php echo $t['orders_id']; ?></th>
-            </tr>
-
-            <tr>
-                <th>Invoice</th>
-                <th>:</th>
-                <th><?php echo $t['invoice']; ?></th>
-            </tr>
-
-            <tr>
-                <th>Nama User</th>
-                <th>:</th>
-                <th><?php echo $t['nama']; ?></th>
-            </tr>
-
-            <tr>
-                <th>Metode Pembayaran</th>
-                <th>:</th>
-                <th><?php echo $t['metode_pembayaran']; ?></th>
-            </tr>
-
-            <tr>
-                <th>Status</th>
-                <th>:</th>
-                <th><?php echo $t['status']; ?></th>
-            </tr>
-
-        </table>
-
-        <!-- DETAIL ORDER -->
-        <table class="table table-bordered">
-
-            <tr>
-                <th>No</th>
-                <th>Produk</th>
-                <th>Harga</th>
-                <th>Qty</th>
-                <th>Subtotal</th>
-            </tr>
-
-            <?php
-            $no = 1;
-
-            $detail = mysqli_query($koneksi,
-                "SELECT order_items.*, produk.nama_produk
-                 FROM order_items
-                 JOIN produk
-                 ON order_items.produk_id = produk.produk_id
-                 WHERE order_items.orders_id='$id'");
-
-            while ($d = mysqli_fetch_array($detail)) {
-            ?>
-
-            <tr>
-
-                <td>
-                    <?php echo $no++; ?>
-                </td>
-
-                <td>
-                    <?php echo $d['nama_produk']; ?>
-                </td>
-
-                <td>
-                    Rp <?php echo number_format($d['harga']); ?>
-                </td>
-
-                <td>
-                    <?php echo $d['qty']; ?>
-                </td>
-
-                <td>
-                    Rp <?php echo number_format($d['subtotal']); ?>
-                </td>
-
-            </tr>
-
-            <?php } ?>
-
-            <!-- TOTAL -->
-            <tr>
-
-                <th colspan="4" class="text-right">
-                    Total
-                </th>
-
-                <th>
-                    Rp <?php echo number_format($t['total']); ?>
-                </th>
-
-            </tr>
-
-            <!-- PAJAK -->
-            <tr>
-
-                <th colspan="4" class="text-right">
-                    Pajak
-                </th>
-
-                <th>
-                    Rp <?php echo number_format($t['pajak']); ?>
-                </th>
-
-            </tr>
-
-            <!-- GRAND TOTAL -->
-            <tr>
-
-                <th colspan="4" class="text-right">
-                    Grand Total
-                </th>
-
-                <th>
-                    Rp <?php echo number_format($t['total'] + $t['pajak']); ?>
-                </th>
-
-            </tr>
-
-        </table>
-
-        <p class="text-center">
-            <i>
-                "Terima Kasih Sudah Memesan di Toko Kue Fanda 🍰"
-            </i>
-        </p>
+        <div class="invoice-info">
+            Metode Pembayaran<br>
+            <strong><?= $order['metode_pembayaran'] ?></strong>
+        </div>
 
     </div>
+
+    <table class="invoice-table">
+
+        <thead>
+            <tr>
+                <th>Produk</th>
+                <th>Qty</th>
+                <th>Harga</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+        <?php
+        $subtotal = 0;
+
+        while($d = mysqli_fetch_assoc($detail)):
+
+            $sub = $d['harga'] * $d['qty'];
+            $subtotal += $sub;
+        ?>
+
+            <tr>
+                <td><?= $d['nama_produk'] ?></td>
+                <td><?= $d['qty'] ?></td>
+                <td><?= rupiah($d['harga']) ?></td>
+                <td><?= rupiah($sub) ?></td>
+            </tr>
+
+        <?php endwhile; ?>
+
+        </tbody>
+
+    </table>
+
+    <?php
+    $pajak = round($subtotal * 0.1);
+    $total = $subtotal + $pajak;
+    ?>
+
+    <div class="total-box">
+
+        <div class="total-row">
+            <span>Subtotal</span>
+            <span><?= rupiah($subtotal) ?></span>
+        </div>
+
+        <div class="total-row">
+            <span>Pajak (10%)</span>
+            <span><?= rupiah($pajak) ?></span>
+        </div>
+
+        <div class="total-row final">
+            <span>Total</span>
+            <span><?= rupiah($total) ?></span>
+        </div>
+
+    </div>
+
+    <button onclick="window.print()" class="btn-print">
+        Print Invoice
+    </button>
 
 </div>
 
