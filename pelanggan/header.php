@@ -38,24 +38,107 @@ if ($_SESSION['role'] != "pelanggan") {
 $current = basename($_SERVER['PHP_SELF']);
 ?>
 
-<!-- TOP BAR -->
-<nav class="navbar">
-    <div class="d-flex align-items-center">
-        <a class="navbar-brand" href="index.php">
-            <i class="fas fa-cake-candles"></i>
-            Toko Kue <span style="color:var(--accent-gold);">Fanda</span>
+<!-- TOP NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm py-3"
+     style="background:#1f1f1f;">
+
+    <div class="container">
+
+        <!-- LOGO -->
+        <a class="navbar-brand fw-bold d-flex align-items-center gap-2"
+           href="index.php"
+           style="font-size:1.3rem;">
+
+            <i class="fas fa-cake-candles"
+               style="color:#d4a25a;"></i>
+
+            Toko Kue
+            <span style="color:#d4a25a;">
+                Fanda
+            </span>
+
         </a>
-        <span class="role-badge">Pelanggan</span>
-    </div>
-    <div class="nav-user">
-        <div class="nav-username">
-            <i class="fas fa-user"></i>
-            <?php echo htmlspecialchars($_SESSION['username']); ?>
+
+        <!-- TOGGLE MOBILE -->
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarPelanggan">
+
+            <span class="navbar-toggler-icon"></span>
+
+        </button>
+
+        <!-- MENU -->
+        <div class="collapse navbar-collapse"
+             id="navbarPelanggan">
+
+            <!-- MENU KIRI -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-4">
+
+                <li class="nav-item">
+
+                    <a class="nav-link <?= ($current == 'index.php') ? 'active' : ''; ?>"
+                       href="index.php">
+
+                        <i class="fas fa-store me-1"></i>
+                        Menu
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link <?= ($current == 'order_tambah.php') ? 'active' : ''; ?>"
+                       href="order_tambah.php">
+
+                        <i class="fas fa-cart-shopping me-1"></i>
+                        Keranjang
+
+                    </a>
+
+                </li>
+
+                <li class="nav-item">
+
+                    <a class="nav-link <?= ($current == 'akun.php') ? 'active' : ''; ?>"
+                       href="akun.php">
+
+                        <i class="fas fa-user me-1"></i>
+                        Akun
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+            <!-- USER -->
+            <div class="d-flex align-items-center gap-3">
+
+                <span class="text-light small">
+
+                    <i class="fas fa-user-circle me-1"></i>
+
+                    <?= htmlspecialchars($_SESSION['username']); ?>
+
+                </span>
+
+                <a href="../logout.php"
+                   class="btn btn-warning btn-sm px-3">
+
+                    <i class="fas fa-right-from-bracket me-1"></i>
+                    Keluar
+
+                </a>
+
+            </div>
+
         </div>
-        <a href="../index.php" class="btn-logout">
-            <i class="fas fa-right-from-bracket me-1"></i>Keluar
-        </a>
+
     </div>
+
 </nav>
 
 

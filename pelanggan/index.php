@@ -592,7 +592,7 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
   </div>
 
   <div class="see-all-wrap reveal">
-    <a href="order_tambah.php" class="see-all">
+    <a href="keranjang.php" class="see-all">
       Pesan Sekarang
       <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
@@ -632,7 +632,7 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
       <img src="../gambar/nastar.jpeg" alt="Nastar" loading="lazy">
     </div>
     <div class="testi-center">
-      <div class="testi-label-tag">Kata Pelanggan Kami</div>
+      <div class="testi-label-tag">Kata Pelanggan Kami</div><br><br><br><br><br><br>
       <div class="testi-sub-label">Dari Tetangga Kami</div>
       <p class="testi-quote-text">"Nastar Klasiknya lembut banget, isian nanasnya pas. Udah langganan tiap minggu, <em>gak pernah kecewa!</em>"</p>
       <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
@@ -685,13 +685,13 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
     <h2 class="sh">Dari <em>Dapur Kami</em></h2>
   </div>
   <div class="gallery-track">
-    <div class="g-img"><img src="../gambar/nastar.jpeg" alt="" loading="lazy"></div>
-    <div class="g-img"><img src="../gambar/kastangel.jpeg" alt="" loading="lazy"></div>
-    <div class="g-img"><img src="../gambar/brownis.jpeg" alt="" loading="lazy"></div>
-    <div class="g-img"><img src="../gambar/chocolate_butter.jpeg" alt="" loading="lazy"></div>
-    <div class="g-img"><img src="../gambar/strawberry_thumb.jpeg" alt="" loading="lazy"></div>
-    <div class="g-img"><img src="../gambar/putri_salju.jpeg" alt="" loading="lazy"></div>
-    <div class="g-img"><img src="../gambar/palm_cheese.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/dapur.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/alat_bahan.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/bahan_bahan.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/kastangel_oven.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/kukis.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/setoberi_thumb.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="../gambar/nastar_toples.jpeg" alt="" loading="lazy"></div>
   </div>
   <p class="gallery-hint">← Geser untuk lihat lebih →</p>
 </section>
@@ -785,24 +785,111 @@ const cio=new IntersectionObserver(entries=>{
 const st=document.querySelector('.hero-stats');if(st)cio.observe(st);
 
 /* CART */
-let cart=JSON.parse(localStorage.getItem('fanda_cart')||'{}');
+let cart = JSON.parse(localStorage.getItem('fanda_cart')) || {};
+
 function updateBadge(){
-  const b=document.getElementById('cartBadge');
-  const n=Object.values(cart).reduce((s,q)=>s+q,0);
-  if(b){b.textContent=n;b.style.transform='scale(1.4)';setTimeout(()=>b.style.transform='',250)}
-}
-updateBadge();
-document.querySelectorAll('.btn-add-cart').forEach(btn=>{
-  btn.addEventListener('click',e=>{
-    e.stopPropagation();
-    const name=btn.dataset.name||'produk';
-    cart[name]=(cart[name]||0)+1;
-    localStorage.setItem('fanda_cart',JSON.stringify(cart));
-    btn.style.background='var(--gold)';btn.style.color='var(--esp)';
-    setTimeout(()=>{btn.style.background='';btn.style.color='';},350);
-    updateBadge();
-    setTimeout(()=>window.location.href='order_tambah.php',420);
+
+  const badge = document.getElementById('cartBadge');
+
+  let total = 0;
+
+  Object.values(cart).forEach(item => {
+    total += item.qty;
   });
+
+  badge.textContent = total;
+}
+
+updateBadge();
+
+document.querySelectorAll('.btn-add-cart').forEach(btn => {
+
+  btn.addEventListener('click', () => {
+
+    const card = btn.closest('.c-card');
+
+    const nama = card.querySelector('.c-name').innerText;
+
+    const hargaText = card.querySelector('.c-price').innerText;
+
+    const harga = parseInt(
+      hargaText.replace('Rp','')
+                .replace(/\./g,'')
+                .replace(/\s/g,'')
+    );
+
+    const gambar = card.querySelector('img').getAttribute('src');
+
+    // cari id produk berdasarkan nama
+    let produkId = null;
+
+    switch(nama){
+
+      case 'Nastar Klasik':
+        produkId = 1;
+      break;
+
+      case 'Kastengel Keju':
+        produkId = 2;
+      break;
+
+      case 'Putri Salju':
+        produkId = 3;
+      break;
+
+      case 'Chocolate Butter Cookies':
+        produkId = 4;
+      break;
+
+      case 'Brownies Panggang':
+        produkId = 5;
+      break;
+
+      case 'Palm Cheese Cookies':
+        produkId = 6;
+      break;
+
+      case 'Strawberry Thumb':
+        produkId = 7;
+      break;
+
+    }
+
+    if(produkId === null) return;
+
+    if(cart[produkId]){
+
+      cart[produkId].qty += 1;
+
+    } else {
+
+      cart[produkId] = {
+        nama: nama,
+        harga: harga,
+        gambar: gambar,
+        qty: 1
+      };
+
+    }
+
+    localStorage.setItem('fanda_cart', JSON.stringify(cart));
+
+    btn.style.background='var(--gold)';
+    btn.style.color='var(--esp)';
+
+    setTimeout(()=>{
+      btn.style.background='';
+      btn.style.color='';
+    },350);
+
+    updateBadge();
+
+    setTimeout(()=>{
+      window.location.href='order_tambah.php';
+    },420);
+
+  });
+
 });
 </script>
 </body>

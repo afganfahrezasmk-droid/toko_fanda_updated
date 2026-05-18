@@ -1,43 +1,68 @@
 <?php
 session_start();
+
 include '../koneksi.php';
 /** @var mysqli $koneksi */
 
-
-header('Content-Type: application/json');
-
-$data = json_decode(file_get_contents('php://input'), true);
-
-if(!$data){
-    echo json_encode([
-        'status' => 'error',
-        'message' => 'Data tidak valid'
-    ]);
-    exit;
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    die('Akses tidak valid!');
 }
 
-$cart    = $data['cart'];
-$metode  = $data['metode'];
-$user_id = $_SESSION['user_id'] ?? 0;
+$user_id = $_POST['user_id'] ?? 0;
+$invoice = $_POST['invoice'] ?? '';
+$metode  = $_POST['metode_pembayaran'] ?? '';
 
-$invoice = 'INV-' . date('YmdHis');
+$produk_id = $_POST['produk_id'] ?? [];
+$qty       = $_POST['qty'] ?? [];
 
-$total = 0;
+if(empty($produk_id) || empty($qty)){
 
-foreach($cart as $item){
-    $subtotal = $item['harga'] * $item['qty'];
-    $total += $subtotal;
+    die('Keranjang kosong!');
+
 }
 
-$pajak = round($total * 0.1);
-$grand_total = $total + $pajak;
+$subtotal = 0;
+
+$detailProduk = [];
+
+for($i = 0; $i < count($produk_id); $i++){
+
+    $idProduk = (int)$produk_id[$i];
+    $jumlah   = (int)$qty[$i];
+
+    $query = mysqli_query($koneksi, "
+        SELECT *
+        FROM produk
+        WHERE produk_id = '$idProduk'
+    ");
+
+    $produk = mysqli_fetch_assoc($query);
+
+    if(!$produk) continue;
+
+    $harga = (int)$produk['harga'];
+
+    $sub = $harga * $jumlah;
+
+    $subtotal += $sub;
+
+    $detailProduk[] = [
+        'produk_id' => $idProduk,
+        'qty'       => $jumlah,
+        'harga'     => $harga,
+        'subtotal'  => $sub
+    ];
+}
+
+$pajak = round($subtotal * 0.1);
+
+$total = $subtotal + $pajak;
 
 mysqli_query($koneksi, "
 INSERT INTO orders(
     invoice,
     user_id,
     metode_pembayaran,
-    subtotal,
     pajak,
     total,
     created_at
@@ -46,47 +71,137 @@ VALUES(
     '$invoice',
     '$user_id',
     '$metode',
-    '$total',
     '$pajak',
-    '$grand_total',
+    '$total',
     NOW()
 )
 ");
 
 $order_id = mysqli_insert_id($koneksi);
 
-foreach($cart as $id => $item){
+foreach($detailProduk as $item){
 
-    $produk_id = (int)$id;
-    $qty       = (int)$item['qty'];
-    $harga     = (int)$item['harga'];
-    $subtotal  = $harga * $qty;
+    $idProduk = $item['produk_id'];
+    $jumlah   = $item['qty'];
+    $harga    = $item['harga'];
+    $sub      = $item['subtotal'];
 
     mysqli_query($koneksi, "
-    INSERT INTO order_detail(
-        order_id,
+    INSERT INTO order_items(
+        orders_id,
         produk_id,
         qty,
         harga,
         subtotal
     )
     VALUES(
-            '$order_id',
-        '$produk_id',
-        '$qty',
+        '$order_id',
+        '$idProduk',
+        '$jumlah',
         '$harga',
-        '$subtotal'
+        '$sub'
     )
     ");
 
     mysqli_query($koneksi, "
     UPDATE produk
-    SET stok = stok - $qty
-    WHERE produk_id = '$produk_id'
+    SET stok = stok - $jumlah
+    WHERE produk_id = '$idProduk'
     ");
 }
 
-echo json_encode([
-    'status' => 'success',
-    'invoice' => $invoice
-]);
+?>
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Pesanan Berhasil</title>
+
+<style>
+
+body{
+    font-family:Arial,sans-serif;
+    background:#f8f8f8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    background:white;
+    padding:40px;
+    border-radius:20px;
+    text-align:center;
+    width:420px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+}
+
+h1{
+    color:#27ae60;
+    margin-bottom:15px;
+}
+
+p{
+    color:#666;
+    margin-bottom:10px;
+}
+
+.invoice{
+    font-size:1.1rem;
+    font-weight:bold;
+    color:#222;
+    margin:20px 0;
+}
+
+.btn{
+    display:inline-block;
+    margin-top:20px;
+    padding:12px 24px;
+    border-radius:12px;
+    background:#d4a25a;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.btn:hover{
+    opacity:.9;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="box">
+
+    <h1>✅ Pesanan Berhasil!</h1>
+
+    <p>Terima kasih telah memesan di</p>
+    <p><b>Toko Kue Fanda</b></p>
+
+    <div class="invoice">
+        <?= htmlspecialchars($invoice) ?>
+    </div>
+
+    <p>Metode Pembayaran:</p>
+    <p><b><?= htmlspecialchars($metode) ?></b></p>
+
+    <p>Total pembayaran berhasil dibuat.</p>
+
+    <a href="index.php" class="btn">
+        Kembali Belanja
+    </a>
+
+</div>
+
+<script>
+
+localStorage.removeItem('fanda_cart');
+
+</script>
+
+</body>
+</html>

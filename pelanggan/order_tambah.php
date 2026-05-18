@@ -5,7 +5,11 @@ include '../koneksi.php';
 ?>
 
 <style>
-.keranjang-wrap{max-width:860px;margin:0 auto;padding:30px 20px 60px}
+.keranjang-wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:40px 24px 70px;
+}
 .keranjang-judul{font-size:1.6rem;font-weight:700;margin-bottom:24px;color:var(--text-dark)}
 .keranjang-kosong{text-align:center;padding:60px 20px;color:#888}
 .keranjang-kosong .icon{font-size:3.5rem;margin-bottom:16px}
@@ -41,23 +45,89 @@ include '../koneksi.php';
 </style>
 
 <div class="keranjang-wrap">
-    <br>
 
-    <form method="POST" action="index.php" style="text-align:left;">
-        <button type="submit" style="background:none;border:none;padding:0;color:#777;cursor:pointer;">
-            ← Kembali Belanja
-        </button>
-    </form>
+   <!-- TOP HEADER -->
+    <div class="mb-4">
+<br>
+        <!-- BUTTON BACK -->
+        <div class="mb-4">
 
-    <h2 class="keranjang-judul">🛒 Keranjang Belanja</h2>
+            <a href="index.php"
+            class="btn btn-outline-dark rounded-pill px-4 py-2 shadow-sm">
+
+                <i class="fa fa-arrow-left me-2"></i>
+                Kembali Belanja
+
+            </a>
+
+        </div>
+<br>
+        <!-- TITLE -->
+        <div class="text-center">
+
+            <h2 class="keranjang-judul mb-2">
+
+                <i class="fa fa-cart-shopping me-2"></i>
+                Keranjang Belanja
+
+            </h2>
+
+            <p class="text-muted mb-0">
+                Periksa kembali pesanan kamu sebelum checkout
+            </p>
+
+        </div>
+
+    </div>
 
     <!-- KERANJANG KOSONG -->
     <div id="keranjangKosong" style="display:none">
-        <div class="keranjang-kosong">
-            <div class="icon">🛒</div>
-            <p>Keranjang kamu masih kosong.</p>
-            <a href="index.php" class="btn btn-primary">Lihat Menu</a>
+
+        <div class="card border-0 shadow-sm rounded-4">
+
+            <div class="card-body text-center py-5">
+
+                <!-- ICON -->
+                <div style="
+                    width:110px;
+                    height:110px;
+                    margin:auto;
+                    border-radius:50%;
+                    background:#fff3e4;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:2.8rem;
+                    color:#d4a25a;
+                    margin-bottom:25px;
+                ">
+
+                    <i class="fa fa-cart-shopping"></i>
+
+                </div>
+
+                <!-- TEXT -->
+                <h4 class="fw-bold mb-2">
+                    Keranjang Masih Kosong
+                </h4>
+
+                <p class="text-muted mb-4">
+                    Yuk pilih kue favorit kamu dulu 🍰
+                </p>
+
+                <!-- BUTTON -->
+                <a href="index.php"
+                   class="btn btn-warning px-4 py-2 rounded-pill shadow-sm">
+
+                    <i class="fa fa-cookie-bite me-2"></i>
+                    Lihat Menu
+
+                </a>
+
+            </div>
+
         </div>
+
     </div>
 
     <!-- ISI KERANJANG -->
@@ -170,13 +240,13 @@ function renderKeranjang(){
             <td>${fmt(item.harga)}</td>
             <td>
                 <div class="qty-control">
-                    <button class="qty-btn" onclick="ubahQty('${id}',-1)">−</button>
+                    <button type="button" class="qty-btn" onclick="ubahQty('${id}',-1)">−</button>
                     <span class="qty-val" id="qty-${id}">${item.qty}</span>
-                    <button class="qty-btn" onclick="ubahQty('${id}',1)">+</button>
+                    <button type="button" class="qty-btn" onclick="ubahQty('${id}',1)">+</button>
                 </div>
             </td>
             <td class="subtotal" id="sub-${id}">${fmt(sub)}</td>
-            <td><button class="btn-hapus" onclick="hapusItem('${id}')">🗑 Hapus</button></td>
+            <td><button type="button" class="btn-hapus" onclick="hapusItem('${id}')">🗑 Hapus</button></td>
         </tr>`;
         
     });

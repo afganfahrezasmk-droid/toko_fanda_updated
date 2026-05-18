@@ -25,138 +25,264 @@ if ($_SESSION['role'] != 'pelanggan') {
 }
 ?>
 
-<div class="container mt-5">
+<style>
 
-    <div class="row justify-content-center">
+.edit-wrap{
+    max-width:720px;
+    margin:50px auto;
+}
 
-        <div class="col-md-6">
+.edit-card{
+    background:#fff;
+    border-radius:28px;
+    overflow:hidden;
+    box-shadow:0 10px 35px rgba(0,0,0,.08);
+}
 
-            <div class="card shadow-sm">
+/* HEADER */
+.edit-header{
+    background:linear-gradient(135deg,#4b240f,#6b3418);
+    padding:40px;
+    color:white;
+    text-align:center;
+}
 
-                <!-- HEADER -->
-                <div class="card-header bg-dark text-white">
+.edit-avatar{
+    width:90px;
+    height:90px;
+    margin:auto;
+    border-radius:50%;
+    background:#ffffff20;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:2.3rem;
+    margin-bottom:18px;
+    border:2px solid #ffffff30;
+}
 
-                    <h5 class="mb-0">
-                        Edit Akun Saya
-                    </h5>
+.edit-title{
+    font-size:1.8rem;
+    font-weight:700;
+}
 
-                </div>
+.edit-sub{
+    opacity:.85;
+    margin-top:8px;
+}
 
-                <!-- BODY -->
-                <div class="card-body">
+/* BODY */
+.edit-body{
+    padding:40px;
+}
 
-                    <?php
+.form-label{
+    font-weight:600;
+    margin-bottom:8px;
+    color:#333;
+}
 
-                    $id = $_GET['id'];
+.form-control{
+    border-radius:14px;
+    padding:14px 16px;
+    border:1.5px solid #e7e7e7;
+    transition:.2s;
+    box-shadow:none !important;
+}
 
-                    $data = mysqli_query(
-                        $koneksi,
-                        "SELECT * FROM user
-                         WHERE user_id='$id'"
-                    );
+.form-control:focus{
+    border-color:#c5975c;
+}
 
-                    $d = mysqli_fetch_array($data);
+.form-text{
+    color:#888;
+    font-size:.85rem;
+}
 
-                    ?>
+/* BUTTON */
+.btn-wrap{
+    display:flex;
+    justify-content:space-between;
+    gap:15px;
+    margin-top:35px;
+    flex-wrap:wrap;
+}
 
-                    <form method="POST"
-                          action="akun_update.php">
+.btn-modern{
+    flex:1;
+    border:none;
+    border-radius:16px;
+    padding:14px;
+    font-weight:700;
+    transition:.2s;
+    text-decoration:none;
+    text-align:center;
+}
 
-                        <!-- ID -->
-                        <input type="hidden"
-                               name="user_id"
-                               value="<?php echo $d['user_id']; ?>">
+.btn-save{
+    background:#c5975c;
+    color:white;
+}
 
-                        <!-- USERNAME -->
-                        <div class="mb-3">
+.btn-save:hover{
+    opacity:.9;
+}
 
-                            <label class="form-label">
-                                Username
-                            </label>
+.btn-back{
+    background:#ece7e1;
+    color:#444;
+}
 
-                            <input type="text"
-                                   name="username"
-                                   class="form-control"
-                                   value="<?php echo $d['username']; ?>"
-                                   required>
+.btn-back:hover{
+    background:#dfd6cd;
+}
 
-                        </div>
+/* RESPONSIVE */
+@media(max-width:768px){
 
-                        <!-- PASSWORD -->
-                        <div class="mb-3">
+    .edit-body{
+        padding:25px;
+    }
 
-                            <label class="form-label">
-                                Password
-                            </label>
+    .btn-wrap{
+        flex-direction:column;
+    }
+}
 
-                            <input type="password"
-                                   name="password"
-                                   class="form-control"
-                                   placeholder="Kosongkan jika tidak diubah">
+</style>
 
-                            <small class="text-muted">
+<?php
 
-                                Kosongkan jika password tidak diubah
+$id = $_GET['id'];
 
-                            </small>
+$data = mysqli_query(
+    $koneksi,
+    "SELECT * FROM user
+     WHERE user_id='$id'"
+);
 
-                        </div>
+$d = mysqli_fetch_array($data);
 
-                        <!-- NAMA -->
-                        <div class="mb-3">
+?>
 
-                            <label class="form-label">
-                                Nama
-                            </label>
+<div class="edit-wrap">
 
-                            <input type="text"
-                                   name="nama"
-                                   class="form-control"
-                                   value="<?php echo $d['nama']; ?>"
-                                   required>
+    <div class="edit-card">
 
-                        </div>
+        <!-- HEADER -->
+        <div class="edit-header">
 
-                        <!-- EMAIL -->
-                        <div class="mb-3">
+            <div class="edit-avatar">
 
-                            <label class="form-label">
-                                Email
-                            </label>
-
-                            <input type="email"
-                                   name="email"
-                                   class="form-control"
-                                   value="<?php echo $d['email']; ?>"
-                                   required>
-
-                        </div>
-
-                        <!-- BUTTON -->
-                        <div class="text-center mt-4">
-
-                            <button type="submit"
-                                    class="btn btn-warning btn-lg me-2">
-
-                                <i class="fas fa-save"></i>
-                                Simpan
-
-                            </button>
-
-                            <a href="akun.php"
-                               class="btn btn-secondary btn-lg">
-
-                                Kembali
-
-                            </a>
-
-                        </div>
-
-                    </form>
-
-                </div>
+                <i class="fas fa-user"></i>
 
             </div>
+
+            <div class="edit-title">
+                Edit Akun Saya
+            </div>
+
+            <div class="edit-sub">
+                Perbarui informasi akun pelanggan kamu
+            </div>
+
+        </div>
+
+        <!-- BODY -->
+        <div class="edit-body">
+
+            <form method="POST"
+                  action="akun_update.php">
+
+                <!-- ID -->
+                <input type="hidden"
+                       name="user_id"
+                       value="<?= $d['user_id']; ?>">
+
+                <!-- USERNAME -->
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Username
+                    </label>
+
+                    <input type="text"
+                           name="username"
+                           class="form-control"
+                           value="<?= htmlspecialchars($d['username']); ?>"
+                           required>
+
+                </div>
+
+                <!-- PASSWORD -->
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Password Baru
+                    </label>
+
+                    <input type="password"
+                           name="password"
+                           class="form-control"
+                           placeholder="Kosongkan jika tidak diubah">
+
+                    <div class="form-text mt-2">
+                        Password lama akan tetap digunakan jika dikosongkan
+                    </div>
+
+                </div>
+
+                <!-- NAMA -->
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Nama Lengkap
+                    </label>
+
+                    <input type="text"
+                           name="nama"
+                           class="form-control"
+                           value="<?= htmlspecialchars($d['nama']); ?>"
+                           required>
+
+                </div>
+
+                <!-- EMAIL -->
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Email
+                    </label>
+
+                    <input type="email"
+                           name="email"
+                           class="form-control"
+                           value="<?= htmlspecialchars($d['email']); ?>"
+                           required>
+
+                </div>
+
+                <!-- BUTTON -->
+                <div class="btn-wrap">
+
+                    <a href="akun.php"
+                       class="btn-modern btn-back">
+
+                        ← Kembali
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn-modern btn-save">
+
+                        <i class="fas fa-save me-2"></i>
+                        Simpan Perubahan
+
+                    </button>
+
+                </div>
+
+            </form>
 
         </div>
 
