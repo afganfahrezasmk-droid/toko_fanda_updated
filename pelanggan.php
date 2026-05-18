@@ -807,152 +807,122 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 
 <script>
 /* CURSOR */
-const cur=document.getElementById('cur'),curR=document.getElementById('cur-r');
+const cur=document.getElementById('cur'),
+      curR=document.getElementById('cur-r');
+
 let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
-(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop)})();
+
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;
+  my=e.clientY;
+
+  cur.style.left=mx+'px';
+  cur.style.top=my+'px';
+});
+
+(function loop(){
+  rx+=(mx-rx)*.1;
+  ry+=(my-ry)*.1;
+
+  curR.style.left=rx+'px';
+  curR.style.top=ry+'px';
+
+  requestAnimationFrame(loop);
+})();
+
 document.querySelectorAll('a,button,.c-card,.g-img,.testi-slide').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('h'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('h'));
+
+  el.addEventListener('mouseenter',()=>{
+    document.body.classList.add('h');
+  });
+
+  el.addEventListener('mouseleave',()=>{
+    document.body.classList.remove('h');
+  });
+
 });
 
 /* NAVBAR */
 const nav=document.getElementById('mainNav');
-window.addEventListener('scroll',()=>nav.classList.toggle('stuck',window.scrollY>55),{passive:true});
+
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('stuck',window.scrollY>55);
+},{passive:true});
 
 /* SCROLL REVEAL */
 const io=new IntersectionObserver(entries=>{
+
   entries.forEach(e=>{
-    if(!e.isIntersecting)return;
+
+    if(!e.isIntersecting) return;
+
     const t=e.target;
-    if(t.classList.contains('c-card')){t.classList.add('show')}
-    else{t.classList.add('in')}
+
+    if(t.classList.contains('c-card')){
+      t.classList.add('show');
+    } else {
+      t.classList.add('in');
+    }
+
     io.unobserve(t);
+
   });
+
 },{threshold:0.12});
-document.querySelectorAll('.c-card,.reveal,.reveal-l').forEach(el=>io.observe(el));
+
+document.querySelectorAll('.c-card,.reveal,.reveal-l').forEach(el=>{
+  io.observe(el);
+});
 
 /* COUNTER */
 const cio=new IntersectionObserver(entries=>{
+
   entries.forEach(e=>{
-    if(!e.isIntersecting)return;
+
+    if(!e.isIntersecting) return;
+
     e.target.querySelectorAll('.ctr').forEach(el=>{
-      const tgt=+el.dataset.to,dur=1800,s=performance.now();
-      const tick=n=>{const t=Math.min((n-s)/dur,1);el.textContent=Math.floor((1-Math.pow(1-t,3))*tgt);if(t<1)requestAnimationFrame(tick)};
-      requestAnimationFrame(tick);
-    });
-    cio.unobserve(e.target);
-  });
-},{threshold:.5});
-const st=document.querySelector('.hero-stats');if(st)cio.observe(st);
 
-/* CART */
-let cart = JSON.parse(localStorage.getItem('fanda_cart')) || {};
+      const tgt = +el.dataset.to;
+      const dur = 1800;
+      const s = performance.now();
 
-function updateBadge(){
+      const tick = n => {
 
-  const badge = document.getElementById('cartBadge');
+        const t = Math.min((n-s)/dur,1);
 
-  let total = 0;
+        el.textContent = Math.floor((1-Math.pow(1-t,3))*tgt);
 
-  Object.values(cart).forEach(item => {
-    total += item.qty;
-  });
+        if(t < 1){
+          requestAnimationFrame(tick);
+        }
 
-  badge.textContent = total;
-}
-
-updateBadge();
-
-document.querySelectorAll('.btn-add-cart').forEach(btn => {
-
-  btn.addEventListener('click', () => {
-
-    const card = btn.closest('.c-card');
-
-    const nama = card.querySelector('.c-name').innerText;
-
-    const hargaText = card.querySelector('.c-price').innerText;
-
-    const harga = parseInt(
-      hargaText.replace('Rp','')
-                .replace(/\./g,'')
-                .replace(/\s/g,'')
-    );
-
-    const gambar = card.querySelector('img').getAttribute('src');
-
-    // cari id produk berdasarkan nama
-    let produkId = null;
-
-    switch(nama){
-
-      case 'Nastar Klasik':
-        produkId = 1;
-      break;
-
-      case 'Kastengel Keju':
-        produkId = 2;
-      break;
-
-      case 'Putri Salju':
-        produkId = 3;
-      break;
-
-      case 'Chocolate Butter Cookies':
-        produkId = 4;
-      break;
-
-      case 'Brownies Panggang':
-        produkId = 5;
-      break;
-
-      case 'Palm Cheese Cookies':
-        produkId = 6;
-      break;
-
-      case 'Strawberry Thumb':
-        produkId = 7;
-      break;
-
-    }
-
-    if(produkId === null) return;
-
-    if(cart[produkId]){
-
-      cart[produkId].qty += 1;
-
-    } else {
-
-      cart[produkId] = {
-        nama: nama,
-        harga: harga,
-        gambar: gambar,
-        qty: 1
       };
 
-    }
+      requestAnimationFrame(tick);
 
-    localStorage.setItem('fanda_cart', JSON.stringify(cart));
+    });
 
-    btn.style.background='var(--gold)';
-    btn.style.color='var(--esp)';
-
-    setTimeout(()=>{
-      btn.style.background='';
-      btn.style.color='';
-    },350);
-
-    updateBadge();
-
-    setTimeout(()=>{
-      window.location.href='order_tambah.php';
-    },420);
+    cio.unobserve(e.target);
 
   });
 
-});
+},{threshold:.5});
+
+const st=document.querySelector('.hero-stats');
+
+if(st){
+  cio.observe(st);
+}
+
+/* CART SELALU 0 */
+localStorage.removeItem('fanda_cart');
+
+const cartBadge = document.getElementById('cartBadge');
+
+if(cartBadge){
+  cartBadge.innerText = '0';
+}
 </script>
 </body>
 </html>
