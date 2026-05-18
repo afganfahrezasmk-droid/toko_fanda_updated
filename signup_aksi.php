@@ -5,14 +5,69 @@ include 'koneksi.php';
 
 /** @var mysqli $koneksi */
 
-$username = $_POST['username'];
-$password = md5($_POST['password']);
-$nama     = $_POST['nama'];
-$email    = $_POST['email'];
+// =========================
+// AMBIL DATA FORM
+// =========================
 
-/* =========================
-   SIMPAN USER
-========================= */
+$username = trim($_POST['username'] ?? '');
+$password = $_POST['password'] ?? '';
+$nama     = trim($_POST['nama'] ?? '');
+$email    = trim($_POST['email'] ?? '');
+
+// =========================
+// VALIDASI INPUT
+// =========================
+
+if(
+    empty($username) ||
+    empty($password) ||
+    empty($nama) ||
+    empty($email)
+){
+
+    header("location:signup.php?error=Semua data wajib diisi!");
+    exit;
+}
+
+// =========================
+// CEK USERNAME SUDAH ADA
+// =========================
+
+$cekUsername = mysqli_query($koneksi,
+    "SELECT * FROM user
+     WHERE username='$username'"
+);
+
+if(mysqli_num_rows($cekUsername) > 0){
+
+    header("location:signup.php?error=Username sudah digunakan!");
+    exit;
+}
+
+// =========================
+// CEK EMAIL SUDAH ADA
+// =========================
+
+$cekEmail = mysqli_query($koneksi,
+    "SELECT * FROM user
+     WHERE email='$email'"
+);
+
+if(mysqli_num_rows($cekEmail) > 0){
+
+    header("location:signup.php?error=Email sudah digunakan!");
+    exit;
+}
+
+// =========================
+// ENKRIPSI PASSWORD
+// =========================
+
+$password = md5($password);
+
+// =========================
+// SIMPAN USER
+// =========================
 
 $query = mysqli_query($koneksi,
     "INSERT INTO user
@@ -20,24 +75,33 @@ $query = mysqli_query($koneksi,
 
     VALUES
 
-    ('$username', '$password', '$nama', '$email')"
+    ('$username', '$password', '$nama', '$email', 'pelanggan')"
 );
 
-/* =========================
-   CEK BERHASIL
-========================= */
+// =========================
+// CEK BERHASIL
+// =========================
 
 if($query){
 
-    // simpan session login otomatis
-    $_SESSION['username'] = $username;
-    $_SESSION['nama']     = $nama;
-    $_SESSION['status']   = "login";
+    // ambil data user terbaru
+    $user = mysqli_fetch_assoc(mysqli_query($koneksi,
+        "SELECT * FROM user
+         WHERE username='$username'"
+    ));
 
-
+    // session login otomatis
+    $_SESSION['user_id']  = $user['user_id'];
+    $_SESSION['username'] = $user['username'];
+    $_SESSION['nama']     = $user['nama'];
+    $_SESSION['role']     = $user['role'];
 
     header("location:pelanggan/index.php");
+    exit;
 
+}else{
+
+    header("location:signup.php?error=Gagal membuat akun!");
+    exit;
 }
-
 ?>

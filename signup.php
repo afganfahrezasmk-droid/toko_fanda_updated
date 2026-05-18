@@ -454,16 +454,37 @@ body {
 <nav class="top-nav">
   <a href="#" class="nav-logo">Toko Kue <span>Fanda</span></a>
   <ul class="nav-links">
-    <li><a href="#">Beranda</a></li>
-    <li><a href="#">Menu</a></li>
-    <li><a href="#">Kontak</a></li>
-    <li><a href="#">Tentang Kami</a></li>
+    <li><a href="pelanggan.php">Beranda</a></li>
+    <li><a href="pelanggan.php#menu">Menu</a></li>
+    <li><a href="pelanggan.php#footer">Kontak</a></li>
+    <li><a href="pelanggan.php#tentang">Tentang Kami</a></li>
   </ul>
   <div class="nav-right">
-    <a href="#" title="Keranjang">🛒</a>
-    <a href="#" title="Akun">👤</a>
-    <a href="index.php" class="btn-kembali">Kembali</a>
-  </div>
+
+  <!-- KERANJANG -->
+  <a href="index.php"
+     title="Silakan login terlebih dahulu"
+     onclick="alert('Anda belum memiliki akun / belum login!')">
+
+     🛒
+
+  </a>
+
+  <!-- AKUN -->
+  <a href="index.php"
+     title="Silakan login terlebih dahulu"
+     onclick="alert('Silakan login terlebih dahulu!')">
+
+     👤
+
+  </a>
+
+  <!-- BUTTON KEMBALI -->
+  <a href="index.php" class="btn-kembali">
+    Kembali
+  </a>
+
+</div>
 </nav>
 
 <!-- MAIN -->

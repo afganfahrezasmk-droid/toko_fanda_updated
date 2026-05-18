@@ -393,16 +393,38 @@ body::before {
 
             <!-- PASSWORD -->
             <div class="field">
-                <label for="passInput">Password</label>
+
+                <label for="passInput">
+                    Password
+                </label>
+
                 <div class="input-wrap">
-                    <input type="password" id="passInput"
-                           name="password" placeholder="Masukkan password"
-                           autocomplete="current-password" required>
-                    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-                    <button type="button" class="eye-btn" id="eyeBtn" title="Tampilkan password">
-                        <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+
+                    <input type="password"
+                        id="passInput"
+                        name="password"
+                        placeholder="Masukkan password"
+                        autocomplete="current-password"
+                        required>
+
+                    <!-- ICON KUNCI -->
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="11" width="18" height="11" rx="2"/>
+                        <path d="M7 11V7a5 5 0 0110 0v4"/>
+                    </svg>
+
+                    <!-- BUTTON MATA -->
+                    <button type="button"
+                            class="eye-btn"
+                            id="eyeBtn"
+                            title="Tampilkan password">
+
+                        <span id="eyeIcon">👁️</span>
+
                     </button>
+
                 </div>
+
             </div>
 
             <button type="submit" class="btn-masuk">Masuk Sekarang →</button>
@@ -438,13 +460,21 @@ document.querySelectorAll('a,button,input').forEach(el=>{
 const passInput = document.getElementById('passInput');
 const eyeBtn    = document.getElementById('eyeBtn');
 const eyeIcon   = document.getElementById('eyeIcon');
-let showPass = false;
+
 eyeBtn.addEventListener('click', () => {
-    showPass = !showPass;
-    passInput.type = showPass ? 'text' : 'password';
-    eyeIcon.innerHTML = showPass
-        ? '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>'
-        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+
+    if(passInput.type === 'password'){
+
+        passInput.type = 'text';
+        eyeIcon.textContent = '🙈';
+
+    }else{
+
+        passInput.type = 'password';
+        eyeIcon.textContent = '👁️';
+
+    }
+
 });
 
 /* ── RIPPLE EFFECT TOMBOL ── */
