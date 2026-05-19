@@ -112,17 +112,29 @@ $jml_kategori = mysqli_num_rows($kategori);
                     <td style="font-weight:600;">Rp <?= number_format($d['total']) ?></td>
                     <td><?= htmlspecialchars($d['metode_pembayaran']) ?></td>
                     <td>
-                        <?php if ($status == 'pending'): ?>
-                            <span class="badge bg-warning text-dark">Menunggu</span>
-                        <?php elseif ($status == 'dibayar'): ?>
-                            <span class="badge bg-primary">Dibayar</span>
-                        <?php elseif ($status == 'selesai'): ?>
-                            <span class="badge bg-success">Selesai</span>
-                        <?php elseif ($status == 'batal'): ?>
-                            <span class="badge bg-danger">Dibatalkan</span>
-                        <?php else: ?>
-                            <span class="badge bg-secondary"><?= ucfirst($status) ?></span>
-                        <?php endif; ?>
+                        <?php
+                        switch ($status) {
+                            case 'pending':
+                                echo '<span class="badge bg-warning text-dark">Menunggu</span>';
+                                break;
+
+                            case 'dibayar':
+                                echo '<span class="badge bg-info">Dibayar</span>';
+                                break;
+
+                            case 'selesai':
+                                echo '<span class="badge bg-success">Selesai</span>';
+                                break;
+
+                            case 'batal':
+                                echo '<span class="badge bg-danger">Dibatalkan</span>';
+                                break;
+
+                            default:
+                                echo '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
+                                break;
+                        }
+                        ?>
                     </td>
                     <td style="font-size:.82rem;color:var(--text-muted);"><?= $d['created_at'] ?></td>
                     <td>

@@ -711,29 +711,29 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
     <div>
       <h4 class="f-col-title">Menu</h4>
       <ul class="f-links">
-        <li><a href="#">Kue Kering</a></li>
-        <li><a href="#">Kue Basah</a></li>
-        <li><a href="#">Cookies</a></li>
-        <li><a href="#">Cake &amp; Brownies</a></li>
-        <li><a href="#">Snack Manis</a></li>
+        <li><a href="#menu">Kue Kering</a></li>
+        <li><a href="#menu">Kue Basah</a></li>
+        <li><a href="#menu">Cookies</a></li>
+        <li><a href="#menu">Cake &amp; Brownies</a></li>
+        <li><a href="#menu">Snack Manis</a></li>
       </ul>
     </div>
     <div>
       <h4 class="f-col-title">Info</h4>
       <ul class="f-links">
-        <li><a href="#">Tentang Kami</a></li>
-        <li><a href="#">Cara Order</a></li>
-        <li><a href="#">FAQ</a></li>
-        <li><a href="#">Promo</a></li>
+        <li><a href="#kontak">Tentang Kami</a></li>
+        <li><a href="keranjang.php">Cara Order</a></li>
+        <li><a href="#tentang">FAQ</a></li>
+        <li><a href="#menu">Promo</a></li>
       </ul>
     </div>
     <div>
       <h4 class="f-col-title">Kontak</h4>
       <ul class="f-links">
         <li><a href="#">📍 Semarang, Jawa Tengah</a></li>
-        <li><a href="#">📞 +62 812-3456-7890</a></li>
+        <li><a href="#">📞 +62 856-4144-7469</a></li>
         <li><a href="#">✉️ hello@tokokuefanda.id</a></li>
-        <li><a href="#">⏰ Buka Setiap Hari</a></li>
+        <li><a href="#">⏰ Buka Setiap Senin - Sabtu</a></li>
       </ul>
     </div>
   </div>

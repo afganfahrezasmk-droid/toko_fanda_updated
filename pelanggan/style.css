@@ -733,3 +733,46 @@ textarea.form-control { min-height: 100px; resize: vertical; }
 
 /* ── Override inline styles ── */
 body { background: var(--cream-bg) !important; }
+
+/* ===== PELANGGAN TANPA SIDEBAR ===== */
+
+/* sembunyikan sidebar */
+.sidebar{
+    display:none !important;
+}
+
+/* wrapper full */
+.layout-wrapper.no-sidebar{
+    width:100%;
+    display:block !important;
+}
+
+/* konten rata tengah + penuh */
+.main-content.centered-content{
+    margin:0 auto !important;
+    width:100% !important;
+    max-width:1450px !important;
+    padding:35px 40px !important;
+}
+
+/* biar row bootstrap rata kanan kiri */
+.main-content .row{
+    width:100%;
+    margin:0 !important;
+}
+
+/* hilangkan padding bawaan bootstrap */
+.main-content .container,
+.main-content .container-fluid{
+    max-width:100% !important;
+    padding:0 !important;
+}
+
+/* mobile */
+@media(max-width:768px){
+
+.main-content.centered-content{
+    padding:20px !important;
+}
+
+}

@@ -4,139 +4,265 @@ include '../koneksi.php';
 
 /** @var mysqli $koneksi */
 
-/* =========================
-   CEK LOGIN
-========================= */
-
 if (!isset($_SESSION['role'])) {
-
     header("location:../index.php?pesan=belum_login");
     exit;
 }
 
-/* =========================
-   CEK ROLE KASIR
-========================= */
-
 if ($_SESSION['role'] != 'kasir') {
-
     header("location:../index.php?pesan=bukan_kasir");
     exit;
 }
 ?>
 
-<div class="container">
+<style>
 
-    <div class="card shadow-sm">
+body{
+    background:#f6f7fb;
+}
 
-        <!-- HEADER -->
-        <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+/* HEADER */
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:20px;
+    margin-bottom:35px;
+}
 
-            <h5 class="mb-0">
-                Data Produk
-            </h5>
+.page-title{
+    font-size:2rem;
+    font-weight:700;
+    color:#2d1b10;
+    margin-bottom:6px;
+}
 
-            <a href="order_tambah.php"
-               class="btn btn-sm btn-primary">
+.page-subtitle{
+    color:#777;
+    font-size:.95rem;
+}
 
-                <i class="fas fa-plus"></i>
-                Order Produk
+/* BUTTON */
+.btn-modern{
+    background:#c58a3a;
+    color:#fff;
+    border:none;
+    padding:12px 22px;
+    border-radius:14px;
+    font-weight:600;
+    transition:.25s;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+}
 
-            </a>
+.btn-modern:hover{
+    transform:translateY(-2px);
+    opacity:.92;
+    color:#fff;
+}
+
+/* PRODUK */
+.section-title{
+    font-size:1.5rem;
+    font-weight:700;
+    color:#2d1b10;
+    margin-bottom:25px;
+}
+
+.produk-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+    gap:25px;
+}
+
+.produk-card{
+    background:#fff;
+    border-radius:24px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.06);
+    border:1px solid #f1f1f1;
+    transition:.25s;
+}
+
+.produk-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 18px 35px rgba(0,0,0,.12);
+}
+
+.produk-img{
+    width:100%;
+    height:230px;
+    object-fit:cover;
+    background:#fafafa;
+}
+
+.produk-body{
+    padding:22px;
+}
+
+.badge-kategori{
+    display:inline-block;
+    background:#f8efe1;
+    color:#c58a3a;
+    padding:7px 14px;
+    border-radius:999px;
+    font-size:.8rem;
+    font-weight:600;
+    margin-bottom:14px;
+}
+
+.produk-nama{
+    font-size:1.15rem;
+    font-weight:700;
+    color:#2d1b10;
+    margin-bottom:10px;
+}
+
+.produk-desc{
+    color:#777;
+    font-size:.92rem;
+    line-height:1.6;
+    height:48px;
+    overflow:hidden;
+}
+
+.produk-footer{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:22px;
+}
+
+.harga{
+    font-size:1.1rem;
+    font-weight:700;
+    color:#c58a3a;
+}
+
+.stok{
+    background:#f5f5f5;
+    padding:7px 14px;
+    border-radius:999px;
+    font-size:.82rem;
+    color:#666;
+}
+
+.created{
+    margin-top:16px;
+    font-size:.8rem;
+    color:#999;
+}
+
+</style>
+
+<div class="container py-5">
+
+    <!-- HEADER -->
+    <div class="page-header">
+
+        <div>
+
+            <h2 class="page-title">
+                🍰 Dashboard Produk
+            </h2>
+
+            <div class="page-subtitle">
+                Kelola produk toko kue 
+            </div>
 
         </div>
 
-        <!-- BODY -->
-        <div class="card-body">
+        <a href="order_tambah.php" class="btn-modern">
 
-            <table class="table table-bordered table-striped table-hover">
+            <i class="fa fa-cart-shopping"></i>
+            Order Produk
 
-                <thead class="table-dark">
+        </a>
 
-                    <tr>
-                        <th>No</th>
-                        <th>Gambar</th>
-                        <th>Nama Produk</th>
-                        <th>Kategori ID</th>
-                        <th>Harga</th>
-                        <th>Stok</th>
-                        <th>Deskripsi</th>
-                        <th>Created At</th>
-                    </tr>
+    </div>
 
-                </thead>
+    
 
-                <tbody>
+    <!-- PRODUK -->
+    <div class="section-title">
+        🧁 Data Produk
+    </div>
 
-                    <?php
-                    $data = mysqli_query($koneksi,
-                            "SELECT * FROM produk
-                            JOIN kategori 
-                            ON produk.kategori_id = kategori.kategori_id
-                            ORDER BY produk.produk_id DESC");
+    <div class="produk-grid">
 
-                    $no = 1;
+        <?php
+        $produk = mysqli_query($koneksi,
+            "SELECT * FROM produk
+             JOIN kategori
+             ON produk.kategori_id = kategori.kategori_id
+             ORDER BY produk.produk_id DESC");
 
-                    while ($d = mysqli_fetch_array($data)) {
-                    ?>
+        while($p = mysqli_fetch_array($produk)){
+        ?>
 
-                    <tr>
+        <div class="produk-card">
 
-                        <!-- NO -->
-                        <td>
-                            <?php echo $no++; ?>
-                        </td>
+            <!-- GAMBAR -->
+            <img src="../gambar/<?= $p['gambar']; ?>"
+                 class="produk-img"
+                 onerror="this.src='../gambar/default.jpeg'">
 
-                        <!-- GAMBAR -->
-                        <td width="120">
+            <div class="produk-body">
 
-                            <img src="../gambar/<?php echo $d['gambar']; ?>"
-                                 width="100"
-                                 class="img-fluid rounded">
+                <!-- KATEGORI -->
+                <div class="badge-kategori">
 
-                        </td>
+                    <?= $p['nama_kategori']; ?>
 
-                        <!-- NAMA PRODUK -->
-                        <td>
-                            <?php echo $d['nama_produk']; ?>
-                        </td>
+                </div>
 
-                        <!-- KATEGORI -->
-                        <td>
-                            <?php echo $d['nama_kategori']; ?>
-                        </td>
+                <!-- NAMA -->
+                <div class="produk-nama">
 
-                        <!-- HARGA -->
-                        <td>
-                            Rp <?php echo number_format($d['harga']); ?>
-                        </td>
+                    <?= $p['nama_produk']; ?>
 
-                        <!-- STOK -->
-                        <td>
-                            <?php echo $d['stok']; ?>
-                        </td>
+                </div>
 
-                        <!-- DESKRIPSI -->
-                        <td>
-                            <?php echo $d['deskripsi']; ?>
-                        </td>
+                <!-- DESKRIPSI -->
+                <div class="produk-desc">
 
-                        <!-- CREATED -->
-                        <td>
-                            <?php echo $d['created_at']; ?>
-                        </td>
+                    <?= $p['deskripsi']; ?>
 
-                    </tr>
+                </div>
 
-                    <?php
-                    }
-                    ?>
+                <!-- INFO -->
+                <div class="produk-footer">
 
-                </tbody>
+                    <div class="harga">
 
-            </table>
+                        Rp <?= number_format($p['harga']); ?>
+
+                    </div>
+
+                    <div class="stok">
+
+                        Stok <?= $p['stok']; ?>
+
+                    </div>
+
+                </div>
+
+                <!-- CREATED -->
+                <div class="created">
+
+                    Dibuat :
+                    <?= $p['created_at']; ?>
+
+                </div>
+
+            </div>
 
         </div>
+
+        <?php } ?>
 
     </div>
 

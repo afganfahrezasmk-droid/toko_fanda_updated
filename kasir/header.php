@@ -65,11 +65,6 @@ $current = basename($_SERVER['PHP_SELF']);
                 </a>
             </li>
             <li>
-                <a href="kategori.php" class="<?= (strpos($current,'kategori')!==false)?'active':'' ?>">
-                    <i class="fas fa-tags"></i> Kategori
-                </a>
-            </li>
-            <li>
                 <a href="produk.php" class="<?= (strpos($current,'produk')!==false)?'active':'' ?>">
                     <i class="fas fa-cart-shopping"></i> Order
                 </a>

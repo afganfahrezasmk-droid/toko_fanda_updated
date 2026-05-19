@@ -184,8 +184,6 @@ if ($_SESSION['role'] != 'pelanggan') {
 
         <div class="text-center w-100">
 
-            
-
             <h2 class="page-title">
                 🛒 Keranjang Belanja
             </h2>

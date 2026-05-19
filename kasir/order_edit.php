@@ -18,9 +18,9 @@ if (!isset($_SESSION['role'])) {
    CEK ROLE ADMIN
 ========================= */
 
-if ($_SESSION['role'] != 'admin') {
+if ($_SESSION['role'] != 'kasir') {
 
-    header("location:../index.php?pesan=bukan_admin");
+    header("location:../index.php?pesan=bukan_kasir");
     exit;
 }
 ?>
@@ -38,7 +38,7 @@ if ($_SESSION['role'] != 'admin') {
             <div class="col-md-8 col-md-offset-2">
 
                 <!-- BUTTON KEMBALI -->
-                <a href="order.php"
+                <a href="produk.php"
                    class="btn btn-sm btn-info pull-right">
 
                     Kembali

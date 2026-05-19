@@ -72,19 +72,38 @@ $jml_user = mysqli_num_rows($user);
                     <td><?= htmlspecialchars($d['username']) ?></td>
                     <td style="font-weight:600;">Rp <?= number_format($d['total']) ?></td>
                     <td><?= htmlspecialchars($d['metode_pembayaran']) ?></td>
-                    <td>
+                   <td>
                         <?php
                         $s = $d['status'];
-                        if ($s == 'pending') echo "<span class='badge bg-warning text-dark'>Menunggu</span>";
-                        elseif ($s == 'selesai') echo "<span class='badge bg-success'>Selesai</span>";
-                        elseif ($s == 'diproses') echo "<span class='badge bg-info'>Di proses</span>";
-                        else echo "<span class='badge bg-danger'>Dibatalkan</span>";
+
+                        if ($s == 'pending') {
+                            echo "<span class='badge bg-warning text-dark'>Menunggu</span>";
+
+                        } elseif ($s == 'dibayar') {
+                            echo "<span class='badge bg-info'>Dibayar</span>";
+
+                        } elseif ($s == 'selesai') {
+                            echo "<span class='badge bg-success'>Selesai</span>";
+
+                        } else {
+                            echo "<span class='badge bg-danger'>Dibatalkan</span>";
+                        }
                         ?>
                     </td>
                     <td style="font-size:.82rem;color:var(--text-muted);"><?= $d['created_at'] ?></td>
                     <td>
-                        <a href="order_invoice.php?id=<?= $d['orders_id'] ?>" class="btn btn-sm btn-primary">
-                            <i class="fas fa-file-invoice me-1"></i>Invoice
+                        <a href="order_edit.php?id=<?= $d['orders_id'] ?>"
+                        class="btn btn-sm btn-info me-1">
+
+                        Edit
+                        </a>
+
+                        <a href="order_invoice.php?invoice=<?= $d['invoice'] ?>"
+                        class="btn btn-sm btn-primary">
+
+                            <i class="fas fa-file-invoice me-1"></i>
+                            Invoice
+
                         </a>
                     </td>
                 </tr>

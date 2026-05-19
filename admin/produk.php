@@ -18,7 +18,7 @@ if ($_SESSION['role'] != 'admin') { header("location:../index.php?pesan=bukan_ad
     <div class="card-header">
         <h5>Daftar Produk</h5>
         <a href="produk_tambah.php" class="btn btn-primary btn-sm">
-            <i class="fas fa-plus me-1"></i>+ Tambahkan Produk
+            <i class="fas fa-plus me-1"></i> Tambahkan Produk
         </a>
     </div>
 

@@ -4,185 +4,307 @@ include '../koneksi.php';
 
 /** @var mysqli $koneksi */
 
-/* =========================
-   CEK LOGIN
-========================= */
-
 if (!isset($_SESSION['role'])) {
-
     header("location:../index.php?pesan=belum_login");
     exit;
 }
 
-/* =========================
-   CEK ROLE KASIR
-========================= */
-
 if ($_SESSION['role'] != 'kasir') {
-
     header("location:../index.php?pesan=bukan_kasir");
     exit;
 }
 ?>
 
-<div class="container">
+<style>
 
-    <div class="panel">
+.order-wrap{
+    max-width:1100px;
+    margin:auto;
+    padding:40px 24px 70px;
+}
 
-        <div class="panel-heading">
-            <h4>Tambah Order</h4>
-        </div>
+.order-card{
+    background:#fff;
+    border-radius:20px;
+    padding:30px;
+    box-shadow:0 10px 30px rgba(0,0,0,.05);
+}
 
-        <div class="panel-body">
+.page-title{
+    margin-bottom:30px;
+}
 
-            <div class="col-md-10 col-md-offset-1">
+.page-title h2{
+    font-size:1.8rem;
+    font-weight:700;
+    margin-bottom:8px;
+    color:#222;
+}
 
-                <!-- BUTTON KEMBALI -->
-                <a href="order.php" class="btn btn-sm btn-info pull-right">
-                    Kembali
-                </a>
+.page-title p{
+    color:#888;
+    font-size:.95rem;
+}
 
-                <br><br>
+.form-label{
+    font-weight:600;
+    margin-bottom:8px;
+    color:#333;
+}
 
-                <form method="POST" action="order_aksi.php">
+.form-control,
+.form-select{
+    border-radius:12px;
+    padding:12px 14px;
+    border:1px solid #ddd;
+    box-shadow:none !important;
+}
 
-                    <!-- USER -->
-                    <div class="form-group">
+.form-control:focus,
+.form-select:focus{
+    border-color:#c59d5f;
+}
 
-                        <label>User</label>
+.table{
+    margin-top:20px;
+}
 
-                        <select name="user_id" class="form-control" required>
+.table thead th{
+    background:#f8f8f8;
+    border:none;
+    padding:14px;
+    font-size:.9rem;
+    color:#555;
+}
 
-                            <option value="">
-                                -- Pilih User --
-                            </option>
+.table tbody td{
+    vertical-align:middle;
+    padding:14px;
+}
 
-                            <?php
-                            $user = mysqli_query($koneksi,
-                                "SELECT * FROM user");
+.produk-img{
+    width:55px;
+    height:55px;
+    border-radius:12px;
+    object-fit:cover;
+    margin-right:12px;
+}
 
-                            while($u = mysqli_fetch_array($user)){
-                            ?>
+.produk-box{
+    display:flex;
+    align-items:center;
+}
 
-                            <option value="<?php echo $u['user_id']; ?>">
+.produk-nama{
+    font-weight:600;
+    color:#222;
+}
 
-                                <?php echo $u['nama']; ?>
+.produk-harga{
+    font-size:.85rem;
+    color:#888;
+}
 
-                            </option>
+.qty-input{
+    width:90px;
+    border-radius:10px;
+    text-align:center;
+}
 
-                            <?php
-                            }
-                            ?>
+.btn-simpan{
+    border:none;
+    background:#c59d5f;
+    color:#fff;
+    padding:13px 28px;
+    border-radius:12px;
+    font-weight:600;
+    transition:.2s;
+}
 
-                        </select>
+.btn-simpan:hover{
+    opacity:.9;
+}
 
-                    </div>
+.btn-kembali{
+    border-radius:12px;
+    padding:11px 22px;
+}
 
-                    <!-- INVOICE -->
-                    <div class="form-group">
+</style>
 
-                        <label>Invoice</label>
+<div class="order-wrap">
 
-                        <input type="text"
-                               name="invoice"
-                               class="form-control"
-                               value="INV-<?php echo rand(1000,9999); ?>"
-                               readonly>
+    <div class="page-title">
+        <h2>Tambah Order</h2>
+        <p>Buat pesanan baru untuk pelanggan.</p>
+    </div>
 
-                    </div>
+    <div class="mb-4">
 
-                    <!-- METODE PEMBAYARAN -->
-                    <div class="form-group">
+        <a href="order.php"
+           class="btn btn-outline-dark btn-kembali">
 
-                        <label>Metode Pembayaran</label>
+            <i class="fa fa-arrow-left me-2"></i>
+            Kembali
 
-                        <select name="metode_pembayaran"
-                                class="form-control"
-                                required>
+        </a>
 
-                            <option value="">
-                                -- Pilih Metode --
-                            </option>
+    </div>
 
-                            <option value="Cash">
-                                Cash
-                            </option>
+    <div class="order-card">
 
-                            <option value="Transfer">
-                                Transfer
-                            </option>
+        <form method="POST" action="order_aksi.php">
 
-                            <option value="QRIS">
-                                QRIS
-                            </option>
+                <div class="col-md-6 mb-4">
+                    <input type="hidden"
+                        name="user_id"
+                        value="<?= $_SESSION['user_id']; ?>">
+                <!-- INVOICE -->
+                <div class="col-md-4 mb-4">
 
-                        </select>
+                    <label class="form-label">
+                        Invoice
+                    </label>
 
-                    </div>
+                    <input type="text"
+                           name="invoice"
+                           class="form-control"
+                           value="INV-<?= rand(1000,9999); ?>"
+                           readonly>
 
-                    <hr>
+                </div>
 
-                    <h4>Data Produk</h4>
+                <!-- METODE -->
+                <div class="col-md-4 mb-4">
 
-                    <table class="table table-bordered">
+                    <label class="form-label">
+                        Metode Pembayaran
+                    </label>
 
+                    <select name="metode_pembayaran"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            -- Pilih Metode --
+                        </option>
+
+                        <option value="Cash">
+                            Cash
+                        </option>
+
+                        <option value="Transfer">
+                            Transfer
+                        </option>
+
+                        <option value="QRIS">
+                            QRIS
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+            <h5 class="mb-4">
+                Data Produk
+            </h5>
+
+            <div class="table-responsive">
+
+                <table class="table align-middle">
+
+                    <thead>
                         <tr>
                             <th>Produk</th>
                             <th>Harga</th>
                             <th width="20%">Qty</th>
                         </tr>
+                    </thead>
 
-                        <?php
-                        $produk = mysqli_query($koneksi,
-                            "SELECT * FROM produk");
+                    <tbody>
 
-                        while($p = mysqli_fetch_array($produk)){
-                        ?>
+                    <?php
+                    $produk = mysqli_query($koneksi,
+                        "SELECT * FROM produk");
 
-                        <tr>
+                    while($p = mysqli_fetch_array($produk)){
+                    ?>
 
-                            <td>
+                    <tr>
 
-                                <?php echo $p['nama_produk']; ?>
+                        <td>
 
-                                <input type="hidden"
-                                       name="produk_id[]"
-                                       value="<?php echo $p['produk_id']; ?>">
+                            <div class="produk-box">
 
-                            </td>
+                                <img src="../gambar/<?= $p['gambar']; ?>"
+                                     class="produk-img"
+                                     onerror="this.src='../gambar/default.jpeg'">
 
-                            <td>
-                                Rp <?php echo number_format($p['harga']); ?>
-                            </td>
+                                <div>
 
-                            <td>
+                                    <div class="produk-nama">
+                                        <?= htmlspecialchars($p['nama_produk']); ?>
+                                    </div>
 
-                                <input type="number"
-                                       name="qty[]"
-                                       class="form-control"
-                                       min="0"
-                                       value="0">
+                                    <div class="produk-harga">
+                                        Stok:
+                                        <?= $p['stok']; ?>
+                                    </div>
 
-                            </td>
+                                </div>
 
-                        </tr>
+                            </div>
 
-                        <?php
-                        }
-                        ?>
+                            <input type="hidden"
+                                   name="produk_id[]"
+                                   value="<?= $p['produk_id']; ?>">
 
-                    </table>
+                        </td>
 
-                    <!-- BUTTON -->
-                    <input type="submit"
-                           class="btn btn-primary"
-                           value="Simpan Order">
+                        <td>
 
-                </form>
+                            Rp <?= number_format($p['harga']); ?>
+
+                        </td>
+
+                        <td>
+
+                            <input type="number"
+                                   name="qty[]"
+                                   class="form-control qty-input"
+                                   min="0"
+                                   max="<?= $p['stok']; ?>"
+                                   value="0">
+
+                        </td>
+
+                    </tr>
+
+                    <?php } ?>
+
+                    </tbody>
+
+                </table>
 
             </div>
 
-        </div>
+            <div class="mt-4">
+
+                <button type="submit"
+                        class="btn-simpan">
+
+                    <i class="fa fa-save me-2"></i>
+                    Simpan Order
+
+                </button>
+
+            </div>
+
+        </form>
 
     </div>
 

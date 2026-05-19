@@ -106,7 +106,7 @@ if ($_SESSION['role'] != 'admin') {
 
                             }elseif($d['status'] == 'dibayar'){
 
-                                echo "<span class='badge bg-primary'>Dibayar</span>";
+                                echo "<span class='badge bg-info'>Dibayar</span>";
 
                             }elseif($d['status'] == 'selesai'){
 

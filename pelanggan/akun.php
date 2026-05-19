@@ -109,21 +109,6 @@ if (!$d) {
                     <!-- FOTO ICON -->
                     <div class="text-center mb-4">
 
-                        <div style="
-                            width:90px;
-                            height:90px;
-                            margin:auto;
-                            border-radius:50%;
-                            background:#f1f1f1;
-                            display:flex;
-                            align-items:center;
-                            justify-content:center;
-                            font-size:2rem;
-                            color:#555;
-                        ">
-                            <i class="fa fa-user"></i>
-                        </div>
-
                         <h5 class="mt-3 mb-0">
                             <?= htmlspecialchars($d['nama']); ?>
                         </h5>
