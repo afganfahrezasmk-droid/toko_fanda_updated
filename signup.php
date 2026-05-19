@@ -494,26 +494,15 @@ body {
   <div class="signup-visual">
 
     <!-- Orbit rings -->
-    <div class="orbit-ring ring-1"></div>
     <div class="orbit-ring ring-2"></div>
-    <div class="orbit-ring ring-3"></div>
 
     <!-- Orbit 1 — ring kecil, satu titik atas dan bawah -->
     <div class="orbit o1">
-      <div class="orb-dot md"></div>
       <div class="orb-dot md orb-dot-b"></div>
     </div>
 
     <!-- Orbit 2 — ring sedang, tiga titik -->
     <div class="orbit o2">
-      <div class="orb-dot sm"></div>
-      <div class="orb-dot lg orb-dot-l"></div>
-      <div class="orb-dot sm orb-dot-r"></div>
-    </div>
-
-    <!-- Orbit 3 — ring besar, dua titik -->
-    <div class="orbit o3">
-      <div class="orb-dot md" style="top:auto;bottom:0;left:50%;transform:translate(-50%,50%)"></div>
       <div class="orb-dot sm orb-dot-r"></div>
     </div>
 

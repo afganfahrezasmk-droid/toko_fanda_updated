@@ -108,12 +108,7 @@ body::before {
     background-size:200px 200px;
 }
 
-/* ══════════════════════════════════════════════════════
-   BAGIAN YANG DIUBAH: Food decoration — Courante style
-   Kue bleeding dari sudut + vignette biar menyatu
-══════════════════════════════════════════════════════ */
-
-/* Vignette — tepi gelap, kue jadi nyambung dengan background */
+/* Vignette */
 .vignette {
     position: fixed; inset: 0; z-index: 3;
     pointer-events: none;
@@ -137,51 +132,24 @@ body::before {
     filter: drop-shadow(0 20px 50px rgba(0,0,0,.65));
 }
 
-/* ── POSISI: sistem tl/tr/bl/br/ml/mr seperti halaman pelanggan ──
-   Lebih berani ke tengah, tidak terpotong tepi                   */
+/* ── POSISI — tidak diubah ── */
+.food-wrap.f1 { top: 3%; left: 3%; }
+.food-wrap.f2 { top: -17%; right: 3%; }
+.food-wrap.f3 { bottom: -4%; left: 4%; }
+.food-wrap.f4 { bottom: 2%; right: 3%; }
+.food-wrap.f5 { top: 50%; left: 17%; transform: translateY(-50%); }
+.food-wrap.f6 { top: 50%; right: 18%; transform: translateY(-50%); }
 
-/* Kiri Atas */
-.food-wrap.f1 {
-    top: 3%;
-    left: 3%;
-}
-/* Kanan Atas */
-.food-wrap.f2 {
-    top: 2%;
-    right: 2%;
-}
-/* Kiri Bawah */
-.food-wrap.f3 {
-    bottom: 3%;
-    left: 4%;
-}
-/* Kanan Bawah */
-.food-wrap.f4 {
-    bottom: 2%;
-    right: 3%;
-}
-/* Kiri Tengah — area kosong di sebelah kiri card login */
-.food-wrap.f5 {
-    top: 50%;
-    left: 5%;
-    transform: translateY(-50%);
-}
-/* Kanan Tengah — area kosong di sebelah kanan card login */
-.food-wrap.f6 {
-    top: 50%;
-    right: 5%;
-    transform: translateY(-50%);
-}
-
-/* Ukuran — sama seperti halaman pelanggan (.hf-wrap.ml/.mr) */
+/* ── UKURAN — tidak diubah ── */
 .food-wrap.f1 .food-img { width: clamp(160px,15vw,220px); height:auto; }
-.food-wrap.f2 .food-img { width: clamp(170px,16vw,240px); height:auto; }
+.food-wrap.f2 .food-img { width: clamp(180px,18vw,280px); height:auto; }
 .food-wrap.f3 .food-img { width: clamp(150px,14vw,210px); height:auto; }
 .food-wrap.f4 .food-img { width: clamp(160px,15vw,225px); height:auto; }
-.food-wrap.f5 .food-img { width: clamp(120px,11vw,160px); height:auto; }
-.food-wrap.f6 .food-img { width: clamp(120px,11vw,160px); height:auto; }
+/* f5 & f6: shadow lebih lembut + sedikit opacity biar nyatu */
+.food-wrap.f5 .food-img { width: clamp(120px,11vw,160px); height:auto; filter: drop-shadow(0 12px 30px rgba(0,0,0,.65)) opacity(0.88); }
+.food-wrap.f6 .food-img { width: clamp(120px,11vw,160px); height:auto; filter: drop-shadow(0 12px 30px rgba(0,0,0,.65)) opacity(0.88); }
 
-/* Slide-in dari sudut masing-masing */
+/* ── FLY-IN ANIMATIONS ── */
 @keyframes flyTL { from{opacity:0;transform:translate(-70px,-70px) rotate(-20deg)} to{opacity:1;transform:translate(0,0) rotate(-10deg)} }
 @keyframes flyTR { from{opacity:0;transform:translate(70px,-70px)  rotate(18deg)}  to{opacity:1;transform:translate(0,0) rotate(8deg)}  }
 @keyframes flyBL { from{opacity:0;transform:translate(-70px,70px)  rotate(16deg)}  to{opacity:1;transform:translate(0,0) rotate(11deg)} }
@@ -196,25 +164,22 @@ body::before {
 .food-wrap.f5 { animation: flyML 1.1s .28s cubic-bezier(.22,.68,0,1) forwards; }
 .food-wrap.f6 { animation: flyMR 1.1s .22s cubic-bezier(.22,.68,0,1) forwards; }
 
-/* Float setelah masuk — mempertahankan rotasi akhir */
+/* ── FLOAT ANIMATIONS ── */
 @keyframes flt1 { 0%,100%{transform:rotate(-10deg) translateY(0)}   50%{transform:rotate(-6deg)  translateY(-11px)} }
 @keyframes flt2 { 0%,100%{transform:rotate(8deg)   translateY(0)}   50%{transform:rotate(12deg)  translateY(-15px)} }
 @keyframes flt3 { 0%,100%{transform:rotate(11deg)  translateY(0)}   50%{transform:rotate(6deg)   translateY(-9px)}  }
 @keyframes flt4 { 0%,100%{transform:rotate(-9deg)  translateY(0)}   50%{transform:rotate(-14deg) translateY(-13px)} }
-@keyframes flt5 { 0%,100%{transform:translateY(-50%) translateX(0)} 50%{transform:translateY(-52%) translateX(4px)} }
-@keyframes flt6 { 0%,100%{transform:translateY(-50%) translateX(0)} 50%{transform:translateY(-48%) translateX(-4px)} }
 
-/* Delay float setelah fly-in selesai */
-.food-wrap.f1 .food-img { animation: flt1 9s  1.3s ease-in-out infinite; }
-.food-wrap.f2 .food-img { animation: flt2 10s 1.2s ease-in-out infinite; }
-.food-wrap.f3 .food-img { animation: flt3 8s  1.4s ease-in-out infinite; }
-.food-wrap.f4 .food-img { animation: flt4 11s 1.3s ease-in-out infinite; }
-.food-wrap.f5 .food-img { animation: flt5 12s 1.5s ease-in-out infinite; }
-.food-wrap.f6 .food-img { animation: flt6 10s 1.4s ease-in-out infinite; }
+/* f5 & f6: goyang + rotate seperti yang lain, tanpa translateY(-50%) biar tidak loncat */
+@keyframes flt5fix { 0%,100%{transform:rotate(-8deg) translateY(0)}  50%{transform:rotate(-4deg) translateY(-10px)} }
+@keyframes flt6fix { 0%,100%{transform:rotate(7deg)  translateY(0)}  50%{transform:rotate(11deg) translateY(-12px)} }
 
-/* ══════════════════════════════════════════════════════
-   SAMPAI SINI perubahan CSS dekorasi
-══════════════════════════════════════════════════════ */
+.food-wrap.f1 .food-img { animation: flt1    9s  1.3s ease-in-out infinite; }
+.food-wrap.f2 .food-img { animation: flt2    10s 1.2s ease-in-out infinite; }
+.food-wrap.f3 .food-img { animation: flt3    8s  1.4s ease-in-out infinite; }
+.food-wrap.f4 .food-img { animation: flt4    11s 1.3s ease-in-out infinite; }
+.food-wrap.f5 .food-img { animation: flt5fix 12s 1.5s ease-in-out infinite; }
+.food-wrap.f6 .food-img { animation: flt6fix 10s 1.4s ease-in-out infinite; }
 
 /* ── MAIN LAYOUT ── */
 .page {
@@ -394,10 +359,10 @@ body::before {
 <div id="cur"></div>
 <div id="cur-r"></div>
 
-<!-- VIGNETTE — tepi gelap biar kue menyatu (BARU) -->
+<!-- VIGNETTE -->
 <div class="vignette"></div>
 
-<!-- FOTO KUE MELAYANG — posisi bleeding dari sudut (DIUBAH) -->
+<!-- FOTO KUE MELAYANG -->
 <div class="food-wrap f1"><img class="food-img" src="gambar/strawberry_thumbprint.png" alt=""></div>
 <div class="food-wrap f2"><img class="food-img" src="gambar/sagu_keju.png" alt=""></div>
 <div class="food-wrap f3"><img class="food-img" src="gambar/nastar.png" alt=""></div>
@@ -515,16 +480,6 @@ document.querySelector('.btn-masuk').addEventListener('click', function(e){
 const style=document.createElement('style');
 style.textContent='@keyframes ripple{to{transform:scale(20);opacity:0}}';
 document.head.appendChild(style);
-
-/* ── PARALLAX MOUSE — kue ikut bergerak halus (BARU) ── */
-document.addEventListener('mousemove', e => {
-    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx, dy = (e.clientY - cy) / cy;
-    document.querySelectorAll('.food-wrap').forEach((el, i) => {
-        const f = (i % 2 === 0 ? 1 : -1) * (i < 4 ? 7 : 3);
-        el.style.transform = `translate(${dx*f}px,${dy*f}px)`;
-    });
-});
 </script>
 </body>
 </html>

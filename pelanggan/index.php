@@ -513,8 +513,8 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
   <ul class="nav-links">
     <li><a href="#">Beranda</a></li>
     <li><a href="#menu">Menu</a></li>
-    <li><a href="#footer">Kontak</a></li>
     <li><a href="#tentang">Ulasan</a></li>
+    <li><a href="#footer">Kontak</a></li>
   </ul>
   <div class="nav-r">
     <button class="nav-icon" title="Keranjang" onclick="window.location.href='order_tambah.php'">
@@ -557,9 +557,7 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 
   <!-- Konten tengah -->
   <div class="hero-inner">
-    <div class="hero-badge"><span class="bdot"></span>Fresh Baked Daily · Semarang</div>
     <h1 class="hero-name">Toko Kue Fanda</h1>
-    <p class="hero-tagline">Artisanal Bakery &amp; Kue Buatan Tangan</p>
     <a href="#menu" class="hero-tag">
       Jelajahi Menu
       <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
@@ -892,7 +890,7 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
         <li><a href="#kontak">Tentang Kami</a></li>
         <li><a href="keranjang.php">Cara Order</a></li>
         <li><a href="#tentang">FAQ</a></li>
-        <li><a href="#menu">Promo</a></li>
+        <li><a href="#menu">Menu Favorit</a></li>
       </ul>
     </div>
     <div>
