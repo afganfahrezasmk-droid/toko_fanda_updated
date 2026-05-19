@@ -108,64 +108,117 @@ body::before {
     background-size:200px 200px;
 }
 
-/* ── FLOATING FOOD IMAGES ── */
-/* Gambar tidak dibuat bulat — cocok untuk foto yang sudah di-remove background */
-.food-wrap { position:fixed; pointer-events:none; z-index:2; }
-.food-img  {
-    object-fit: contain;   /* tampilkan penuh, tidak dipotong */
-    display: block;
-    filter: drop-shadow(0 20px 40px rgba(0,0,0,.55));
-    /* HAPUS border-radius agar gambar remove-bg tampil alami */
+/* ══════════════════════════════════════════════════════
+   BAGIAN YANG DIUBAH: Food decoration — Courante style
+   Kue bleeding dari sudut + vignette biar menyatu
+══════════════════════════════════════════════════════ */
+
+/* Vignette — tepi gelap, kue jadi nyambung dengan background */
+.vignette {
+    position: fixed; inset: 0; z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center,
+        transparent 28%,
+        rgba(45,21,7,.5) 68%,
+        rgba(28,10,0,.9) 100%
+    );
 }
 
-/* Posisi & ukuran */
-.food-wrap.f1 { top:-2%; left:-2%; }
-.food-wrap.f2 { top:-1%; right:-1%; }
-.food-wrap.f3 { bottom:-2%; left:0%; }
-.food-wrap.f4 { bottom:-1%; right:0%; }
-.food-wrap.f5 { top:36%; left:-1%; transform:translateY(-50%); }
-.food-wrap.f6 { top:36%; right:-1%; transform:translateY(-50%); }
+/* Base untuk semua dekorasi kue */
+.food-wrap {
+    position: fixed;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+}
+.food-img {
+    object-fit: contain;
+    display: block;
+    filter: drop-shadow(0 20px 50px rgba(0,0,0,.65));
+}
 
-.food-wrap.f1 .food-img { width:clamp(140px,14vw,210px); height:clamp(140px,14vw,210px); }
-.food-wrap.f2 .food-img { width:clamp(160px,16vw,240px); height:clamp(160px,16vw,240px); }
-.food-wrap.f3 .food-img { width:clamp(130px,13vw,190px); height:clamp(130px,13vw,190px); }
-.food-wrap.f4 .food-img { width:clamp(150px,15vw,220px); height:clamp(150px,15vw,220px); }
-.food-wrap.f5 .food-img { width:clamp(95px,9vw,135px);   height:clamp(95px,9vw,135px); }
-.food-wrap.f6 .food-img { width:clamp(100px,10vw,145px); height:clamp(100px,10vw,145px); }
+/* ── POSISI: sistem tl/tr/bl/br/ml/mr seperti halaman pelanggan ──
+   Lebih berani ke tengah, tidak terpotong tepi                   */
 
-/* Fly-in */
-.food-wrap.f1 { animation: flyTL 1.1s .05s cubic-bezier(.22,.68,0,1) forwards; }
+/* Kiri Atas */
+.food-wrap.f1 {
+    top: 3%;
+    left: 3%;
+}
+/* Kanan Atas */
+.food-wrap.f2 {
+    top: 2%;
+    right: 2%;
+}
+/* Kiri Bawah */
+.food-wrap.f3 {
+    bottom: 3%;
+    left: 4%;
+}
+/* Kanan Bawah */
+.food-wrap.f4 {
+    bottom: 2%;
+    right: 3%;
+}
+/* Kiri Tengah — area kosong di sebelah kiri card login */
+.food-wrap.f5 {
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+}
+/* Kanan Tengah — area kosong di sebelah kanan card login */
+.food-wrap.f6 {
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+}
+
+/* Ukuran — sama seperti halaman pelanggan (.hf-wrap.ml/.mr) */
+.food-wrap.f1 .food-img { width: clamp(160px,15vw,220px); height:auto; }
+.food-wrap.f2 .food-img { width: clamp(170px,16vw,240px); height:auto; }
+.food-wrap.f3 .food-img { width: clamp(150px,14vw,210px); height:auto; }
+.food-wrap.f4 .food-img { width: clamp(160px,15vw,225px); height:auto; }
+.food-wrap.f5 .food-img { width: clamp(120px,11vw,160px); height:auto; }
+.food-wrap.f6 .food-img { width: clamp(120px,11vw,160px); height:auto; }
+
+/* Slide-in dari sudut masing-masing */
+@keyframes flyTL { from{opacity:0;transform:translate(-70px,-70px) rotate(-20deg)} to{opacity:1;transform:translate(0,0) rotate(-10deg)} }
+@keyframes flyTR { from{opacity:0;transform:translate(70px,-70px)  rotate(18deg)}  to{opacity:1;transform:translate(0,0) rotate(8deg)}  }
+@keyframes flyBL { from{opacity:0;transform:translate(-70px,70px)  rotate(16deg)}  to{opacity:1;transform:translate(0,0) rotate(11deg)} }
+@keyframes flyBR { from{opacity:0;transform:translate(70px,70px)   rotate(-18deg)} to{opacity:1;transform:translate(0,0) rotate(-9deg)} }
+@keyframes flyML { from{opacity:0;transform:translateX(-50px) translateY(-50%)}    to{opacity:1;transform:translateX(0)  translateY(-50%)} }
+@keyframes flyMR { from{opacity:0;transform:translateX(50px)  translateY(-50%)}    to{opacity:1;transform:translateX(0)  translateY(-50%)} }
+
+.food-wrap.f1 { animation: flyTL 1.2s .05s cubic-bezier(.22,.68,0,1) forwards; }
 .food-wrap.f2 { animation: flyTR 1.2s .00s cubic-bezier(.22,.68,0,1) forwards; }
-.food-wrap.f3 { animation: flyBL 1.1s .20s cubic-bezier(.22,.68,0,1) forwards; }
+.food-wrap.f3 { animation: flyBL 1.2s .20s cubic-bezier(.22,.68,0,1) forwards; }
 .food-wrap.f4 { animation: flyBR 1.2s .10s cubic-bezier(.22,.68,0,1) forwards; }
-.food-wrap.f5 { animation: flyML 1.0s .28s cubic-bezier(.22,.68,0,1) forwards; }
-.food-wrap.f6 { animation: flyMR 1.0s .22s cubic-bezier(.22,.68,0,1) forwards; }
+.food-wrap.f5 { animation: flyML 1.1s .28s cubic-bezier(.22,.68,0,1) forwards; }
+.food-wrap.f6 { animation: flyMR 1.1s .22s cubic-bezier(.22,.68,0,1) forwards; }
 
-@keyframes flyTL { from{opacity:0;transform:translate(-130%,-110%) rotate(-20deg)} to{opacity:1;transform:translate(0,0) rotate(-9deg)} }
-@keyframes flyTR { from{opacity:0;transform:translate(130%,-100%) rotate(18deg)}  to{opacity:1;transform:translate(0,0) rotate(7deg)} }
-@keyframes flyBL { from{opacity:0;transform:translate(-120%,110%) rotate(14deg)}  to{opacity:1;transform:translate(0,0) rotate(10deg)} }
-@keyframes flyBR { from{opacity:0;transform:translate(120%,100%) rotate(-16deg)}  to{opacity:1;transform:translate(0,0) rotate(-8deg)} }
-@keyframes flyML { from{opacity:0;transform:translateY(-50%) translateX(-120%)}   to{opacity:1;transform:translateY(-50%) translateX(0)} }
-@keyframes flyMR { from{opacity:0;transform:translateY(-50%) translateX(120%)}    to{opacity:1;transform:translateY(-50%) translateX(0)} }
+/* Float setelah masuk — mempertahankan rotasi akhir */
+@keyframes flt1 { 0%,100%{transform:rotate(-10deg) translateY(0)}   50%{transform:rotate(-6deg)  translateY(-11px)} }
+@keyframes flt2 { 0%,100%{transform:rotate(8deg)   translateY(0)}   50%{transform:rotate(12deg)  translateY(-15px)} }
+@keyframes flt3 { 0%,100%{transform:rotate(11deg)  translateY(0)}   50%{transform:rotate(6deg)   translateY(-9px)}  }
+@keyframes flt4 { 0%,100%{transform:rotate(-9deg)  translateY(0)}   50%{transform:rotate(-14deg) translateY(-13px)} }
+@keyframes flt5 { 0%,100%{transform:translateY(-50%) translateX(0)} 50%{transform:translateY(-52%) translateX(4px)} }
+@keyframes flt6 { 0%,100%{transform:translateY(-50%) translateX(0)} 50%{transform:translateY(-48%) translateX(-4px)} }
 
-/* Float setelah fly-in */
-.food-wrap.f1 .food-img { animation: flt1 7s 1.15s ease-in-out infinite; }
-.food-wrap.f2 .food-img { animation: flt2 8s 1.20s ease-in-out infinite; }
-.food-wrap.f3 .food-img { animation: flt3 6.5s 1.30s ease-in-out infinite; }
-.food-wrap.f4 .food-img { animation: flt4 7.5s 1.30s ease-in-out infinite; }
-.food-wrap.f5 .food-img { animation: flt5 9s 1.28s ease-in-out infinite; }
-.food-wrap.f6 .food-img { animation: flt6 8.5s 1.22s ease-in-out infinite; }
+/* Delay float setelah fly-in selesai */
+.food-wrap.f1 .food-img { animation: flt1 9s  1.3s ease-in-out infinite; }
+.food-wrap.f2 .food-img { animation: flt2 10s 1.2s ease-in-out infinite; }
+.food-wrap.f3 .food-img { animation: flt3 8s  1.4s ease-in-out infinite; }
+.food-wrap.f4 .food-img { animation: flt4 11s 1.3s ease-in-out infinite; }
+.food-wrap.f5 .food-img { animation: flt5 12s 1.5s ease-in-out infinite; }
+.food-wrap.f6 .food-img { animation: flt6 10s 1.4s ease-in-out infinite; }
 
-@keyframes flt1 { 0%,100%{transform:translateY(0) rotate(-9deg)}  50%{transform:translateY(-16px) rotate(-5deg)} }
-@keyframes flt2 { 0%,100%{transform:translateY(0) rotate(7deg)}   50%{transform:translateY(-20px) rotate(11deg)} }
-@keyframes flt3 { 0%,100%{transform:translateY(0) rotate(10deg)}  50%{transform:translateY(-13px) rotate(5deg)} }
-@keyframes flt4 { 0%,100%{transform:translateY(0) rotate(-8deg)}  50%{transform:translateY(-18px) rotate(-13deg)} }
-@keyframes flt5 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
-@keyframes flt6 { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
+/* ══════════════════════════════════════════════════════
+   SAMPAI SINI perubahan CSS dekorasi
+══════════════════════════════════════════════════════ */
 
 /* ── MAIN LAYOUT ── */
 .page {
-    position: relative; z-index: 3;
+    position: relative; z-index: 4;
     min-height: 100vh;
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
@@ -298,7 +351,6 @@ body::before {
 .btn-masuk:active { transform: translateY(0); box-shadow: 0 4px 16px rgba(192,123,58,.3); }
 
 /* ── SIGN UP LINK ── */
-/* Menggantikan bagian role badges yang dihapus */
 .signup-link {
     margin-top: 22px;
     text-align: center;
@@ -325,14 +377,11 @@ body::before {
 }
 .bottom-note strong { color: rgba(255,252,247,.4); font-weight: 500; }
 
-/* ── SCROLLBAR ── */
 ::-webkit-scrollbar { width:4px; }
 ::-webkit-scrollbar-thumb { background:var(--car); border-radius:2px; }
 
-/* ── ANIMATIONS ── */
 @keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
 
-/* ── RESPONSIVE ── */
 @media (max-width: 500px) {
     .card-login { padding: 30px 22px 28px; }
     .food-wrap.f5, .food-wrap.f6 { display:none; }
@@ -345,7 +394,10 @@ body::before {
 <div id="cur"></div>
 <div id="cur-r"></div>
 
-<!-- FOTO KUE MELAYANG (gambar remove-bg, tanpa border radius) -->
+<!-- VIGNETTE — tepi gelap biar kue menyatu (BARU) -->
+<div class="vignette"></div>
+
+<!-- FOTO KUE MELAYANG — posisi bleeding dari sudut (DIUBAH) -->
 <div class="food-wrap f1"><img class="food-img" src="gambar/strawberry_thumbprint.png" alt=""></div>
 <div class="food-wrap f2"><img class="food-img" src="gambar/sagu_keju.png" alt=""></div>
 <div class="food-wrap f3"><img class="food-img" src="gambar/nastar.png" alt=""></div>
@@ -393,52 +445,34 @@ body::before {
 
             <!-- PASSWORD -->
             <div class="field">
-
-                <label for="passInput">
-                    Password
-                </label>
-
+                <label for="passInput">Password</label>
                 <div class="input-wrap">
-
                     <input type="password"
                         id="passInput"
                         name="password"
                         placeholder="Masukkan password"
                         autocomplete="current-password"
                         required>
-
-                    <!-- ICON KUNCI -->
                     <svg viewBox="0 0 24 24">
                         <rect x="3" y="11" width="18" height="11" rx="2"/>
                         <path d="M7 11V7a5 5 0 0110 0v4"/>
                     </svg>
-
-                    <!-- BUTTON MATA -->
-                    <button type="button"
-                            class="eye-btn"
-                            id="eyeBtn"
-                            title="Tampilkan password">
-
+                    <button type="button" class="eye-btn" id="eyeBtn" title="Tampilkan password">
                         <span id="eyeIcon">👁️</span>
-
                     </button>
-
                 </div>
-
             </div>
 
             <button type="submit" class="btn-masuk">Masuk Sekarang →</button>
 
         </form>
 
-        <!-- SIGN UP LINK (menggantikan role badges) -->
         <div class="signup-link">
             Belum punya akun? <a href="signup.php">Daftar di sini</a>
         </div>
 
     </div>
 
-    <!-- BOTTOM NOTE -->
     <div class="bottom-note">
         © <?= date('Y') ?> <strong>Toko Kue Fanda</strong> · Fresh Baked Daily, Made With Love ❤️
     </div>
@@ -460,21 +494,14 @@ document.querySelectorAll('a,button,input').forEach(el=>{
 const passInput = document.getElementById('passInput');
 const eyeBtn    = document.getElementById('eyeBtn');
 const eyeIcon   = document.getElementById('eyeIcon');
-
 eyeBtn.addEventListener('click', () => {
-
     if(passInput.type === 'password'){
-
         passInput.type = 'text';
         eyeIcon.textContent = '🙈';
-
     }else{
-
         passInput.type = 'password';
         eyeIcon.textContent = '👁️';
-
     }
-
 });
 
 /* ── RIPPLE EFFECT TOMBOL ── */
@@ -488,6 +515,16 @@ document.querySelector('.btn-masuk').addEventListener('click', function(e){
 const style=document.createElement('style');
 style.textContent='@keyframes ripple{to{transform:scale(20);opacity:0}}';
 document.head.appendChild(style);
+
+/* ── PARALLAX MOUSE — kue ikut bergerak halus (BARU) ── */
+document.addEventListener('mousemove', e => {
+    const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+    const dx = (e.clientX - cx) / cx, dy = (e.clientY - cy) / cy;
+    document.querySelectorAll('.food-wrap').forEach((el, i) => {
+        const f = (i % 2 === 0 ? 1 : -1) * (i < 4 ? 7 : 3);
+        el.style.transform = `translate(${dx*f}px,${dy*f}px)`;
+    });
+});
 </script>
 </body>
 </html>

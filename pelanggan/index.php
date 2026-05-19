@@ -58,13 +58,23 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .btn-keluar:hover{background:var(--white);color:var(--esp)}
 
 /* ══════════════════════════════════════
-   HERO — Teks di tengah, roti terbang masuk
+   HERO — Teks di tengah, gambar natural shape (PNG transparan)
 ══════════════════════════════════════ */
 .hero{min-height:100vh;background:var(--esp-2);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 64px 90px;text-align:center}
 
-/* Roti terbang — wrapper untuk fly-in, inner untuk float */
+/* Gambar hias hero — wrapper untuk fly-in, inner untuk float */
 .hf-wrap{position:absolute;pointer-events:none;z-index:1}
-.hf-img{border-radius:50%;object-fit:cover;display:block;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+
+/* 
+  PERUBAHAN 1: .hf-img tidak lagi border-radius:50%
+  Pakai object-fit:contain agar gambar PNG transparan tampil natural
+  Pakai filter:drop-shadow agar shadow ngikutin bentuk gambar
+*/
+.hf-img{
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.45));
+}
 
 /* Posisi akhir masing-masing */
 .hf-wrap.tl{top:-2%;left:-1%}
@@ -96,7 +106,7 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 @keyframes flyML{from{opacity:0;transform:translateY(-50%) translateX(-120%)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
 @keyframes flyMR{from{opacity:0;transform:translateY(-50%) translateX(120%)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
 
-/* FLOAT setelah fly in (pakai delay = durasi fly-in) */
+/* FLOAT setelah fly-in */
 .hf-wrap.tl .hf-img{animation:flt1 7s 1.2s ease-in-out infinite}
 .hf-wrap.tr .hf-img{animation:flt2 8s 1.2s ease-in-out infinite}
 .hf-wrap.bl .hf-img{animation:flt3 6.5s 1.35s ease-in-out infinite}
@@ -118,8 +128,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.6)}}
 .hero-name{font-family:'Kaushan Script',cursive;font-size:clamp(72px,13vw,180px);color:var(--blush);line-height:.92;letter-spacing:-.01em;opacity:0;animation:fadeUp .9s .6s var(--es) forwards;position:relative;z-index:2}
 .hero-tagline{font-family:'Playfair Display',serif;font-size:clamp(14px,2vw,22px);font-style:italic;color:rgba(255,252,247,.55);margin-top:8px;opacity:0;animation:fadeUp .6s .8s forwards}
-
-/* Tag button "Jelajahi Menu" — seperti di Courante */
 .hero-tag{
   display:inline-flex;align-items:center;gap:10px;
   background:var(--white);color:var(--esp);
@@ -151,7 +159,7 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .ticker-dot{width:4px;height:4px;background:var(--car);border-radius:50%;flex-shrink:0}
 
 /* ══════════════════════════════════════
-   MENU SECTION — Pink bg, gambar lingkaran, zoom hover (Image 3 style)
+   MENU SECTION — Pink bg, gambar lingkaran, zoom hover
 ══════════════════════════════════════ */
 .menu-section{padding:90px 64px 100px;background:var(--blush)}
 .menu-head{text-align:center;margin-bottom:20px}
@@ -159,7 +167,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .menu-head .sh{font-family:'Kaushan Script',cursive;font-size:clamp(40px,5vw,68px);color:var(--esp);line-height:1}
 .menu-desc{text-align:center;font-size:.92rem;line-height:1.8;color:var(--brown);max-width:560px;margin:0 auto 58px;font-style:italic}
 
-/* Circular product grid */
 .circle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 24px}
 .c-card{
   display:flex;flex-direction:column;align-items:center;
@@ -205,38 +212,150 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .c-add:hover{background:var(--car)}
 .c-add svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5}
 
-/* See all link */
 .see-all-wrap{text-align:center;margin-top:48px}
 .see-all{display:inline-flex;align-items:center;gap:8px;color:var(--esp);font-size:.88rem;font-weight:600;letter-spacing:.04em;border-bottom:1.5px solid var(--esp);padding-bottom:2px;transition:gap .3s,color .3s}
 .see-all:hover{gap:14px;color:var(--car);border-color:var(--car)}
 .see-all svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
 
 /* ══════════════════════════════════════
-   PROMO BANNER
+   PERUBAHAN 2: MENU FAVORIT — Menggantikan Promo Banner
+   Gaya Courante: background cream/putih, gambar produk besar
+   tanpa background, nama & harga di bawah
 ══════════════════════════════════════ */
-.promo-wrap{padding:0 64px;background:var(--blush);padding-bottom:90px}
-.promo{border-radius:24px;background:var(--esp-2);overflow:hidden;display:grid;grid-template-columns:55% 45%;min-height:440px;position:relative}
-.promo::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;top:-160px;left:-120px;background:radial-gradient(circle,rgba(192,123,58,.15) 0%,transparent 65%);pointer-events:none}
-.promo-left{padding:60px 56px;display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
-.promo-tag{display:flex;align-items:center;gap:10px;font-size:.68rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--car);margin-bottom:14px}
-.promo-tag::before{content:'';display:block;width:22px;height:1.5px;background:var(--car)}
-.promo-h{font-family:'Kaushan Script',cursive;font-size:clamp(38px,5vw,68px);line-height:1.05;color:var(--white);margin-bottom:14px}
-.promo-body{font-size:.88rem;line-height:1.8;color:rgba(255,252,247,.45);max-width:340px;margin-bottom:36px}
-.btn-promo{display:inline-flex;align-items:center;gap:11px;padding:14px 36px;border-radius:var(--pill);background:var(--blush);color:var(--esp);font-size:.88rem;font-weight:600;width:fit-content;cursor:none;transition:background .3s,color .3s}
-.btn-promo:hover{background:transparent;color:var(--white)}
-.btn-promo svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;transition:transform .3s}
-.btn-promo:hover svg{transform:translateX(5px)}
-.promo-right{position:relative;overflow:hidden}
-.promo-imgs{position:absolute;inset:0;display:grid;grid-template-rows:1fr 1fr;gap:2px}
-.promo-imgs img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--es)}
-.promo:hover .promo-imgs img{transform:scale(1.07)}
+.favmenu-section{
+  padding:96px 64px 100px;
+  background:var(--white);
+  position:relative;
+  overflow:hidden;
+}
+/* Dekorasi blob di belakang */
+.favmenu-section::before{
+  content:'';position:absolute;width:600px;height:600px;
+  border-radius:50%;top:-200px;right:-180px;
+  background:radial-gradient(circle, rgba(245,206,204,.35) 0%, transparent 65%);
+  pointer-events:none;
+}
+.favmenu-section::after{
+  content:'';position:absolute;width:400px;height:400px;
+  border-radius:50%;bottom:-150px;left:-120px;
+  background:radial-gradient(circle, rgba(232,180,109,.12) 0%, transparent 65%);
+  pointer-events:none;
+}
+
+.favmenu-head{
+  text-align:center;
+  margin-bottom:16px;
+  position:relative;z-index:1;
+}
+.favmenu-head .stag{
+  display:block;font-size:.68rem;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:var(--car);margin-bottom:10px;
+}
+.favmenu-head .sh{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(36px,5vw,62px);
+  font-weight:900;color:var(--esp);line-height:1.05;
+}
+.favmenu-head .sh em{font-style:italic;color:var(--brown)}
+.favmenu-sub{
+  text-align:center;font-size:.92rem;line-height:1.8;
+  color:var(--muted);max-width:520px;margin:0 auto 68px;
+  font-style:italic;position:relative;z-index:1;
+}
+
+/* Grid 4 kolom — seperti Image 3 (Courante) */
+.favmenu-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px 32px;
+  position:relative;z-index:1;
+}
+
+/* Setiap kartu */
+.fav-card{
+  display:flex;flex-direction:column;align-items:center;
+  cursor:none;
+  opacity:0;transform:translateY(28px);
+}
+.fav-card.show{animation:cardIn .65s var(--es) forwards}
+.fav-card:nth-child(2).show{animation-delay:.1s}
+.fav-card:nth-child(3).show{animation-delay:.2s}
+.fav-card:nth-child(4).show{animation-delay:.3s}
+
+/* Lingkaran gambar */
+.fav-img-ring{
+  width:clamp(180px,20vw,260px);
+  height:clamp(180px,20vw,260px);
+  border-radius:50%;
+  background:var(--blush);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  position:relative;
+  transition:transform .45s var(--ease),box-shadow .45s;
+  box-shadow:0 8px 32px rgba(74,37,16,.12);
+}
+.fav-card:hover .fav-img-ring{
+  transform:translateY(-10px) scale(1.05);
+  box-shadow:0 22px 52px rgba(74,37,16,.22);
+}
+/* 
+  Gambar di dalam ring: object-fit cover untuk gambar JPEG biasa.
+  Kalau pakai PNG transparan, ganti .fav-img-ring background menjadi 
+  transparent dan tambahkan class 'fav-card--nobg' di HTML.
+*/
+.fav-img-ring img{
+  width:100%;height:100%;
+  object-fit:cover;
+  transition:transform .6s var(--es);
+}
+.fav-card:hover .fav-img-ring img{transform:scale(1.1)}
+
+/* Badge ranking */
+.fav-rank{
+  position:absolute;top:14px;left:14px;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--esp);color:var(--gold);
+  font-size:.65rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  letter-spacing:0;
+}
+
+.fav-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--esp);text-align:center;
+  margin-top:22px;line-height:1.2;
+}
+.fav-price{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;font-style:italic;
+  color:var(--car);margin-top:5px;
+}
+.fav-stars{
+  display:flex;gap:2px;margin-top:6px;
+}
+.fav-stars span{color:var(--gold);font-size:.72rem}
+
+/* Divider dekoratif */
+.favmenu-divider{
+  display:flex;align-items:center;gap:18px;
+  max-width:320px;margin:60px auto 0;
+  position:relative;z-index:1;
+}
+.favmenu-divider::before,.favmenu-divider::after{
+  content:'';flex:1;height:1px;background:var(--cream2);
+}
+.favmenu-divider-text{
+  font-family:'Kaushan Script',cursive;
+  font-size:1.1rem;color:var(--muted);white-space:nowrap;
+}
 
 /* ══════════════════════════════════════
-   TESTIMONIAL — Roti besar di sisi, teks besar (Image 2 & 4 style)
+   TESTIMONIAL — PERUBAHAN 3: gambar sisi natural shape
 ══════════════════════════════════════ */
 .testi-section{background:var(--esp-2);overflow:hidden;position:relative}
 
-/* Satu slide testimonial */
 .testi-slide{
   min-height:75vh;
   display:grid;grid-template-columns:360px 1fr 360px;
@@ -246,29 +365,32 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 }
 .testi-slide:nth-child(even){background:rgba(0,0,0,.12)}
 
-/* Gambar roti di sisi — besar, seperti Courante */
+/* 
+  PERUBAHAN 3: .testi-food img tidak lagi border-radius:50%
+  Pakai object-fit:contain agar ngikutin bentuk PNG transparan
+  Pakai filter:drop-shadow agar shadow ngikutin bentuk gambar
+*/
 .testi-food{
   width:100%;height:100%;
   display:flex;align-items:flex-end;
-  overflow:hidden;
+  overflow:visible; /* biarkan gambar bisa melampaui batas container */
   position:relative;
 }
-.testi-food.left{justify-content:flex-end;padding-right:0}
-.testi-food.right{justify-content:flex-start;padding-left:0}
+.testi-food.left{justify-content:flex-end;}
+.testi-food.right{justify-content:flex-start;}
 .testi-food img{
   width:clamp(250px,28vw,380px);
   height:clamp(300px,36vw,460px);
-  object-fit:cover;border-radius:50%;
-  box-shadow:0 30px 80px rgba(0,0,0,.5);
+  object-fit:contain; /* ngikutin bentuk PNG transparan */
   flex-shrink:0;
-  transition:transform .6s var(--es);
+  filter:drop-shadow(0 24px 60px rgba(0,0,0,.45)); /* shadow ngikutin bentuk */
+  transition:transform .6s var(--es), filter .6s var(--es);
 }
 .testi-food.left img{transform:translate(-15%, 15%) rotate(-8deg)}
 .testi-food.right img{transform:translate(15%, 15%) rotate(8deg)}
-.testi-slide:hover .testi-food.left img{transform:translate(-10%, 8%) rotate(-5deg)}
-.testi-slide:hover .testi-food.right img{transform:translate(10%, 8%) rotate(5deg)}
+.testi-slide:hover .testi-food.left img{transform:translate(-10%, 8%) rotate(-5deg);filter:drop-shadow(0 32px 70px rgba(0,0,0,.55))}
+.testi-slide:hover .testi-food.right img{transform:translate(10%, 8%) rotate(5deg);filter:drop-shadow(0 32px 70px rgba(0,0,0,.55))}
 
-/* Label di atas gambar slide pertama */
 .testi-label-tag{
   position:absolute;top:40px;left:50%;transform:translateX(-50%);
   background:var(--white);color:var(--esp);
@@ -278,14 +400,12 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   white-space:nowrap;z-index:2;
 }
 
-/* Section label (kiri atas) */
 .testi-section-label{
   position:absolute;top:44px;left:64px;
   font-family:'Kaushan Script',cursive;font-size:1.45rem;
   color:rgba(255,252,247,.3);
 }
 
-/* Teks tengah testimonial */
 .testi-center{
   padding:0 40px;text-align:center;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -308,7 +428,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .testi-stars{display:flex;gap:3px;justify-content:center;margin-bottom:6px}
 .testi-stars span{color:var(--gold);font-size:.85rem}
 
-/* Section label bawah slide */
 .testi-bottom-label{
   text-align:center;padding:40px;
   font-family:'Kaushan Script',cursive;
@@ -369,10 +488,8 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
   .hf-wrap.bl .hf-img,.hf-wrap.br .hf-img{width:110px;height:110px}
   .menu-section{padding:70px 22px 80px}
   .circle-grid{grid-template-columns:repeat(2,1fr);gap:24px 16px}
-  .promo-wrap{padding:0 22px 70px}
-  .promo{grid-template-columns:1fr}
-  .promo-right{height:200px}
-  .promo-left{padding:40px 28px}
+  .favmenu-section{padding:70px 22px 80px}
+  .favmenu-grid{grid-template-columns:repeat(2,1fr);gap:24px 16px}
   .testi-slide{grid-template-columns:1fr;padding:60px 22px}
   .testi-food{display:none}
   .testi-section-label{left:22px}
@@ -411,32 +528,31 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
   </div>
 </nav>
 
-<!-- ════ HERO — Teks tengah + roti terbang masuk ════ -->
+<!-- ════ HERO ════ -->
 <section class="hero" id="beranda">
 
-  <!-- Roti kiri atas -->
+  <!-- 
+    PERUBAHAN 1: Gambar hias hero tidak lagi dipaksa jadi lingkaran.
+    Pastikan gambar yang dipakai sudah di-remove background (PNG transparan).
+    Ganti src dengan path gambar PNG kamu.
+  -->
   <div class="hf-wrap tl">
-    <img class="hf-img" src="../gambar/nastar.jpeg" alt="">
+    <img class="hf-img" src="../gambar/nastar.png" alt="">
   </div>
-  <!-- Roti kanan atas -->
   <div class="hf-wrap tr">
-    <img class="hf-img" src="../gambar/kastangel.jpeg" alt="">
+    <img class="hf-img" src="../gambar/kastengel.png" alt="">
   </div>
-  <!-- Roti kiri bawah -->
   <div class="hf-wrap bl">
-    <img class="hf-img" src="../gambar/brownis.jpeg" alt="">
+    <img class="hf-img" src="../gambar/strawberry_thumbprint.png" alt="">
   </div>
-  <!-- Roti kanan bawah -->
   <div class="hf-wrap br">
-    <img class="hf-img" src="../gambar/chocolate_butter.jpeg" alt="">
+    <img class="hf-img" src="../gambar/lidah_kucing.png" alt="">
   </div>
-  <!-- Roti kiri tengah -->
   <div class="hf-wrap ml">
-    <img class="hf-img" src="../gambar/putri_salju.jpeg" alt="">
+    <img class="hf-img" src="../gambar/kue_kacang.png" alt="">
   </div>
-  <!-- Roti kanan tengah -->
   <div class="hf-wrap mr">
-    <img class="hf-img" src="../gambar/strawberry_thumb.jpeg" alt="">
+    <img class="hf-img" src="../gambar/sagu_keju.png" alt="">
   </div>
 
   <!-- Konten tengah -->
@@ -481,7 +597,7 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
   </div>
 </div>
 
-<!-- ════ MENU — Pink bg, lingkaran, zoom hover ════ -->
+<!-- ════ MENU SECTION ════ -->
 <section class="menu-section" id="menu">
   <div class="menu-head reveal">
     <span class="stag">Menu Unggulan Kami</span>
@@ -599,37 +715,90 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
   </div>
 </section>
 
-<!-- ════ PROMO BANNER ════ -->
-<div class="promo-wrap">
-  <div class="promo reveal" id="promoBanner">
-    <div class="promo-left">
-      <span class="promo-tag">Promo Spesial</span>
-      <h2 class="promo-h">Beli 3 Item,<br>Gratis Ongkir!</h2>
-      <p class="promo-body">Dapatkan gratis ongkos kirim untuk setiap pembelian minimal 3 item. Berlaku setiap hari ke seluruh wilayah Semarang.</p>
-      <a href="#menu" class="btn-promo">
-        Pesan Sekarang
-        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </a>
-    </div>
-    <div class="promo-right">
-      <div class="promo-imgs">
-        <img src="../gambar/kastangel.jpeg" alt="" loading="lazy">
-        <img src="../gambar/brownis.jpeg" alt="" loading="lazy">
+<!-- ════ PERUBAHAN 2: MENU FAVORIT (menggantikan promo banner) ════ -->
+<section class="favmenu-section">
+  <div class="favmenu-head reveal">
+    <span class="stag">Paling Banyak Dipesan</span>
+    <h2 class="sh">Menu <em>Favorit</em></h2>
+  </div>
+  <p class="favmenu-sub reveal">Pilihan pelanggan setia kami — kue-kue terlaris yang selalu habis lebih cepat dari yang bisa kami panggang.</p>
+
+  <div class="favmenu-grid" id="favGrid">
+
+    <!-- Kartu 1 -->
+    <div class="fav-card">
+      <div class="fav-img-ring">
+        <span class="fav-rank">#1</span>
+        <img src="../gambar/nastar.jpeg" alt="Nastar Klasik" loading="lazy">
+      </div>
+      <h3 class="fav-name">Nastar Klasik</h3>
+      <span class="fav-price">Rp 85.000</span>
+      <div class="fav-stars">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- ════ TESTIMONIAL — Roti besar di sisi, teks besar (Image 2 & 4 style) ════ -->
+    <!-- Kartu 2 -->
+    <div class="fav-card">
+      <div class="fav-img-ring">
+        <span class="fav-rank">#2</span>
+        <img src="../gambar/kastangel.jpeg" alt="Kastengel Keju" loading="lazy">
+      </div>
+      <h3 class="fav-name">Kastengel Keju</h3>
+      <span class="fav-price">Rp 60.000</span>
+      <div class="fav-stars">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+      </div>
+    </div>
+
+    <!-- Kartu 3 -->
+    <div class="fav-card">
+      <div class="fav-img-ring">
+        <span class="fav-rank">#3</span>
+        <img src="../gambar/brownis.jpeg" alt="Brownies Panggang" loading="lazy">
+      </div>
+      <h3 class="fav-name">Brownies Panggang</h3>
+      <span class="fav-price">Rp 95.000</span>
+      <div class="fav-stars">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+      </div>
+    </div>
+
+    <!-- Kartu 4 -->
+    <div class="fav-card">
+      <div class="fav-img-ring">
+        <span class="fav-rank">#4</span>
+        <img src="../gambar/strawberry_thumb.jpeg" alt="Strawberry Thumb" loading="lazy">
+      </div>
+      <h3 class="fav-name">Strawberry Thumb</h3>
+      <span class="fav-price">Rp 72.000</span>
+      <div class="fav-stars">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="favmenu-divider reveal">
+    <span class="favmenu-divider-text">Pesan sebelum kehabisan</span>
+  </div>
+</section>
+
+<!-- ════ TESTIMONIAL ════ -->
 <section class="testi-section" id="tentang">
 
-  <!-- Label kiri atas -->
   <div class="testi-section-label">Toko Kue Fanda</div>
 
-  <!-- Slide 1 — seperti Image 2 -->
+  <!-- 
+    PERUBAHAN 3: Gambar di sisi kiri & kanan testimonial tidak lagi
+    dipaksa jadi lingkaran. Pastikan pakai PNG transparan agar hasilnya natural.
+    Ganti src dengan path gambar PNG kamu.
+  -->
+
+  <!-- Slide 1 -->
   <div class="testi-slide">
     <div class="testi-food left">
-      <img src="../gambar/nastar.jpeg" alt="Nastar" loading="lazy">
+      <img src="../gambar/nstr.png" alt="Nastar" loading="lazy">
     </div>
     <div class="testi-center">
       <div class="testi-label-tag">Kata Pelanggan Kami</div><br><br><br><br><br><br>
@@ -639,14 +808,14 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
       <span class="testi-name">Niny — Pelanggan Setia</span>
     </div>
     <div class="testi-food right">
-      <img src="../gambar/kastangel.jpeg" alt="Kastengel" loading="lazy">
+      <img src="../gambar/rim.png" alt="Kastengel" loading="lazy">
     </div>
   </div>
 
-  <!-- Slide 2 — seperti Image 4 -->
+  <!-- Slide 2 -->
   <div class="testi-slide">
     <div class="testi-food left">
-      <img src="../gambar/brownis.jpeg" alt="Brownies" loading="lazy">
+      <img src="../gambar/ckis.png" alt="Brownies" loading="lazy">
     </div>
     <div class="testi-center">
       <div class="testi-sub-label">Dari Tetangga Kami</div>
@@ -655,14 +824,14 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
       <span class="testi-name">Agan — Food Enthusiast</span>
     </div>
     <div class="testi-food right">
-      <img src="../gambar/chocolate_butter.jpeg" alt="Cookies" loading="lazy">
+      <img src="../gambar/astr.png" alt="Cookies" loading="lazy">
     </div>
   </div>
 
   <!-- Slide 3 -->
   <div class="testi-slide">
     <div class="testi-food left">
-      <img src="../gambar/strawberry_thumb.jpeg" alt="Strawberry" loading="lazy">
+      <img src="../gambar/strb.png" alt="Strawberry" loading="lazy">
     </div>
     <div class="testi-center">
       <div class="testi-sub-label">Dari Tetangga Kami</div>
@@ -671,11 +840,10 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
       <span class="testi-name">Ayuna — Pelanggan Setia</span>
     </div>
     <div class="testi-food right">
-      <img src="../gambar/putri_salju.jpeg" alt="Putri Salju" loading="lazy">
+      <img src="../gambar/slj.png" alt="Putri Salju" loading="lazy">
     </div>
   </div>
 
-  <div class="testi-bottom-label">Dapur Kami, Untuk Kamu</div>
 </section>
 
 <!-- ════ GALLERY ════ -->
@@ -749,7 +917,7 @@ const cur=document.getElementById('cur'),curR=document.getElementById('cur-r');
 let mx=0,my=0,rx=0,ry=0;
 document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
 (function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop)})();
-document.querySelectorAll('a,button,.c-card,.g-img,.testi-slide').forEach(el=>{
+document.querySelectorAll('a,button,.c-card,.fav-card,.g-img,.testi-slide').forEach(el=>{
   el.addEventListener('mouseenter',()=>document.body.classList.add('h'));
   el.addEventListener('mouseleave',()=>document.body.classList.remove('h'));
 });
@@ -758,17 +926,17 @@ document.querySelectorAll('a,button,.c-card,.g-img,.testi-slide').forEach(el=>{
 const nav=document.getElementById('mainNav');
 window.addEventListener('scroll',()=>nav.classList.toggle('stuck',window.scrollY>55),{passive:true});
 
-/* SCROLL REVEAL */
+/* SCROLL REVEAL — untuk .c-card, .fav-card, .reveal, .reveal-l */
 const io=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(!e.isIntersecting)return;
     const t=e.target;
-    if(t.classList.contains('c-card')){t.classList.add('show')}
+    if(t.classList.contains('c-card')||t.classList.contains('fav-card')){t.classList.add('show')}
     else{t.classList.add('in')}
     io.unobserve(t);
   });
 },{threshold:0.12});
-document.querySelectorAll('.c-card,.reveal,.reveal-l').forEach(el=>io.observe(el));
+document.querySelectorAll('.c-card,.fav-card,.reveal,.reveal-l').forEach(el=>io.observe(el));
 
 /* COUNTER */
 const cio=new IntersectionObserver(entries=>{
@@ -788,108 +956,46 @@ const st=document.querySelector('.hero-stats');if(st)cio.observe(st);
 let cart = JSON.parse(localStorage.getItem('fanda_cart')) || {};
 
 function updateBadge(){
-
   const badge = document.getElementById('cartBadge');
-
   let total = 0;
-
-  Object.values(cart).forEach(item => {
-    total += item.qty;
-  });
-
+  Object.values(cart).forEach(item => { total += item.qty; });
   badge.textContent = total;
 }
-
 updateBadge();
 
 document.querySelectorAll('.btn-add-cart').forEach(btn => {
-
   btn.addEventListener('click', () => {
-
     const card = btn.closest('.c-card');
-
     const nama = card.querySelector('.c-name').innerText;
-
     const hargaText = card.querySelector('.c-price').innerText;
-
-    const harga = parseInt(
-      hargaText.replace('Rp','')
-                .replace(/\./g,'')
-                .replace(/\s/g,'')
-    );
-
+    const harga = parseInt(hargaText.replace('Rp','').replace(/\./g,'').replace(/\s/g,''));
     const gambar = card.querySelector('img').getAttribute('src');
 
-    // cari id produk berdasarkan nama
     let produkId = null;
-
     switch(nama){
-
-      case 'Nastar Klasik':
-        produkId = 1;
-      break;
-
-      case 'Kastengel Keju':
-        produkId = 2;
-      break;
-
-      case 'Putri Salju':
-        produkId = 3;
-      break;
-
-      case 'Chocolate Butter Cookies':
-        produkId = 4;
-      break;
-
-      case 'Brownies Panggang':
-        produkId = 5;
-      break;
-
-      case 'Palm Cheese Cookies':
-        produkId = 6;
-      break;
-
-      case 'Strawberry Thumb':
-        produkId = 7;
-      break;
-
+      case 'Nastar Klasik':         produkId = 1; break;
+      case 'Kastengel Keju':        produkId = 2; break;
+      case 'Putri Salju':           produkId = 3; break;
+      case 'Chocolate Butter Cookies': produkId = 4; break;
+      case 'Brownies Panggang':     produkId = 5; break;
+      case 'Palm Cheese Cookies':   produkId = 6; break;
+      case 'Strawberry Thumb':      produkId = 7; break;
     }
-
     if(produkId === null) return;
 
     if(cart[produkId]){
-
       cart[produkId].qty += 1;
-
     } else {
-
-      cart[produkId] = {
-        nama: nama,
-        harga: harga,
-        gambar: gambar,
-        qty: 1
-      };
-
+      cart[produkId] = { nama, harga, gambar, qty: 1 };
     }
 
     localStorage.setItem('fanda_cart', JSON.stringify(cart));
-
     btn.style.background='var(--gold)';
     btn.style.color='var(--esp)';
-
-    setTimeout(()=>{
-      btn.style.background='';
-      btn.style.color='';
-    },350);
-
+    setTimeout(()=>{ btn.style.background=''; btn.style.color=''; },350);
     updateBadge();
-
-    setTimeout(()=>{
-      window.location.href='order_tambah.php';
-    },420);
-
+    setTimeout(()=>{ window.location.href='order_tambah.php'; },420);
   });
-
 });
 </script>
 </body>
