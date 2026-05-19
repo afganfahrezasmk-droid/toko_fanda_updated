@@ -40,7 +40,7 @@ $current = basename($_SERVER['PHP_SELF']);
             <i class="fas fa-cake-candles"></i>
             Toko Kue <span style="color:var(--accent-gold);">Fanda</span>
         </a>
-        <span class="role-badge">Kasir</span>
+        <span class="role-badge">pelanggan</span>
     </div>
     <div class="nav-user">
         <div class="nav-username">
