@@ -1,485 +1,1118 @@
 <?php
-session_start();
 include 'koneksi.php';
-/** @var mysqli $koneksi */
-
-$pesan = '';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    $login    = trim($_POST['login'] ?? '');
-    $password = md5($_POST['password'] ?? '');
-
-    // Prepared statement
-    $stmt = $koneksi->prepare(
-        "SELECT * FROM user
-         WHERE (username = ? OR email = ?)
-         AND password = ?"
-    );
-
-    $stmt->bind_param('sss', $login, $login, $password);
-
-    $stmt->execute();
-
-    $result = $stmt->get_result();
-
-    if ($result && $result->num_rows > 0) {
-
-        $u = $result->fetch_assoc();
-
-        $_SESSION['user_id']  = $u['user_id'];
-        $_SESSION['nama']     = $u['nama'];
-        $_SESSION['username'] = $u['username'];
-        $_SESSION['role']     = $u['role'];
-
-        switch ($u['role']) {
-
-            case 'admin':
-                header("Location: admin/index.php");
-                break;
-
-            case 'kasir':
-                header("Location: kasir/index.php");
-                break;
-
-            case 'pelanggan':
-            default:
-                header("Location: pelanggan/index.php");
-                break;
-        }
-
-        exit;
-
-    } else {
-
-        $pesan = 'Username / email atau password salah.';
-    }
-}
-
-$flash = $_GET['pesan'] ?? '';
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Toko Kue Fanda — Masuk</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toko Kue Fanda — Freshly Baked, Made With Love</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
 <style>
-:root {
-    --esp:   #1C0A00;
-    --esp-2: #2D1507;
-    --brown: #4A2510;
-    --car:   #C07B3A;
-    --gold:  #E8B46D;
-    --cream: #F8F2E5;
-    --blush: #F5CECC;
-    --blush2:#EDB8B4;
-    --white: #FFFCF7;
-    --muted: #9B7A5A;
-    --pill:  100px;
-    --ease:  cubic-bezier(.22,.68,0,1.2);
-    --es:    cubic-bezier(.25,.46,.45,.94);
+:root{
+  --esp:    #1C0A00;
+  --esp-2:  #2D1507;
+  --brown:  #4A2510;
+  --car:    #C07B3A;
+  --gold:   #E8B46D;
+  --cream:  #F8F2E5;
+  --cream2: #EFE3CE;
+  --blush:  #F5CECC;
+  --blush2: #EDB8B4;
+  --white:  #FFFCF7;
+  --muted:  #9B7A5A;
+  --r:      20px;
+  --pill:   100px;
+  --ease:   cubic-bezier(.22,.68,0,1.2);
+  --es:     cubic-bezier(.25,.46,.45,.94);
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-html { height:100%; }
-body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--esp-2);
-    color: var(--white);
-    min-height: 100vh;
-    overflow: hidden;
-    cursor: none;
-    position: relative;
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--esp);overflow-x:hidden;cursor:none}
+img{display:block;max-width:100%;height:auto}
+a{text-decoration:none}ul{list-style:none}
+button{font-family:inherit;cursor:none;border:none}
+
+/* CURSOR */
+#cur{position:fixed;width:11px;height:11px;background:var(--car);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:multiply}
+#cur-r{position:fixed;width:42px;height:42px;border:2px solid var(--car);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);opacity:.4;transition:width .3s var(--es),height .3s var(--es)}
+body.h #cur{width:18px;height:18px}
+body.h #cur-r{width:60px;height:60px;opacity:.18}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--car);border-radius:2px}
+
+/* NAVBAR */
+.nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:22px 64px;display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--es)}
+.nav.stuck{padding:13px 64px;background:rgba(28,10,0,.94);backdrop-filter:blur(18px)}
+.nav-logo{font-family:'Kaushan Script',cursive;font-size:1.6rem;color:var(--white)}
+.nav-links{display:flex;gap:34px}
+.nav-links a{font-size:.82rem;font-weight:400;letter-spacing:.05em;color:rgba(255,252,247,.65);position:relative;transition:color .3s}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;width:0;height:1.5px;background:var(--gold);transition:width .35s var(--es)}
+.nav-links a:hover{color:var(--white)}
+.nav-links a:hover::after{width:100%}
+.nav-r{display:flex;gap:10px;align-items:center}
+.nav-icon{width:40px;height:40px;border-radius:50%;border:1.5px solid rgba(255,252,247,.2);background:transparent;display:flex;align-items:center;justify-content:center;transition:all .3s;position:relative}
+.nav-icon:hover{background:rgba(255,252,247,.12);border-color:rgba(255,252,247,.5)}
+.nav-icon svg{width:18px;height:18px;stroke:var(--white);fill:none;stroke-width:1.6}
+.cart-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--gold);color:var(--esp);font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center}
+.btn-keluar{padding:10px 24px;border-radius:var(--pill);background:transparent;color:var(--white);font-size:.82rem;font-weight:500;border:1.5px solid rgba(255,252,247,.35);transition:all .3s}
+.btn-keluar:hover{background:var(--white);color:var(--esp)}
+
+/* ══════════════════════════════════════
+   HERO — Teks di tengah, gambar natural shape (PNG transparan)
+══════════════════════════════════════ */
+.hero{min-height:100vh;background:var(--esp-2);position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:120px 64px 90px;text-align:center}
+
+/* Gambar hias hero — wrapper untuk fly-in, inner untuk float */
+.hf-wrap{position:absolute;pointer-events:none;z-index:1}
+
+/* 
+  PERUBAHAN 1: .hf-img tidak lagi border-radius:50%
+  Pakai object-fit:contain agar gambar PNG transparan tampil natural
+  Pakai filter:drop-shadow agar shadow ngikutin bentuk gambar
+*/
+.hf-img{
+  object-fit:contain;
+  display:block;
+  filter:drop-shadow(0 20px 40px rgba(0,0,0,.45));
 }
 
-/* ── CURSOR ── */
-#cur  { position:fixed; width:11px; height:11px; background:var(--car); border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); mix-blend-mode:multiply; transition:width .2s,height .2s; }
-#cur-r{ position:fixed; width:42px; height:42px; border:2px solid var(--car); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); opacity:.4; transition:width .3s var(--es),height .3s var(--es); }
-body.h #cur  { width:18px; height:18px; }
-body.h #cur-r{ width:60px; height:60px; opacity:.18; }
+/* Posisi akhir masing-masing */
+.hf-wrap.tl{top:-2%;left:-1%}
+.hf-wrap.tr{top:2%;right:-1%}
+.hf-wrap.bl{bottom:0%;left:3%}
+.hf-wrap.br{bottom:2%;right:2%}
+.hf-wrap.ml{top:42%;left:-2%;transform:translateY(-50%)}
+.hf-wrap.mr{top:42%;right:-2%;transform:translateY(-50%)}
 
-/* ── NOISE OVERLAY ── */
-body::before {
-    content:''; position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.045;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size:200px 200px;
+.hf-wrap.tl .hf-img{width:clamp(170px,16vw,240px);height:clamp(170px,16vw,240px)}
+.hf-wrap.tr .hf-img{width:clamp(190px,18vw,270px);height:clamp(190px,18vw,270px)}
+.hf-wrap.bl .hf-img{width:clamp(155px,14vw,215px);height:clamp(155px,14vw,215px)}
+.hf-wrap.br .hf-img{width:clamp(175px,16vw,250px);height:clamp(175px,16vw,250px)}
+.hf-wrap.ml .hf-img{width:clamp(110px,10vw,155px);height:clamp(110px,10vw,155px)}
+.hf-wrap.mr .hf-img{width:clamp(120px,11vw,165px);height:clamp(120px,11vw,165px)}
+
+/* FLY IN animations */
+.hf-wrap.tl{animation:flyTL 1.1s .1s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.tr{animation:flyTR 1.2s .0s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.bl{animation:flyBL 1.1s .25s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.br{animation:flyBR 1.2s .15s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.ml{animation:flyML 1.0s .35s cubic-bezier(.22,.68,0,1) forwards}
+.hf-wrap.mr{animation:flyMR 1.0s .3s cubic-bezier(.22,.68,0,1) forwards}
+
+@keyframes flyTL{from{opacity:0;transform:translate(-130%,-110%) rotate(-20deg)}to{opacity:1;transform:translate(0,0) rotate(-8deg)}}
+@keyframes flyTR{from{opacity:0;transform:translate(130%,-100%) rotate(18deg)}to{opacity:1;transform:translate(0,0) rotate(6deg)}}
+@keyframes flyBL{from{opacity:0;transform:translate(-120%,110%) rotate(14deg)}to{opacity:1;transform:translate(0,0) rotate(10deg)}}
+@keyframes flyBR{from{opacity:0;transform:translate(120%,100%) rotate(-16deg)}to{opacity:1;transform:translate(0,0) rotate(-7deg)}}
+@keyframes flyML{from{opacity:0;transform:translateY(-50%) translateX(-120%)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
+@keyframes flyMR{from{opacity:0;transform:translateY(-50%) translateX(120%)}to{opacity:1;transform:translateY(-50%) translateX(0)}}
+
+/* FLOAT setelah fly-in */
+.hf-wrap.tl .hf-img{animation:flt1 7s 1.2s ease-in-out infinite}
+.hf-wrap.tr .hf-img{animation:flt2 8s 1.2s ease-in-out infinite}
+.hf-wrap.bl .hf-img{animation:flt3 6.5s 1.35s ease-in-out infinite}
+.hf-wrap.br .hf-img{animation:flt4 7.5s 1.35s ease-in-out infinite}
+.hf-wrap.ml .hf-img{animation:flt5 9s 1.35s ease-in-out infinite}
+.hf-wrap.mr .hf-img{animation:flt6 8.5s 1.3s ease-in-out infinite}
+
+@keyframes flt1{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-18px) rotate(-4deg)}}
+@keyframes flt2{0%,100%{transform:translateY(0) rotate(6deg)}50%{transform:translateY(-22px) rotate(10deg)}}
+@keyframes flt3{0%,100%{transform:translateY(0) rotate(10deg)}50%{transform:translateY(-14px) rotate(5deg)}}
+@keyframes flt4{0%,100%{transform:translateY(0) rotate(-7deg)}50%{transform:translateY(-20px) rotate(-12deg)}}
+@keyframes flt5{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes flt6{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+
+/* Hero center content */
+.hero-inner{position:relative;z-index:2}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,252,247,.1);border:1px solid rgba(255,252,247,.18);color:var(--gold);font-size:.68rem;font-weight:500;letter-spacing:.18em;text-transform:uppercase;padding:8px 20px;border-radius:var(--pill);margin-bottom:22px;opacity:0;animation:fadeUp .6s .9s forwards}
+.bdot{width:6px;height:6px;background:var(--gold);border-radius:50%;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(1.6)}}
+.hero-name{font-family:'Kaushan Script',cursive;font-size:clamp(72px,13vw,180px);color:var(--blush);line-height:.92;letter-spacing:-.01em;opacity:0;animation:fadeUp .9s .6s var(--es) forwards;position:relative;z-index:2}
+.hero-tagline{font-family:'Playfair Display',serif;font-size:clamp(14px,2vw,22px);font-style:italic;color:rgba(255,252,247,.55);margin-top:8px;opacity:0;animation:fadeUp .6s .8s forwards}
+.hero-tag{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--white);color:var(--esp);
+  font-family:'Playfair Display',serif;font-style:italic;
+  font-size:1rem;letter-spacing:.02em;
+  padding:14px 32px;border-radius:6px;
+  margin-top:32px;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+  cursor:none;transition:transform .3s var(--ease),box-shadow .3s;
+  opacity:0;animation:fadeUp .6s 1.05s forwards;
 }
+.hero-tag:hover{transform:translateY(-3px) rotate(-1deg);box-shadow:0 14px 40px rgba(0,0,0,.4)}
+.hero-tag svg{width:16px;height:16px;stroke:var(--car);fill:none;stroke-width:2.5}
 
-/* Vignette */
-.vignette {
-    position: fixed; inset: 0; z-index: 3;
-    pointer-events: none;
-    background: radial-gradient(ellipse at center,
-        transparent 28%,
-        rgba(45,21,7,.5) 68%,
-        rgba(28,10,0,.9) 100%
-    );
+.hero-stats{display:flex;gap:52px;justify-content:center;margin-top:60px;padding-top:36px;border-top:1px solid rgba(255,252,247,.1);opacity:0;animation:fadeUp .6s 1.2s forwards}
+.stat{display:flex;flex-direction:column;align-items:center;gap:4px}
+.stat-n{font-family:'Playfair Display',serif;font-size:2.4rem;font-weight:900;color:var(--blush);line-height:1;letter-spacing:-.02em}
+.stat-n sup{font-size:1.2rem;color:var(--gold)}
+.stat-l{font-size:.7rem;color:rgba(255,252,247,.4);letter-spacing:.1em;text-transform:uppercase}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+
+/* TICKER */
+.ticker{background:var(--esp);padding:13px 0;overflow:hidden;display:flex;border-top:1px solid rgba(232,180,109,.1)}
+.ticker-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
+.ticker-track:hover{animation-play-state:paused}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:20px;padding:0 22px;white-space:nowrap;color:var(--gold);font-size:.7rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+.ticker-dot{width:4px;height:4px;background:var(--car);border-radius:50%;flex-shrink:0}
+
+/* ══════════════════════════════════════
+   MENU SECTION — Pink bg, gambar lingkaran, zoom hover
+══════════════════════════════════════ */
+.menu-section{padding:90px 64px 100px;background:var(--blush)}
+.menu-head{text-align:center;margin-bottom:20px}
+.menu-head .stag{display:block;font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--brown);margin-bottom:8px}
+.menu-head .sh{font-family:'Kaushan Script',cursive;font-size:clamp(40px,5vw,68px);color:var(--esp);line-height:1}
+.menu-desc{text-align:center;font-size:.92rem;line-height:1.8;color:var(--brown);max-width:560px;margin:0 auto 58px;font-style:italic}
+
+.circle-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 24px}
+.c-card{
+  display:flex;flex-direction:column;align-items:center;
+  cursor:none;
+  opacity:0;transform:translateY(32px);
 }
+.c-card.show{animation:cardIn .65s var(--es) forwards}
+.c-card:nth-child(2).show{animation-delay:.1s}
+.c-card:nth-child(3).show{animation-delay:.18s}
+.c-card:nth-child(4).show{animation-delay:.26s}
+.c-card:nth-child(5).show{animation-delay:.08s}
+.c-card:nth-child(6).show{animation-delay:.16s}
+.c-card:nth-child(7).show{animation-delay:.24s}
+@keyframes cardIn{to{opacity:1;transform:translateY(0)}}
 
-/* Base untuk semua dekorasi kue */
-.food-wrap {
-    position: fixed;
-    pointer-events: none;
-    z-index: 2;
-    opacity: 0;
-}
-.food-img {
-    object-fit: contain;
-    display: block;
-    filter: drop-shadow(0 20px 50px rgba(0,0,0,.65));
-}
+.c-img-wrap{
+  width:clamp(160px,18vw,230px);
+  height:clamp(160px,18vw,230px);
+  position:relative;
+  flex-shrink:0;
 
-/* ── POSISI — tidak diubah ── */
-.food-wrap.f1 { top: 3%; left: 3%; }
-.food-wrap.f2 { top: -17%; right: 3%; }
-.food-wrap.f3 { bottom: -4%; left: 4%; }
-.food-wrap.f4 { bottom: 2%; right: 3%; }
-.food-wrap.f5 { top: 50%; left: 17%; transform: translateY(-50%); }
-.food-wrap.f6 { top: 50%; right: 18%; transform: translateY(-50%); }
+  border-radius:50%;
+  overflow:hidden;
 
-/* ── UKURAN — tidak diubah ── */
-.food-wrap.f1 .food-img { width: clamp(160px,15vw,220px); height:auto; }
-.food-wrap.f2 .food-img { width: clamp(180px,18vw,280px); height:auto; }
-.food-wrap.f3 .food-img { width: clamp(150px,14vw,210px); height:auto; }
-.food-wrap.f4 .food-img { width: clamp(160px,15vw,225px); height:auto; }
-/* f5 & f6: shadow lebih lembut + sedikit opacity biar nyatu */
-.food-wrap.f5 .food-img { width: clamp(120px,11vw,160px); height:auto; filter: drop-shadow(0 12px 30px rgba(0,0,0,.65)) opacity(0.88); }
-.food-wrap.f6 .food-img { width: clamp(120px,11vw,160px); height:auto; filter: drop-shadow(0 12px 30px rgba(0,0,0,.65)) opacity(0.88); }
-
-/* ── FLY-IN ANIMATIONS ── */
-@keyframes flyTL { from{opacity:0;transform:translate(-70px,-70px) rotate(-20deg)} to{opacity:1;transform:translate(0,0) rotate(-10deg)} }
-@keyframes flyTR { from{opacity:0;transform:translate(70px,-70px)  rotate(18deg)}  to{opacity:1;transform:translate(0,0) rotate(8deg)}  }
-@keyframes flyBL { from{opacity:0;transform:translate(-70px,70px)  rotate(16deg)}  to{opacity:1;transform:translate(0,0) rotate(11deg)} }
-@keyframes flyBR { from{opacity:0;transform:translate(70px,70px)   rotate(-18deg)} to{opacity:1;transform:translate(0,0) rotate(-9deg)} }
-@keyframes flyML { from{opacity:0;transform:translateX(-50px) translateY(-50%)}    to{opacity:1;transform:translateX(0)  translateY(-50%)} }
-@keyframes flyMR { from{opacity:0;transform:translateX(50px)  translateY(-50%)}    to{opacity:1;transform:translateX(0)  translateY(-50%)} }
-
-.food-wrap.f1 { animation: flyTL 1.2s .05s cubic-bezier(.22,.68,0,1) forwards; }
-.food-wrap.f2 { animation: flyTR 1.2s .00s cubic-bezier(.22,.68,0,1) forwards; }
-.food-wrap.f3 { animation: flyBL 1.2s .20s cubic-bezier(.22,.68,0,1) forwards; }
-.food-wrap.f4 { animation: flyBR 1.2s .10s cubic-bezier(.22,.68,0,1) forwards; }
-.food-wrap.f5 { animation: flyML 1.1s .28s cubic-bezier(.22,.68,0,1) forwards; }
-.food-wrap.f6 { animation: flyMR 1.1s .22s cubic-bezier(.22,.68,0,1) forwards; }
-
-/* ── FLOAT ANIMATIONS ── */
-@keyframes flt1 { 0%,100%{transform:rotate(-10deg) translateY(0)}   50%{transform:rotate(-6deg)  translateY(-11px)} }
-@keyframes flt2 { 0%,100%{transform:rotate(8deg)   translateY(0)}   50%{transform:rotate(12deg)  translateY(-15px)} }
-@keyframes flt3 { 0%,100%{transform:rotate(11deg)  translateY(0)}   50%{transform:rotate(6deg)   translateY(-9px)}  }
-@keyframes flt4 { 0%,100%{transform:rotate(-9deg)  translateY(0)}   50%{transform:rotate(-14deg) translateY(-13px)} }
-
-/* f5 & f6: goyang + rotate seperti yang lain, tanpa translateY(-50%) biar tidak loncat */
-@keyframes flt5fix { 0%,100%{transform:rotate(-8deg) translateY(0)}  50%{transform:rotate(-4deg) translateY(-10px)} }
-@keyframes flt6fix { 0%,100%{transform:rotate(7deg)  translateY(0)}  50%{transform:rotate(11deg) translateY(-12px)} }
-
-.food-wrap.f1 .food-img { animation: flt1    9s  1.3s ease-in-out infinite; }
-.food-wrap.f2 .food-img { animation: flt2    10s 1.2s ease-in-out infinite; }
-.food-wrap.f3 .food-img { animation: flt3    8s  1.4s ease-in-out infinite; }
-.food-wrap.f4 .food-img { animation: flt4    11s 1.3s ease-in-out infinite; }
-.food-wrap.f5 .food-img { animation: flt5fix 12s 1.5s ease-in-out infinite; }
-.food-wrap.f6 .food-img { animation: flt6fix 10s 1.4s ease-in-out infinite; }
-
-/* ── MAIN LAYOUT ── */
-.page {
-    position: relative; z-index: 4;
-    min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    padding: 40px 20px;
-}
-
-/* ── LOGO ── */
-.logo-wrap {
-    text-align: center; margin-bottom: 28px;
-    opacity: 0; animation: fadeUp .7s .4s var(--es) forwards;
-}
-.logo-title {
-    font-family: 'Kaushan Script', cursive;
-    font-size: clamp(2.2rem, 5vw, 3.2rem);
-    color: var(--blush);
-    line-height: 1;
-    text-shadow: 0 4px 30px rgba(0,0,0,.5);
-}
-.logo-tagline {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    font-size: .85rem;
-    color: rgba(255,252,247,.4);
-    letter-spacing: .08em;
-    margin-top: 6px;
-}
-
-/* ── CARD LOGIN ── */
-.card-login {
-    width: 100%; max-width: 420px;
-    background: rgba(255, 252, 247, 0.06);
-    border: 1px solid rgba(255, 252, 247, 0.12);
-    border-radius: 24px;
-    padding: 40px 36px 36px;
-    backdrop-filter: blur(20px);
-    box-shadow: 0 40px 100px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,252,247,.08);
-    opacity: 0; animation: fadeUp .7s .6s var(--es) forwards;
-    position: relative; overflow: hidden;
-}
-.card-login::before {
-    content: '';
-    position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
-    width: 200px; height: 200px; border-radius: 50%;
-    background: radial-gradient(circle, rgba(192,123,58,.25) 0%, transparent 70%);
-    pointer-events: none;
+  transition:
+    transform .45s var(--ease),
+    box-shadow .45s var(--ease);
 }
 
-.card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.6rem; font-weight: 700;
-    color: var(--white);
-    margin-bottom: 4px;
-}
-.card-sub {
-    font-size: .82rem; color: rgba(255,252,247,.42);
-    margin-bottom: 30px;
+.c-card:hover .c-img-wrap{
+  transform:scale(1.08) translateY(-8px);
+  box-shadow:0 24px 60px rgba(74,37,16,.28);
 }
 
-/* ── FLASH ALERT ── */
-.alert {
-    padding: 12px 16px; border-radius: 12px; font-size: .83rem;
-    margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
-}
-.alert-error { background: rgba(220,60,60,.18); border:1px solid rgba(220,60,60,.3); color:#ffaaaa; }
-.alert-info  { background: rgba(232,180,109,.15); border:1px solid rgba(232,180,109,.25); color:var(--gold); }
-
-/* ── FORM ── */
-.field { margin-bottom: 18px; }
-.field label {
-    display: block; font-size: .78rem; font-weight: 500;
-    letter-spacing: .06em; text-transform: uppercase;
-    color: rgba(255,252,247,.5); margin-bottom: 8px;
-}
-.input-wrap { position: relative; }
-.input-wrap svg {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    width: 16px; height: 16px; stroke: rgba(255,252,247,.3);
-    fill: none; stroke-width: 1.8; pointer-events: none;
-    transition: stroke .3s;
-}
-.input-wrap input {
-    width: 100%; padding: 13px 14px 13px 42px;
-    background: rgba(255,252,247,.07);
-    border: 1.5px solid rgba(255,252,247,.12);
-    border-radius: 12px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: .92rem; color: var(--white);
-    outline: none; transition: border-color .3s, background .3s;
-    cursor: none;
-}
-.input-wrap input::placeholder { color: rgba(255,252,247,.25); }
-.input-wrap input:focus {
-    border-color: var(--car);
-    background: rgba(192,123,58,.08);
-}
-.input-wrap input:focus + svg,
-.input-wrap:focus-within svg { stroke: var(--car); }
-
-/* show/hide password */
-.eye-btn {
-    position: absolute; right: 13px; top: 50%; transform: translateY(-50%);
-    background: none; border: none; cursor: none; padding: 4px;
-    display: flex; align-items: center;
-}
-.eye-btn svg { width:16px; height:16px; stroke:rgba(255,252,247,.3); fill:none; stroke-width:1.8; transition:stroke .3s; }
-.eye-btn:hover svg { stroke: var(--car); }
-
-/* ── SUBMIT BUTTON ── */
-.btn-masuk {
-    width: 100%; padding: 14px;
-    border-radius: 12px;
-    background: var(--car);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
-    font-size: .95rem; font-weight: 600;
-    letter-spacing: .03em;
-    border: none; cursor: none;
-    position: relative; overflow: hidden;
-    transition: transform .2s, box-shadow .2s;
-    box-shadow: 0 8px 30px rgba(192,123,58,.4);
-    margin-top: 6px;
-}
-.btn-masuk::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 60%);
-    pointer-events: none;
-}
-.btn-masuk:hover  { transform: translateY(-2px); box-shadow: 0 14px 40px rgba(192,123,58,.55); }
-.btn-masuk:active { transform: translateY(0); box-shadow: 0 4px 16px rgba(192,123,58,.3); }
-
-/* ── SIGN UP LINK ── */
-.signup-link {
-    margin-top: 22px;
-    text-align: center;
-    font-size: .84rem;
-    color: rgba(255,252,247,.38);
-}
-.signup-link a {
-    color: var(--gold);
-    text-decoration: none;
-    font-weight: 600;
-    transition: color .2s, opacity .2s;
-    cursor: none;
-}
-.signup-link a:hover {
-    color: var(--blush);
-    opacity: .9;
+.c-img-wrap img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:50%;
+  transition:transform .6s var(--es);
 }
 
-/* ── FOOTER NOTE ── */
-.bottom-note {
-    margin-top: 24px; text-align: center;
-    font-size: .75rem; color: rgba(255,252,247,.22);
-    opacity: 0; animation: fadeUp .6s 1s var(--es) forwards;
+.c-card:hover .c-img-wrap img{
+  transform:scale(1.08);
 }
-.bottom-note strong { color: rgba(255,252,247,.4); font-weight: 500; }
 
-::-webkit-scrollbar { width:4px; }
-::-webkit-scrollbar-thumb { background:var(--car); border-radius:2px; }
+.c-stok{
+  position:absolute;
+  top:10px;
+  right:-10px;
+  z-index:20;
 
-@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+  font-size:.58rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
 
-@media (max-width: 500px) {
-    .card-login { padding: 30px 22px 28px; }
-    .food-wrap.f5, .food-wrap.f6 { display:none; }
+  padding:7px 13px;
+  border-radius:999px;
+
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+}
+.stok-aman{background:rgba(255,252,247,.9);color:var(--esp)}
+.stok-tipis{background:rgba(232,180,109,.92);color:var(--esp)}
+.stok-habis{background:rgba(200,60,60,.9);color:#fff}
+.c-cat{font-size:.62rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--car);margin-top:20px;margin-bottom:4px}
+.c-name{font-family:'Playfair Display',serif;font-size:1.18rem;font-weight:700;color:var(--esp);text-align:center;line-height:1.2}
+.c-price{font-family:'Playfair Display',serif;font-size:1.15rem;font-style:italic;font-weight:400;color:var(--brown);margin-top:6px}
+.c-add{
+  margin-top:12px;
+  display:inline-flex;align-items:center;gap:7px;
+  padding:8px 20px;border-radius:var(--pill);
+  background:var(--esp);color:var(--white);
+  font-size:.75rem;font-weight:500;
+  opacity:0;transform:translateY(6px);
+  transition:opacity .3s,transform .3s,background .3s;
+}
+.c-card:hover .c-add{opacity:1;transform:translateY(0)}
+.c-add:hover{background:var(--car)}
+.c-add svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5}
+
+.see-all-wrap{text-align:center;margin-top:48px}
+.see-all{display:inline-flex;align-items:center;gap:8px;color:var(--esp);font-size:.88rem;font-weight:600;letter-spacing:.04em;border-bottom:1.5px solid var(--esp);padding-bottom:2px;transition:gap .3s,color .3s}
+.see-all:hover{gap:14px;color:var(--car);border-color:var(--car)}
+.see-all svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
+
+/* ══════════════════════════════════════
+   PERUBAHAN 2: MENU FAVORIT — Menggantikan Promo Banner
+   Gaya Courante: background cream/putih, gambar produk besar
+   tanpa background, nama & harga di bawah
+══════════════════════════════════════ */
+.favmenu-section{
+  padding:96px 64px 100px;
+  background:var(--white);
+  position:relative;
+  overflow:hidden;
+}
+/* Dekorasi blob di belakang */
+.favmenu-section::before{
+  content:'';position:absolute;width:600px;height:600px;
+  border-radius:50%;top:-200px;right:-180px;
+  background:radial-gradient(circle, rgba(245,206,204,.35) 0%, transparent 65%);
+  pointer-events:none;
+}
+.favmenu-section::after{
+  content:'';position:absolute;width:400px;height:400px;
+  border-radius:50%;bottom:-150px;left:-120px;
+  background:radial-gradient(circle, rgba(232,180,109,.12) 0%, transparent 65%);
+  pointer-events:none;
+}
+
+.favmenu-head{
+  text-align:center;
+  margin-bottom:16px;
+  position:relative;z-index:1;
+}
+.favmenu-head .stag{
+  display:block;font-size:.68rem;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:var(--car);margin-bottom:10px;
+}
+.favmenu-head .sh{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(36px,5vw,62px);
+  font-weight:900;color:var(--esp);line-height:1.05;
+}
+.favmenu-head .sh em{font-style:italic;color:var(--brown)}
+.favmenu-sub{
+  text-align:center;font-size:.92rem;line-height:1.8;
+  color:var(--muted);max-width:520px;margin:0 auto 68px;
+  font-style:italic;position:relative;z-index:1;
+}
+
+/* Grid 4 kolom — seperti Image 3 (Courante) */
+.favmenu-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px 32px;
+  position:relative;z-index:1;
+}
+
+/* Setiap kartu */
+.fav-card{
+  display:flex;flex-direction:column;align-items:center;
+  cursor:none;
+  opacity:0;transform:translateY(28px);
+}
+.fav-card.show{animation:cardIn .65s var(--es) forwards}
+.fav-card:nth-child(2).show{animation-delay:.1s}
+.fav-card:nth-child(3).show{animation-delay:.2s}
+.fav-card:nth-child(4).show{animation-delay:.3s}
+
+/* Lingkaran gambar */
+.fav-img-ring{
+  width:clamp(180px,20vw,260px);
+  height:clamp(180px,20vw,260px);
+  border-radius:50%;
+  background:var(--blush);
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  position:relative;
+  transition:transform .45s var(--ease),box-shadow .45s;
+  box-shadow:0 8px 32px rgba(74,37,16,.12);
+}
+.fav-card:hover .fav-img-ring{
+  transform:translateY(-10px) scale(1.05);
+  box-shadow:0 22px 52px rgba(74,37,16,.22);
+}
+/* 
+  Gambar di dalam ring: object-fit cover untuk gambar JPEG biasa.
+  Kalau pakai PNG transparan, ganti .fav-img-ring background menjadi 
+  transparent dan tambahkan class 'fav-card--nobg' di HTML.
+*/
+.fav-img-ring img{
+  width:100%;height:100%;
+  object-fit:cover;
+  transition:transform .6s var(--es);
+}
+.fav-card:hover .fav-img-ring img{transform:scale(1.1)}
+
+/* Badge ranking */
+.fav-rank{
+  position:absolute;top:14px;left:14px;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--esp);color:var(--gold);
+  font-size:.65rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  letter-spacing:0;
+}
+
+.fav-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;font-weight:700;
+  color:var(--esp);text-align:center;
+  margin-top:22px;line-height:1.2;
+}
+.fav-price{
+  font-family:'Playfair Display',serif;
+  font-size:1.05rem;font-style:italic;
+  color:var(--car);margin-top:5px;
+}
+.fav-stars{
+  display:flex;gap:2px;margin-top:6px;
+}
+.fav-stars span{color:var(--gold);font-size:.72rem}
+
+/* Divider dekoratif */
+.favmenu-divider{
+  display:flex;align-items:center;gap:18px;
+  max-width:320px;margin:60px auto 0;
+  position:relative;z-index:1;
+}
+.favmenu-divider::before,.favmenu-divider::after{
+  content:'';flex:1;height:1px;background:var(--cream2);
+}
+.favmenu-divider-text{
+  font-family:'Kaushan Script',cursive;
+  font-size:1.1rem;color:var(--muted);white-space:nowrap;
+}
+
+/* ══════════════════════════════════════
+   TESTIMONIAL — PERUBAHAN 3: gambar sisi natural shape
+══════════════════════════════════════ */
+.testi-section{background:var(--esp-2);overflow:hidden;position:relative}
+
+.testi-slide{
+  min-height:75vh;
+  display:grid;grid-template-columns:360px 1fr 360px;
+  align-items:center;
+  padding:80px 0;
+  position:relative;
+}
+.testi-slide:nth-child(even){background:rgba(0,0,0,.12)}
+
+/* 
+  PERUBAHAN 3: .testi-food img tidak lagi border-radius:50%
+  Pakai object-fit:contain agar ngikutin bentuk PNG transparan
+  Pakai filter:drop-shadow agar shadow ngikutin bentuk gambar
+*/
+.testi-food{
+  width:100%;height:100%;
+  display:flex;align-items:flex-end;
+  overflow:visible; /* biarkan gambar bisa melampaui batas container */
+  position:relative;
+}
+.testi-food.left{justify-content:flex-end;}
+.testi-food.right{justify-content:flex-start;}
+.testi-food img{
+  width:clamp(250px,28vw,380px);
+  height:clamp(300px,36vw,460px);
+  object-fit:contain; /* ngikutin bentuk PNG transparan */
+  flex-shrink:0;
+  filter:drop-shadow(0 24px 60px rgba(0,0,0,.45)); /* shadow ngikutin bentuk */
+  transition:transform .6s var(--es), filter .6s var(--es);
+}
+.testi-food.left img{transform:translate(-15%, 15%) rotate(-8deg)}
+.testi-food.right img{transform:translate(15%, 15%) rotate(8deg)}
+.testi-slide:hover .testi-food.left img{transform:translate(-10%, 8%) rotate(-5deg);filter:drop-shadow(0 32px 70px rgba(0,0,0,.55))}
+.testi-slide:hover .testi-food.right img{transform:translate(10%, 8%) rotate(5deg);filter:drop-shadow(0 32px 70px rgba(0,0,0,.55))}
+
+.testi-label-tag{
+  position:absolute;top:40px;left:50%;transform:translateX(-50%);
+  background:var(--white);color:var(--esp);
+  font-family:'Playfair Display',serif;font-style:italic;font-size:.95rem;
+  padding:11px 28px;border-radius:5px;
+  box-shadow:0 6px 24px rgba(0,0,0,.25);
+  white-space:nowrap;z-index:2;
+}
+
+.testi-section-label{
+  position:absolute;top:44px;left:64px;
+  font-family:'Kaushan Script',cursive;font-size:1.45rem;
+  color:rgba(255,252,247,.3);
+}
+
+.testi-center{
+  padding:0 40px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:relative;z-index:1;
+}
+.testi-sub-label{
+  font-family:'Kaushan Script',cursive;
+  font-size:clamp(1.2rem,2.5vw,1.8rem);
+  color:rgba(255,252,247,.4);
+  margin-bottom:20px;
+}
+.testi-quote-text{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(22px,3.5vw,46px);
+  font-weight:700;line-height:1.2;
+  color:var(--white);margin-bottom:28px;
+}
+.testi-quote-text em{color:var(--gold);font-style:italic}
+.testi-name{font-size:.88rem;font-weight:500;color:rgba(255,252,247,.45);letter-spacing:.1em;text-transform:uppercase}
+.testi-stars{display:flex;gap:3px;justify-content:center;margin-bottom:6px}
+.testi-stars span{color:var(--gold);font-size:.85rem}
+
+.testi-bottom-label{
+  text-align:center;padding:40px;
+  font-family:'Kaushan Script',cursive;
+  font-size:clamp(28px,5vw,56px);
+  color:rgba(255,252,247,.12);
+  border-top:1px solid rgba(255,252,247,.06);
+}
+
+/* ══════════════════════════════════════
+   GALLERY
+══════════════════════════════════════ */
+.gallery-section{padding:90px 0 80px;background:var(--cream2);overflow:hidden}
+.gallery-head{padding:0 64px 42px;text-align:left}
+.gallery-head .stag{display:block;font-size:.68rem;font-weight:500;letter-spacing:.22em;text-transform:uppercase;color:var(--car);margin-bottom:8px}
+.gallery-head .sh{font-family:'Playfair Display',serif;font-size:clamp(34px,4.5vw,58px);font-weight:900;color:var(--esp);line-height:1.05}
+.gallery-head .sh em{font-style:italic}
+.gallery-track{display:flex;gap:16px;padding:0 64px 10px;overflow-x:auto;-ms-overflow-style:none;scrollbar-width:none}
+.gallery-track::-webkit-scrollbar{display:none}
+.g-img{flex-shrink:0;width:240px;height:290px;border-radius:18px;overflow:hidden;cursor:none}
+.g-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--es)}
+.g-img:hover img{transform:scale(1.1)}
+.gallery-hint{text-align:center;margin-top:18px;font-size:.72rem;color:var(--muted);letter-spacing:.1em}
+
+/* ══════════════════════════════════════
+   FOOTER
+══════════════════════════════════════ */
+footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(232,180,109,.08)}
+.footer-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:52px;margin-bottom:52px;padding-bottom:48px;border-bottom:1px solid rgba(255,252,247,.08)}
+.f-logo{font-family:'Kaushan Script',cursive;font-size:1.75rem;color:var(--gold);display:block;margin-bottom:14px}
+.f-desc{font-size:.85rem;line-height:1.8;color:rgba(255,252,247,.36);max-width:230px;margin-bottom:22px}
+.f-social{display:flex;gap:10px}
+.f-soc{width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(255,252,247,.15);display:flex;align-items:center;justify-content:center;transition:all .3s;cursor:none}
+.f-soc:hover{background:var(--car);border-color:var(--car)}
+.f-soc svg{width:15px;height:15px;stroke:rgba(255,252,247,.5);fill:none;stroke-width:1.6;transition:stroke .3s}
+.f-soc:hover svg{stroke:#fff}
+.f-col-title{font-size:.85rem;font-weight:500;color:var(--white);margin-bottom:18px}
+.f-links{display:flex;flex-direction:column;gap:9px}
+.f-links a{font-size:.8rem;color:rgba(255,252,247,.35);transition:color .3s,padding-left .3s;cursor:none}
+.f-links a:hover{color:var(--gold);padding-left:5px}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between}
+.f-copy{font-size:.78rem;color:rgba(255,252,247,.22)}
+.f-copy strong{color:rgba(255,252,247,.5);font-weight:500}
+
+/* REVEAL */
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .7s var(--es),transform .7s var(--es)}
+.reveal.in{opacity:1;transform:translateY(0)}
+.reveal-l{opacity:0;transform:translateX(-36px);transition:opacity .7s var(--es),transform .7s var(--es)}
+.reveal-l.in{opacity:1;transform:translateX(0)}
+
+.testi-add-wrap{
+    text-align:center;
+    padding:50px 20px 70px;
+}
+
+.testi-add-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    padding:15px 34px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    backdrop-filter:blur(10px);
+
+    color:var(--white);
+
+    font-size:.85rem;
+    font-weight:500;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+
+    transition:all .35s var(--es);
+
+    text-decoration:none;
+}
+
+.testi-add-btn:hover{
+    background:var(--gold);
+    color:var(--esp);
+
+    transform:translateY(-4px);
+
+    box-shadow:0 14px 30px rgba(232,180,109,.28);
+}
+
+/* NOTIF REVIEW */
+.review-success{
+    width:fit-content;
+
+    margin:30px auto 10px;
+
+    padding:14px 26px;
+
+    border-radius:999px;
+
+    background:rgba(232,180,109,.12);
+
+    border:1px solid rgba(232,180,109,.25);
+
+    color:var(--gold);
+
+    font-size:.9rem;
+    font-weight:500;
+
+    letter-spacing:.03em;
+
+    backdrop-filter:blur(10px);
+
+    animation:fadeNotif .5s ease;
+}
+
+@keyframes fadeNotif{
+    from{
+        opacity:0;
+        transform:translateY(-10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .nav{padding:14px 22px}
+  .nav.stuck{padding:12px 22px}
+  .nav-links{display:none}
+  .hero{padding:100px 22px 80px}
+  .hf-wrap.ml,.hf-wrap.mr{display:none}
+  .hf-wrap.tl .hf-img,.hf-wrap.tr .hf-img{width:120px;height:120px}
+  .hf-wrap.bl .hf-img,.hf-wrap.br .hf-img{width:110px;height:110px}
+  .menu-section{padding:70px 22px 80px}
+  .circle-grid{grid-template-columns:repeat(2,1fr);gap:24px 16px}
+  .favmenu-section{padding:70px 22px 80px}
+  .favmenu-grid{grid-template-columns:repeat(2,1fr);gap:24px 16px}
+  .testi-slide{grid-template-columns:1fr;padding:60px 22px}
+  .testi-food{display:none}
+  .testi-section-label{left:22px}
+  .gallery-section{padding:70px 0}
+  .gallery-head{padding:0 22px 32px}
+  .gallery-track{padding:0 22px 10px}
+  footer{padding:56px 22px 30px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .footer-bottom{flex-direction:column;gap:8px;text-align:center}
 }
 </style>
 </head>
 <body>
 
-<!-- CURSOR -->
 <div id="cur"></div>
 <div id="cur-r"></div>
 
-<!-- VIGNETTE -->
-<div class="vignette"></div>
+<!-- ════ NAVBAR ════ -->
+<nav class="nav" id="mainNav">
+  <a href="#" class="nav-logo">Toko Kue Fanda</a>
+  <ul class="nav-links">
+    <li><a href="#">Beranda</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#tentang">Ulasan</a></li>
+    <li><a href="#footer">Kontak</a></li>
+  </ul>
+  <div class="nav-r">
+    <button class="nav-icon" title="Keranjang" onclick="alert('Silakan login atau buat akun terlebih dahulu!'); window.location.href='login.php'"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><span class="cart-badge" id="cartBadge">0</span></button>
 
-<!-- FOTO KUE MELAYANG -->
-<div class="food-wrap f1"><img class="food-img" src="gambar/strawberry_thumbprint.png" alt=""></div>
-<div class="food-wrap f2"><img class="food-img" src="gambar/sagu_keju.png" alt=""></div>
-<div class="food-wrap f3"><img class="food-img" src="gambar/nastar.png" alt=""></div>
-<div class="food-wrap f4"><img class="food-img" src="gambar/lidah_kucing.png" alt=""></div>
-<div class="food-wrap f5"><img class="food-img" src="gambar/kue_kacang.png" alt=""></div>
-<div class="food-wrap f6"><img class="food-img" src="gambar/kastengel.png" alt=""></div>
+    <button class="nav-icon" title="Akun" onclick="alert('Anda belum login!'); window.location.href='login.php'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
+    
+    <button class="btn-keluar" onclick="window.location.href='login.php'">Keluar</button>
+  </div>
+</nav>
 
-<!-- KONTEN UTAMA -->
-<div class="page">
+<!-- ════ HERO ════ -->
+<section class="hero" id="beranda">
 
-    <!-- LOGO -->
-    <div class="logo-wrap">
-        <div class="logo-title">Toko Kue Fanda</div>
-        <div class="logo-tagline">Artisanal Bakery &amp; Kue Buatan Tangan · Semarang</div>
+  <!-- 
+    PERUBAHAN 1: Gambar hias hero tidak lagi dipaksa jadi lingkaran.
+    Pastikan gambar yang dipakai sudah di-remove background (PNG transparan).
+    Ganti src dengan path gambar PNG kamu.
+  -->
+  <div class="hf-wrap tl">
+    <img class="hf-img" src="gambar/nastar.png" alt="">
+  </div>
+  <div class="hf-wrap tr">
+    <img class="hf-img" src="gambar/kastengel.png" alt="">
+  </div>
+  <div class="hf-wrap bl">
+    <img class="hf-img" src="gambar/strawberry_thumbprint.png" alt="">
+  </div>
+  <div class="hf-wrap br">
+    <img class="hf-img" src="gambar/lidah_kucing.png" alt="">
+  </div>
+  <div class="hf-wrap ml">
+    <img class="hf-img" src="gambar/kue_kacang.png" alt="">
+  </div>
+  <div class="hf-wrap mr">
+    <img class="hf-img" src="gambar/sagu_keju.png" alt="">
+  </div>
+
+  <!-- Konten tengah -->
+  <div class="hero-inner">
+    <h1 class="hero-name">Toko Kue Fanda</h1>
+    <a href="#menu" class="hero-tag">
+      Jelajahi Menu
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+    </a>
+    <div class="hero-stats">
+      <div class="stat">
+        <span class="stat-n"><span class="ctr" data-to="7">0</span><sup>+</sup></span>
+        <span class="stat-l">Menu Pilihan</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n">4.9<sup>★</sup></span>
+        <span class="stat-l">Rating</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n"><span class="ctr" data-to="100">0</span><sup>+</sup></span>
+        <span class="stat-l">Pelanggan Puas</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Rating 4.9 Bintang<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Rating 4.9 Bintang<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
+  </div>
+</div>
+
+<!-- ════ MENU SECTION ════ -->
+<section class="menu-section" id="menu">
+  <div class="menu-head reveal">
+    <span class="stag">Menu Unggulan Kami</span>
+    <h2 class="sh">Langsung dari Dapur Kami</h2>
+  </div>
+  <p class="menu-desc reveal">Dari kue kering renyah hingga brownies fudgy yang pekat — setiap item dibuat dari bahan pilihan, dipanggang segar setiap hari.</p>
+
+  <div class="circle-grid" id="circleGrid">
+
+    <?php
+    $query = mysqli_query($koneksi, "SELECT * FROM produk");
+
+    while($data = mysqli_fetch_assoc($query)){
+
+        $stok = $data['stok'];
+
+        if($stok > 20){
+            $class_stok = "stok-aman";
+            $text_stok = "Stok $stok";
+        }elseif($stok > 0){
+            $class_stok = "stok-tipis";
+            $text_stok = "Stok Tipis";
+        }else{
+            $class_stok = "stok-habis";
+            $text_stok = "Stok Habis";
+        }
+    ?>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+
+        <img src="gambar/<?= $data['gambar']; ?>" 
+            alt="<?= $data['nama_produk']; ?>" 
+            loading="lazy">
+
+      </div>
+
+      <span class="c-cat">
+        <?php
+          if($data['kategori_id'] == 1){
+              echo "Kue Kering";
+          }elseif($data['kategori_id'] == 2){
+              echo "Kue Basah";
+          }elseif($data['kategori_id'] == 3){
+              echo "Cookies";
+          }elseif($data['kategori_id'] == 4){
+              echo "Cake & Brownies";
+          }elseif($data['kategori_id'] == 5){
+              echo "Snack Manis";
+          }else{
+              echo "Kategori Tidak Ada";
+          }
+        ?>
+      </span>
+
+      <h3 class="c-name">
+        <?= $data['nama_produk']; ?>
+      </h3>
+
+      <span class="c-price">
+        Rp <?= number_format($data['harga'],0,',','.'); ?>
+      </span>
+
+      <span class="c-stok <?= $class_stok ?>">
+          <?= $text_stok ?>
+      </span>
+
+      <button class="c-add btn-add-cart"
+        onclick="alert('Silakan login atau buat akun terlebih dahulu!'); window.location.href='login.php'">
+
+        <svg viewBox="0 0 24 24">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+
+        Tambah
+
+      </button>
+
+        </div>
+
+    <?php } ?>
+
+    </div>
+  </div>
+
+  <div class="see-all-wrap reveal">
+    <a href="login.php"
+       class="see-all"
+       onclick="alert('Silakan login atau buat akun terlebih dahulu!')">
+
+      Pesan Sekarang
+
+      <svg viewBox="0 0 24 24">
+        <polyline points="9 18 15 12 9 6"/>
+      </svg>
+
+    </a>
+  </div>
+</section>
+
+<!-- ════ MENU FAVORIT OTOMATIS ════ -->
+<section class="favmenu-section">
+
+  <div class="favmenu-head reveal">
+    <span class="stag">Paling Banyak Dipesan</span>
+    <h2 class="sh">Menu <em>Favorit</em></h2>
+  </div>
+
+  <p class="favmenu-sub reveal">
+    Produk terlaris pilihan pelanggan dengan rating terbaik dari toko kami ✨
+  </p>
+
+  <div class="favmenu-grid" id="favGrid">
+
+    <?php
+
+    $fav = mysqli_query($koneksi, "
+
+SELECT 
+    produk.produk_id,
+    produk.nama_produk,
+    produk.harga,
+    produk.gambar,
+
+    COALESCE(SUM(order_items.qty),0) as total_terjual,
+
+    COALESCE(AVG(review.rating),0) as rata_rating
+
+FROM produk
+
+LEFT JOIN order_items
+    ON produk.produk_id = order_items.produk_id
+
+LEFT JOIN review
+    ON produk.produk_id = review.produk_id
+    AND review.status='tampil'
+
+GROUP BY produk.produk_id
+
+ORDER BY total_terjual DESC, rata_rating DESC
+
+LIMIT 4
+
+");
+
+    $rank = 1;
+
+    while($f = mysqli_fetch_assoc($fav)){
+
+    ?>
+
+    <div class="fav-card">
+
+      <div class="fav-img-ring">
+
+        <span class="fav-rank">
+          #<?= $rank++; ?>
+        </span>
+
+        <img 
+          src="gambar/<?= $f['gambar']; ?>" 
+          alt="<?= $f['nama_produk']; ?>" 
+          loading="lazy"
+        >
+
+      </div>
+
+      <h3 class="fav-name">
+        <?= $f['nama_produk']; ?>
+      </h3>
+
+      <span class="fav-price">
+        Rp <?= number_format($f['harga'],0,',','.'); ?>
+      </span>
+
+      <div class="fav-stars">
+
+        <?php
+
+        $rating = round($f['rata_rating']);
+
+        for($i=1; $i<=5; $i++){
+
+            if($i <= $rating){
+                echo "<span>★</span>";
+            } else {
+                echo "<span>☆</span>";
+            }
+
+        }
+
+        ?>
+
+      </div>
+
     </div>
 
-    <!-- CARD LOGIN -->
-    <div class="card-login">
-        <div class="card-title">Selamat Datang 👋</div>
-        <div class="card-sub">Masuk untuk mulai memesan kue favoritmu</div>
+    <?php } ?>
 
-        <?php if ($pesan): ?>
-        <div class="alert alert-error">⚠️ <?= htmlspecialchars($pesan) ?></div>
-        <?php endif; ?>
+  </div>
 
-        <?php if ($flash == 'belum_login'): ?>
-        <div class="alert alert-info">🔒 Silakan masuk terlebih dahulu.</div>
-        <?php elseif ($flash == 'bukan_pelanggan'): ?>
-        <div class="alert alert-info">⚠️ Akses hanya untuk pelanggan.</div>
-        <?php endif; ?>
+  <div class="favmenu-divider reveal">
+    <span class="favmenu-divider-text">
+      Favorit pelanggan kami ✨
+    </span>
+  </div>
 
-        <form method="POST" action="">
+</section>
 
-            <!-- USERNAME / EMAIL -->
-            <div class="field">
-                <label for="login">Username atau Email</label>
-                <div class="input-wrap">
-                    <input type="text" id="login" name="login"
-                           placeholder="Masukkan username atau email"
-                           autocomplete="username" required
-                           value="<?= htmlspecialchars($_POST['login'] ?? '') ?>">
-                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                </div>
+<!-- ════ TESTIMONIAL ════ -->
+<section class="testi-section" id="tentang">
+
+  <?php if(isset($_GET['review']) && $_GET['review'] == 'success'){ ?>
+
+  <div class="review-success">
+      ✨ Review berhasil ditambahkan, terima kasih!
+  </div>
+
+  <?php } ?>
+
+  <div class="testi-section-label">Toko Kue Fanda</div>
+
+  <!-- 
+    PERUBAHAN 3: Gambar di sisi kiri & kanan testimonial tidak lagi
+    dipaksa jadi lingkaran. Pastikan pakai PNG transparan agar hasilnya natural.
+    Ganti src dengan path gambar PNG kamu.
+  -->
+
+  <?php
+      $qReview = mysqli_query($koneksi, "
+          SELECT review.*, produk.gambar
+          FROM review
+          JOIN produk ON review.produk_id = produk.produk_id
+          WHERE review.status='tampil'
+      ");
+
+    while($r = mysqli_fetch_assoc($qReview)){
+    ?>
+
+    <div class="testi-slide">
+
+        <div class="testi-food left">
+            <img src="gambar/<?= $r['gambar']; ?>" loading="lazy">
+        </div>
+
+        <div class="testi-center">
+
+            <div class="testi-sub-label">
+                Dari Tetangga Kami
             </div>
 
-            <!-- PASSWORD -->
-            <div class="field">
-                <label for="passInput">Password</label>
-                <div class="input-wrap">
-                    <input type="password"
-                        id="passInput"
-                        name="password"
-                        placeholder="Masukkan password"
-                        autocomplete="current-password"
-                        required>
-                    <svg viewBox="0 0 24 24">
-                        <rect x="3" y="11" width="18" height="11" rx="2"/>
-                        <path d="M7 11V7a5 5 0 0110 0v4"/>
-                    </svg>
-                    <button type="button" class="eye-btn" id="eyeBtn" title="Tampilkan password">
-                        <span id="eyeIcon">👁️</span>
-                    </button>
-                </div>
+            <p class="testi-quote-text">
+                "<?= $r['review']; ?>"
+            </p>
+
+            <div class="testi-stars">
+                <?php
+                for($i=1; $i<=5; $i++){
+                    if($i <= $r['rating']){
+                        echo "<span>★</span>";
+                    } else {
+                        echo "<span>☆</span>";
+                    }
+                }
+                ?>
             </div>
 
-            <button type="submit" class="btn-masuk">Masuk Sekarang →</button>
+            <span class="testi-name">
+                <?= $r['nama_pelanggan']; ?>
+            </span>
 
-        </form>
+        </div>
 
-        <div class="signup-link">
-            Belum punya akun? <a href="signup.php">Daftar di sini</a>
+        <div class="testi-food right">
+            <img src="gambar/<?= $r['gambar']; ?>" loading="lazy">
         </div>
 
     </div>
 
-    <div class="bottom-note">
-        © <?= date('Y') ?> <strong>Toko Kue Fanda</strong> · Fresh Baked Daily, Made With Love ❤️
+    <?php } ?>
+
+    <div class="testi-add-wrap">
+
+        <a href="review_tambah.php" class="testi-add-btn">
+            + Bagikan Pengalaman Anda
+        </a>
+
     </div>
 
-</div>
+  </div>
+
+</section>
+
+<!-- ════ GALLERY ════ -->
+<section class="gallery-section">
+  <div class="gallery-head reveal">
+    <span class="stag">Galeri</span>
+    <h2 class="sh">Dari <em>Dapur Kami</em></h2>
+  </div>
+  <div class="gallery-track">
+    <div class="g-img"><img src="gambar/dapur.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="gambar/alat_bahan.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="gambar/bahan_bahan.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="gambar/kastangel_oven.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="gambar/kukis.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="gambar/setoberi_thumb.jpeg" alt="" loading="lazy"></div>
+    <div class="g-img"><img src="gambar/nastar_toples.jpeg" alt="" loading="lazy"></div>
+  </div>
+  <p class="gallery-hint">← Geser untuk lihat lebih →</p>
+</section>
+
+<!-- ════ FOOTER ════ -->
+<footer id="footer">
+  <div class="footer-grid">
+    <div>
+      <span class="f-logo">Toko Kue Fanda</span>
+      <p class="f-desc">Kue premium buatan tangan, dipanggang segar setiap hari dengan bahan-bahan pilihan terbaik.</p>
+      <div class="f-social">
+        <a href="#" class="f-soc"><svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+        <a href="#" class="f-soc"><svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" class="f-soc"><svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/></svg></a>
+      </div>
+    </div>
+    <div>
+      <h4 class="f-col-title">Menu</h4>
+      <ul class="f-links">
+        <li><a href="#menu">Kue Kering</a></li>
+        <li><a href="#menu">Kue Basah</a></li>
+        <li><a href="#menu">Cookies</a></li>
+        <li><a href="#menu">Cake &amp; Brownies</a></li>
+        <li><a href="#menu">Snack Manis</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="f-col-title">Info</h4>
+      <ul class="f-links">
+        <li><a href="#kontak">Tentang Kami</a></li>
+        <li><a href="keranjang.php">Cara Order</a></li>
+        <li><a href="#tentang">FAQ</a></li>
+        <li><a href="#menu">Menu Favorit</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="f-col-title">Kontak</h4>
+      <ul class="f-links">
+        <li><a href="#">📍 Semarang, Jawa Tengah</a></li>
+        <li><a href="#">📞 +62 856-4144-7469</a></li>
+        <li><a href="#">✉️ hello@tokokuefanda.id</a></li>
+        <li><a href="#">⏰ Buka Setiap Senin - Sabtu</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="f-copy">© 2025 <strong>Toko Kue Fanda</strong>. All rights reserved.</span>
+    <span class="f-copy">Made with ❤️ in Semarang</span>
+  </div>
+</footer>
 
 <script>
-/* ── CURSOR ── */
+/* CURSOR */
 const cur=document.getElementById('cur'),curR=document.getElementById('cur-r');
 let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop);})();
-document.querySelectorAll('a,button,input').forEach(el=>{
-    el.addEventListener('mouseenter',()=>document.body.classList.add('h'));
-    el.addEventListener('mouseleave',()=>document.body.classList.remove('h'));
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px'});
+(function loop(){rx+=(mx-rx)*.1;ry+=(my-ry)*.1;curR.style.left=rx+'px';curR.style.top=ry+'px';requestAnimationFrame(loop)})();
+document.querySelectorAll('a,button,.c-card,.fav-card,.g-img,.testi-slide').forEach(el=>{
+  el.addEventListener('mouseenter',()=>document.body.classList.add('h'));
+  el.addEventListener('mouseleave',()=>document.body.classList.remove('h'));
 });
 
-/* ── SHOW/HIDE PASSWORD ── */
-const passInput = document.getElementById('passInput');
-const eyeBtn    = document.getElementById('eyeBtn');
-const eyeIcon   = document.getElementById('eyeIcon');
-eyeBtn.addEventListener('click', () => {
-    if(passInput.type === 'password'){
-        passInput.type = 'text';
-        eyeIcon.textContent = '🙈';
-    }else{
-        passInput.type = 'password';
-        eyeIcon.textContent = '👁️';
-    }
-});
+/* NAVBAR */
+const nav=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>nav.classList.toggle('stuck',window.scrollY>55),{passive:true});
 
-/* ── RIPPLE EFFECT TOMBOL ── */
-document.querySelector('.btn-masuk').addEventListener('click', function(e){
-    const r = document.createElement('span');
-    const rect = this.getBoundingClientRect();
-    r.style.cssText = `position:absolute;border-radius:50%;background:rgba(255,255,255,.25);width:10px;height:10px;left:${e.clientX-rect.left-5}px;top:${e.clientY-rect.top-5}px;transform:scale(0);animation:ripple .5s ease-out forwards;pointer-events:none`;
-    this.appendChild(r);
-    setTimeout(()=>r.remove(),500);
-});
-const style=document.createElement('style');
-style.textContent='@keyframes ripple{to{transform:scale(20);opacity:0}}';
-document.head.appendChild(style);
+/* SCROLL REVEAL — untuk .c-card, .fav-card, .reveal, .reveal-l */
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    const t=e.target;
+    if(t.classList.contains('c-card')||t.classList.contains('fav-card')){t.classList.add('show')}
+    else{t.classList.add('in')}
+    io.unobserve(t);
+  });
+},{threshold:0.12});
+document.querySelectorAll('.c-card,.fav-card,.reveal,.reveal-l').forEach(el=>io.observe(el));
+
+/* COUNTER */
+const cio=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting)return;
+    e.target.querySelectorAll('.ctr').forEach(el=>{
+      const tgt=+el.dataset.to,dur=1800,s=performance.now();
+      const tick=n=>{const t=Math.min((n-s)/dur,1);el.textContent=Math.floor((1-Math.pow(1-t,3))*tgt);if(t<1)requestAnimationFrame(tick)};
+      requestAnimationFrame(tick);
+    });
+    cio.unobserve(e.target);
+  });
+},{threshold:.5});
+const st=document.querySelector('.hero-stats');if(st)cio.observe(st);
+
+/* CART NONAKTIF */
+document.getElementById('cartBadge').textContent = '0';
+
 </script>
 </body>
 </html>

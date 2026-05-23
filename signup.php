@@ -462,7 +462,7 @@ body {
   <div class="nav-right">
 
   <!-- KERANJANG -->
-  <a href="index.php"
+  <a href="login.php"
      title="Silakan login terlebih dahulu"
      onclick="alert('Anda belum memiliki akun / belum login!')">
 
@@ -471,7 +471,7 @@ body {
   </a>
 
   <!-- AKUN -->
-  <a href="index.php"
+  <a href="login.php"
      title="Silakan login terlebih dahulu"
      onclick="alert('Silakan login terlebih dahulu!')">
 
@@ -480,7 +480,7 @@ body {
   </a>
 
   <!-- BUTTON KEMBALI -->
-  <a href="index.php" class="btn-kembali">
+  <a href="login.php" class="btn-kembali">
     Kembali
   </a>
 
@@ -606,7 +606,7 @@ body {
       <div class="divider">atau</div>
 
       <div class="bottom-link">
-        Sudah punya akun? <a href="index.php">Masuk di sini</a>
+        Sudah punya akun? <a href="login.php">Masuk di sini</a>
       </div>
 
     </div>
