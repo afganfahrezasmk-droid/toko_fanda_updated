@@ -1,5 +1,9 @@
-<?php 
+<?php
 require_once __DIR__ . '/../koneksi.php';
+session_start();
+
+$flash_success = $_SESSION['flash_success'] ?? null;
+unset($_SESSION['flash_success']);
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -42,6 +46,51 @@ body.h #cur{width:18px;height:18px}
 body.h #cur-r{width:60px;height:60px;opacity:.18}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-thumb{background:var(--car);border-radius:2px}
+
+.toast-success {
+    transition: all 0.4s ease;
+
+    position: fixed;
+    top: 90px;
+    right: 20px;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 14px 16px;
+    min-width: 260px;
+
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+
+    border: 1px solid rgba(255,255,255,0.15);
+    border-left: 4px solid #2ecc71;
+
+    color: #ffffff;
+    border-radius: 14px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+
+    animation: slideIn .5s ease;
+    font-size: 14px;
+}
+
+.toast-success span {
+    font-size: 18px;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(40px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
 
 /* NAVBAR */
 .nav{position:fixed;top:0;left:0;right:0;z-index:900;padding:22px 64px;display:flex;align-items:center;justify-content:space-between;transition:all .4s var(--es)}
@@ -645,6 +694,15 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 </head>
 <body>
 
+<?php if ($flash_success): ?>
+<div class="toast-success">
+    <span>✅</span>
+    <div>
+        <?= htmlspecialchars($flash_success) ?>
+    </div>
+</div>
+<?php endif; ?>
+
 <div id="cur"></div>
 <div id="cur-r"></div>
 
@@ -956,76 +1014,76 @@ LIMIT 4
 <!-- ════ TESTIMONIAL ════ -->
 <section class="testi-section" id="tentang">
 
-  <?php if(isset($_GET['review']) && $_GET['review'] == 'success'){ ?>
+<?php if(isset($_GET['review']) && $_GET['review'] == 'success'){ ?>
+    <div class="review-success">
+        ✨ Review berhasil ditambahkan, terima kasih!
+    </div>
+<?php } ?>
 
-  <div class="review-success">
-      ✨ Review berhasil ditambahkan, terima kasih!
-  </div>
+<div class="testi-section-label">Toko Kue Fanda</div>
 
-  <?php } ?>
+<?php
+$qReview = mysqli_query($koneksi, "
+    SELECT 
+        review.*,
+        produk.gambar,
+        produk.gambar_testi
+    FROM review
+    LEFT JOIN produk ON review.produk_id = produk.produk_id
+    WHERE review.status = 'tampil'
+    ORDER BY review.id_review DESC
+");
 
-  <div class="testi-section-label">Toko Kue Fanda</div>
+while($r = mysqli_fetch_assoc($qReview)){
+?>
 
-  <?php
-      $qReview = mysqli_query($koneksi, "
-          SELECT review.*, produk.gambar
-          FROM review
-          JOIN produk ON review.produk_id = produk.produk_id
-          WHERE review.status='tampil'
-      ");
+<div class="testi-slide">
 
-    while($r = mysqli_fetch_assoc($qReview)){
-    ?>
+    <div class="testi-food left">
+        <img src="../gambar/<?= $r['gambar_testi']; ?>" loading="lazy">
+    </div>
 
-    <div class="testi-slide">
+    <div class="testi-center">
 
-        <div class="testi-food left">
-            <img src="../gambar/<?= $r['gambar']; ?>" loading="lazy">
+        <div class="testi-sub-label">
+            Dari Tetangga Kami
         </div>
 
-        <div class="testi-center">
+        <p class="testi-quote-text">
+            "<?= $r['review']; ?>"
+        </p>
 
-            <div class="testi-sub-label">
-                Dari Tetangga Kami
-            </div>
-
-            <p class="testi-quote-text">
-                "<?= $r['review']; ?>"
-            </p>
-
-            <div class="testi-stars">
-                <?php
-                for($i=1; $i<=5; $i++){
-                    if($i <= $r['rating']){
-                        echo "<span>★</span>";
-                    } else {
-                        echo "<span>☆</span>";
-                    }
+        <div class="testi-stars">
+            <?php
+            for($i=1; $i<=5; $i++){
+                if($i <= $r['rating']){
+                    echo "<span>★</span>";
+                } else {
+                    echo "<span>☆</span>";
                 }
-                ?>
-            </div>
-
-            <span class="testi-name">
-                <?= $r['nama_pelanggan']; ?>
-            </span>
-
+            }
+            ?>
         </div>
 
-        <div class="testi-food right">
-            <img src="../gambar/<?= $r['gambar']; ?>" loading="lazy">
-        </div>
+        <span class="testi-name">
+            <?= $r['nama_pelanggan']; ?>
+        </span>
 
     </div>
 
-    <?php } ?>
-
-    <div class="testi-add-wrap">
-
-        <a href="review_tambah.php" class="testi-add-btn">
-            + Bagikan Pengalaman Anda
-        </a>
-
+    <div class="testi-food right">
+        <img src="../gambar/<?= $r['gambar_testi']; ?>" loading="lazy">
     </div>
+
+</div>
+
+<?php } ?>
+
+<div class="testi-add-wrap">
+    <a href="review_tambah.php" class="testi-add-btn">
+        + Bagikan Pengalaman Anda
+    </a>
+</div>
 
 </section>
 
@@ -1207,5 +1265,19 @@ document.querySelectorAll('.fav-img-ring').forEach(ring => {
 });
 
 </script>
+
+<?php if ($flash_success): ?> 
+<script>
+setTimeout(() => {
+    const toast = document.querySelector('.toast-success');
+    if(toast){
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(40px)';
+        setTimeout(() => toast.remove(), 400);
+    }
+}, 5000); // 5 detik
+</script>
+<?php endif; ?>
+
 </body>
 </html>

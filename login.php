@@ -32,6 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $_SESSION['username'] = $u['username'];
         $_SESSION['role']     = $u['role'];
 
+        $_SESSION['flash_success'] = "Selamat datang, {$u['nama']} 👋 Login berhasil!";
+
         switch ($u['role']) {
 
             case 'admin':
