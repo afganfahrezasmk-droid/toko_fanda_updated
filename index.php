@@ -157,9 +157,63 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .ticker{background:var(--esp);padding:13px 0;overflow:hidden;display:flex;border-top:1px solid rgba(232,180,109,.1)}
 .ticker-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
 .ticker-track:hover{animation-play-state:paused}
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.ticker-item{display:flex;align-items:center;gap:20px;padding:0 22px;white-space:nowrap;color:var(--gold);font-size:.7rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
-.ticker-dot{width:4px;height:4px;background:var(--car);border-radius:50%;flex-shrink:0}
+.ticker-item{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    padding:0 22px;
+    white-space:nowrap;
+    color:var(--gold);
+    font-size:.7rem;
+    font-weight:500;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+
+    opacity:.92;
+    transition:all .3s ease;
+    text-shadow:0 0 8px rgba(255,255,255,.08);
+}
+/* DOT */
+.ticker-dot{
+    width:5px;
+    height:5px;
+    border-radius:50%;
+    background:var(--gold);
+
+    box-shadow:0 0 10px rgba(255,215,120,.7);
+
+    animation:pulse 2s infinite;
+}
+
+/* TICKER JALAN */
+@keyframes marquee{
+    from{
+        transform:translateX(0)
+    }
+    to{
+        transform:translateX(-50%)
+    }
+}
+
+/* DOT BERDENYUT */
+@keyframes pulse{
+
+    0%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+    50%{
+        transform:scale(1.5);
+        opacity:.6;
+    }
+
+    100%{
+        transform:scale(1);
+        opacity:1;
+    }
+
+}
 
 /* ══════════════════════════════════════
    MENU SECTION — Pink bg, gambar lingkaran, zoom hover
@@ -671,41 +725,148 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
     <img class="hf-img" src="gambar/sagu_keju.png" alt="">
   </div>
 
-  <!-- Konten tengah -->
-  <div class="hero-inner">
-    <h1 class="hero-name">Toko Kue Fanda</h1>
+  <?php
+
+/* TOTAL MENU */
+$qMenu = mysqli_query($koneksi, "
+    SELECT COUNT(*) as total_menu
+    FROM produk
+");
+
+$dMenu = mysqli_fetch_assoc($qMenu);
+
+
+/* RATING RATA-RATA */
+$qRating = mysqli_query($koneksi, "
+    SELECT AVG(rating) as rating_avg
+    FROM review
+    WHERE status='tampil'
+");
+
+$dRating = mysqli_fetch_assoc($qRating);
+
+$rating = number_format($dRating['rating_avg'],1);
+
+
+/* PELANGGAN PUAS */
+$qPelanggan = mysqli_query($koneksi, "
+    SELECT COUNT(DISTINCT orders_id) as total_pelanggan
+    FROM order_items
+");
+
+$dPelanggan = mysqli_fetch_assoc($qPelanggan);
+
+?>
+
+<!-- Konten tengah -->
+<div class="hero-inner">
+
+    <h1 class="hero-name">
+        Toko Kue Fanda
+    </h1>
+
     <a href="#menu" class="hero-tag">
-      Jelajahi Menu
-      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+
+        Jelajahi Menu
+
+        <svg viewBox="0 0 24 24">
+            <polyline points="9 18 15 12 9 6"/>
+        </svg>
+
     </a>
+
     <div class="hero-stats">
-      <div class="stat">
-        <span class="stat-n"><span class="ctr" data-to="7">0</span><sup>+</sup></span>
-        <span class="stat-l">Menu Pilihan</span>
-      </div>
-      <div class="stat">
-        <span class="stat-n">4.9<sup>★</sup></span>
-        <span class="stat-l">Rating</span>
-      </div>
-      <div class="stat">
-        <span class="stat-n"><span class="ctr" data-to="100">0</span><sup>+</sup></span>
-        <span class="stat-l">Pelanggan Puas</span>
-      </div>
+
+        <!-- MENU -->
+        <div class="stat">
+
+            <span class="stat-n">
+
+                <span class="ctr"
+                      data-to="<?= $dMenu['total_menu']; ?>">
+                    0
+                </span>
+
+                <sup>+</sup>
+
+            </span>
+
+            <span class="stat-l">
+                Menu Pilihan
+            </span>
+
+        </div>
+
+        <!-- RATING -->
+        <div class="stat">
+
+            <span class="stat-n">
+                <?= $rating; ?><sup>★</sup>
+            </span>
+
+            <span class="stat-l">
+                Rating Pelanggan
+            </span>
+
+        </div>
+
+        <!-- PELANGGAN -->
+        <div class="stat">
+
+            <span class="stat-n">
+
+                <span class="ctr"
+                      data-to="<?= $dPelanggan['total_pelanggan']; ?>">
+                    0
+                </span>
+
+                <sup>+</sup>
+
+            </span>
+
+            <span class="stat-l">
+              Produk Terjual
+          </span>
+
+        </div>
+
     </div>
-  </div>
+
+</div>
 </section>
 
 <!-- TICKER -->
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
+
     <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
+
     <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
-    <div class="ticker-item">Rating 4.9 Bintang<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Rating Pelanggan 4.9★<span class="ticker-dot"></span></div>
+
     <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
-    <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
-    <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
-    <div class="ticker-item">Rating 4.9 Bintang<span class="ticker-dot"></span></div>
-    <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Bahan Pilihan Berkualitas<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Manisnya Bikin Nagih<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Produk Terlaris Setiap Hari<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Favorit Keluarga Indonesia<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Resep Homemade Spesial<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Lembut, Renyah & Fresh<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Cocok Untuk Hampers & Hadiah<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Pesan Mudah & Cepat<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Kualitas Rasa Terbaik<span class="ticker-dot"></span></div>
+
+    <div class="ticker-item">Selalu Fresh Dari Oven<span class="ticker-dot"></span></div>
+
   </div>
 </div>
 

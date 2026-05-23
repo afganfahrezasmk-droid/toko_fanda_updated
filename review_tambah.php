@@ -270,7 +270,7 @@ option{
 
 <div class="box">
 
-    <a href="pengguna.php#tentang" class="back-btn">
+    <a href="index.php#tentang" class="back-btn">
         ← Kembali
     </a>
     

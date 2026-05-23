@@ -1,6 +1,3 @@
-<?php
-include 'koneksi.php';
-?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -157,63 +154,9 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .ticker{background:var(--esp);padding:13px 0;overflow:hidden;display:flex;border-top:1px solid rgba(232,180,109,.1)}
 .ticker-track{display:flex;width:max-content;animation:marquee 28s linear infinite}
 .ticker-track:hover{animation-play-state:paused}
-.ticker-item{
-    display:flex;
-    align-items:center;
-    gap:20px;
-    padding:0 22px;
-    white-space:nowrap;
-    color:var(--gold);
-    font-size:.7rem;
-    font-weight:500;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-
-    opacity:.92;
-    transition:all .3s ease;
-    text-shadow:0 0 8px rgba(255,255,255,.08);
-}
-/* DOT */
-.ticker-dot{
-    width:5px;
-    height:5px;
-    border-radius:50%;
-    background:var(--gold);
-
-    box-shadow:0 0 10px rgba(255,215,120,.7);
-
-    animation:pulse 2s infinite;
-}
-
-/* TICKER JALAN */
-@keyframes marquee{
-    from{
-        transform:translateX(0)
-    }
-    to{
-        transform:translateX(-50%)
-    }
-}
-
-/* DOT BERDENYUT */
-@keyframes pulse{
-
-    0%{
-        transform:scale(1);
-        opacity:1;
-    }
-
-    50%{
-        transform:scale(1.5);
-        opacity:.6;
-    }
-
-    100%{
-        transform:scale(1);
-        opacity:1;
-    }
-
-}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:20px;padding:0 22px;white-space:nowrap;color:var(--gold);font-size:.7rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase}
+.ticker-dot{width:4px;height:4px;background:var(--car);border-radius:50%;flex-shrink:0}
 
 /* ══════════════════════════════════════
    MENU SECTION — Pink bg, gambar lingkaran, zoom hover
@@ -240,52 +183,16 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 @keyframes cardIn{to{opacity:1;transform:translateY(0)}}
 
 .c-img-wrap{
-  width:clamp(160px,18vw,230px);
-  height:clamp(160px,18vw,230px);
-  position:relative;
+  width:clamp(160px,18vw,230px);height:clamp(160px,18vw,230px);
+  border-radius:50%;overflow:hidden;position:relative;
+  box-shadow:0 12px 40px rgba(74,37,16,.25);
+  transition:transform .45s var(--ease),box-shadow .45s;
   flex-shrink:0;
-
-  border-radius:50%;
-  overflow:hidden;
-
-  transition:
-    transform .45s var(--ease),
-    box-shadow .45s var(--ease);
 }
-
-.c-card:hover .c-img-wrap{
-  transform:scale(1.08) translateY(-8px);
-  box-shadow:0 24px 60px rgba(74,37,16,.28);
-}
-
-.c-img-wrap img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  border-radius:50%;
-  transition:transform .6s var(--es);
-}
-
-.c-card:hover .c-img-wrap img{
-  transform:scale(1.08);
-}
-
-.c-stok{
-  position:absolute;
-  top:10px;
-  right:-10px;
-  z-index:20;
-
-  font-size:.58rem;
-  font-weight:700;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-
-  padding:7px 13px;
-  border-radius:999px;
-
-  box-shadow:0 8px 20px rgba(0,0,0,.18);
-}
+.c-card:hover .c-img-wrap{transform:scale(1.1) translateY(-8px);box-shadow:0 24px 60px rgba(74,37,16,.4)}
+.c-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .6s var(--es)}
+.c-card:hover .c-img-wrap img{transform:scale(1.08)}
+.c-stok{position:absolute;top:12px;right:12px;font-size:.58rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 11px;border-radius:var(--pill)}
 .stok-aman{background:rgba(255,252,247,.9);color:var(--esp)}
 .stok-tipis{background:rgba(232,180,109,.92);color:var(--esp)}
 .stok-habis{background:rgba(200,60,60,.9);color:#fff}
@@ -570,86 +477,6 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 .reveal-l{opacity:0;transform:translateX(-36px);transition:opacity .7s var(--es),transform .7s var(--es)}
 .reveal-l.in{opacity:1;transform:translateX(0)}
 
-.testi-add-wrap{
-    text-align:center;
-    padding:50px 20px 70px;
-}
-
-.testi-add-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-
-    padding:15px 34px;
-
-    border-radius:999px;
-
-    background:rgba(255,255,255,.08);
-
-    border:1px solid rgba(255,255,255,.12);
-
-    backdrop-filter:blur(10px);
-
-    color:var(--white);
-
-    font-size:.85rem;
-    font-weight:500;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-
-    transition:all .35s var(--es);
-
-    text-decoration:none;
-}
-
-.testi-add-btn:hover{
-    background:var(--gold);
-    color:var(--esp);
-
-    transform:translateY(-4px);
-
-    box-shadow:0 14px 30px rgba(232,180,109,.28);
-}
-
-/* NOTIF REVIEW */
-.review-success{
-    width:fit-content;
-
-    margin:30px auto 10px;
-
-    padding:14px 26px;
-
-    border-radius:999px;
-
-    background:rgba(232,180,109,.12);
-
-    border:1px solid rgba(232,180,109,.25);
-
-    color:var(--gold);
-
-    font-size:.9rem;
-    font-weight:500;
-
-    letter-spacing:.03em;
-
-    backdrop-filter:blur(10px);
-
-    animation:fadeNotif .5s ease;
-}
-
-@keyframes fadeNotif{
-    from{
-        opacity:0;
-        transform:translateY(-10px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
 /* RESPONSIVE */
 @media(max-width:960px){
   .nav{padding:14px 22px}
@@ -728,148 +555,43 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
     <img class="hf-img" src="../gambar/sagu_keju.png" alt="">
   </div>
 
-  <?php
-
-/* TOTAL MENU */
-$qMenu = mysqli_query($koneksi, "
-    SELECT COUNT(*) as total_menu
-    FROM produk
-");
-
-$dMenu = mysqli_fetch_assoc($qMenu);
-
-
-/* RATING RATA-RATA */
-$qRating = mysqli_query($koneksi, "
-    SELECT AVG(rating) as rating_avg
-    FROM review
-    WHERE status='tampil'
-");
-
-$dRating = mysqli_fetch_assoc($qRating);
-
-$rating = number_format($dRating['rating_avg'],1);
-
-
-/* PELANGGAN PUAS */
-$qPelanggan = mysqli_query($koneksi, "
-    SELECT COUNT(DISTINCT orders_id) as total_pelanggan
-    FROM order_items
-");
-
-$dPelanggan = mysqli_fetch_assoc($qPelanggan);
-
-?>
-
-<!-- Konten tengah -->
-<div class="hero-inner">
-
-    <h1 class="hero-name">
-        Toko Kue Fanda
-    </h1>
-
+  <!-- Konten tengah -->
+  <div class="hero-inner">
+    <h1 class="hero-name">Toko Kue Fanda</h1>
     <a href="#menu" class="hero-tag">
-
-        Jelajahi Menu
-
-        <svg viewBox="0 0 24 24">
-            <polyline points="9 18 15 12 9 6"/>
-        </svg>
-
+      Jelajahi Menu
+      <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
-
     <div class="hero-stats">
-
-        <!-- MENU -->
-        <div class="stat">
-
-            <span class="stat-n">
-
-                <span class="ctr"
-                      data-to="<?= $dMenu['total_menu']; ?>">
-                    0
-                </span>
-
-                <sup>+</sup>
-
-            </span>
-
-            <span class="stat-l">
-                Menu Pilihan
-            </span>
-
-        </div>
-
-        <!-- RATING -->
-        <div class="stat">
-
-            <span class="stat-n">
-                <?= $rating; ?><sup>★</sup>
-            </span>
-
-            <span class="stat-l">
-                Rating Pelanggan
-            </span>
-
-        </div>
-
-        <!-- PELANGGAN -->
-        <div class="stat">
-
-            <span class="stat-n">
-
-                <span class="ctr"
-                      data-to="<?= $dPelanggan['total_pelanggan']; ?>">
-                    0
-                </span>
-
-                <sup>+</sup>
-
-            </span>
-
-            <span class="stat-l">
-              Produk Terjual
-          </span>
-
-        </div>
-
+      <div class="stat">
+        <span class="stat-n"><span class="ctr" data-to="7">0</span><sup>+</sup></span>
+        <span class="stat-l">Menu Pilihan</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n">4.9<sup>★</sup></span>
+        <span class="stat-l">Rating</span>
+      </div>
+      <div class="stat">
+        <span class="stat-n"><span class="ctr" data-to="100">0</span><sup>+</sup></span>
+        <span class="stat-l">Pelanggan Puas</span>
+      </div>
     </div>
-
-</div>
+  </div>
 </section>
 
 <!-- TICKER -->
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
-
     <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Rating Pelanggan 4.9★<span class="ticker-dot"></span></div>
-
+    <div class="ticker-item">Pengiriman ke Seluruh Wilayah<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Rating 4.9 Bintang<span class="ticker-dot"></span></div>
     <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Bahan Pilihan Berkualitas<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Manisnya Bikin Nagih<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Produk Terlaris Setiap Hari<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Favorit Keluarga Indonesia<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Resep Homemade Spesial<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Lembut, Renyah & Fresh<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Cocok Untuk Hampers & Hadiah<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Pesan Mudah & Cepat<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Kualitas Rasa Terbaik<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Selalu Fresh Dari Oven<span class="ticker-dot"></span></div>
-
+    <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Pengiriman ke Seluruh Wilayah<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Rating 4.9 Bintang<span class="ticker-dot"></span></div>
+    <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
   </div>
 </div>
 
@@ -883,74 +605,104 @@ $dPelanggan = mysqli_fetch_assoc($qPelanggan);
 
   <div class="circle-grid" id="circleGrid">
 
-    <?php
-    $query = mysqli_query($koneksi, "SELECT * FROM produk");
-
-    while($data = mysqli_fetch_assoc($query)){
-
-        $stok = $data['stok'];
-
-        if($stok > 20){
-            $class_stok = "stok-aman";
-            $text_stok = "Stok $stok";
-        }elseif($stok > 0){
-            $class_stok = "stok-tipis";
-            $text_stok = "Stok Tipis";
-        }else{
-            $class_stok = "stok-habis";
-            $text_stok = "Stok Habis";
-        }
-    ?>
-
     <div class="c-card">
       <div class="c-img-wrap">
-
-        <img src="gambar/<?= $data['gambar']; ?>" 
-            alt="<?= $data['nama_produk']; ?>" 
-            loading="lazy">
-
+        <span class="c-stok stok-aman">Stok 47</span>
+        <img src="../gambar/nastar.jpeg" alt="Nastar Klasik" loading="lazy">
       </div>
-
-      <span class="c-cat">
-        <?php
-          if($data['kategori_id'] == 1){
-              echo "Kue Kering";
-          }elseif($data['kategori_id'] == 2){
-              echo "Kue Basah";
-          }elseif($data['kategori_id'] == 3){
-              echo "Cookies";
-          }elseif($data['kategori_id'] == 4){
-              echo "Cake & Brownies";
-          }elseif($data['kategori_id'] == 5){
-              echo "Snack Manis";
-          }else{
-              echo "Kategori Tidak Ada";
-          }
-        ?>
-      </span>
-
-      <h3 class="c-name">
-        <?= $data['nama_produk']; ?>
-      </h3>
-
-      <span class="c-price">
-        Rp <?= number_format($data['harga'],0,',','.'); ?>
-      </span>
-
-      <span class="c-stok <?= $class_stok ?>">
-          <?= $text_stok ?>
-      </span>
-
-      <button class="c-add btn-add-cart">
+      <span class="c-cat">Kue Kering</span>
+      <h3 class="c-name">Nastar Klasik</h3>
+      <span class="c-price">Rp 85.000</span>
+      <button class="c-add btn-add-cart" data-name="Nastar Klasik">
         <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Tambah
       </button>
-
-        </div>
-
-    <?php } ?>
-
     </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 38</span>
+        <img src="../gambar/kastangel.jpeg" alt="Kastengel Keju" loading="lazy">
+      </div>
+      <span class="c-cat">Kue Kering</span>
+      <h3 class="c-name">Kastengel Keju</h3>
+      <span class="c-price">Rp 60.000</span>
+      <button class="c-add btn-add-cart" data-name="Kastengel Keju">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 40</span>
+        <img src="../gambar/putri_salju.jpeg" alt="Putri Salju" loading="lazy">
+      </div>
+      <span class="c-cat">Kue Kering</span>
+      <h3 class="c-name">Putri Salju</h3>
+      <span class="c-price">Rp 80.000</span>
+      <button class="c-add btn-add-cart" data-name="Putri Salju">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 53</span>
+        <img src="../gambar/chocolate_butter.jpeg" alt="Chocolate Butter Cookies" loading="lazy">
+      </div>
+      <span class="c-cat">Cookies</span>
+      <h3 class="c-name">Chocolate Butter Cookies</h3>
+      <span class="c-price">Rp 70.000</span>
+      <button class="c-add btn-add-cart" data-name="Chocolate Butter Cookies">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-tipis">Stok Tipis</span>
+        <img src="../gambar/brownis.jpeg" alt="Brownies Panggang" loading="lazy">
+      </div>
+      <span class="c-cat">Cake & Brownies</span>
+      <h3 class="c-name">Brownies Panggang</h3>
+      <span class="c-price">Rp 95.000</span>
+      <button class="c-add btn-add-cart" data-name="Brownies Panggang">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 49</span>
+        <img src="../gambar/palm_cheese.jpeg" alt="Palm Cheese Cookies" loading="lazy">
+      </div>
+      <span class="c-cat">Cookies</span>
+      <h3 class="c-name">Palm Cheese Cookies</h3>
+      <span class="c-price">Rp 75.000</span>
+      <button class="c-add btn-add-cart" data-name="Palm Cheese Cookies">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
+    <div class="c-card">
+      <div class="c-img-wrap">
+        <span class="c-stok stok-aman">Stok 52</span>
+        <img src="../gambar/strawberry_thumb.jpeg" alt="Strawberry Thumb" loading="lazy">
+      </div>
+      <span class="c-cat">Cookies</span>
+      <h3 class="c-name">Strawberry Thumb</h3>
+      <span class="c-price">Rp 72.000</span>
+      <button class="c-add btn-add-cart" data-name="Strawberry Thumb">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Tambah
+      </button>
+    </div>
+
   </div>
 
   <div class="see-all-wrap reveal">
@@ -961,125 +713,77 @@ $dPelanggan = mysqli_fetch_assoc($qPelanggan);
   </div>
 </section>
 
-<!-- ════ MENU FAVORIT OTOMATIS ════ -->
+<!-- ════ PERUBAHAN 2: MENU FAVORIT (menggantikan promo banner) ════ -->
 <section class="favmenu-section">
-
   <div class="favmenu-head reveal">
     <span class="stag">Paling Banyak Dipesan</span>
     <h2 class="sh">Menu <em>Favorit</em></h2>
   </div>
-
-  <p class="favmenu-sub reveal">
-    Produk terlaris pilihan pelanggan dengan rating terbaik dari toko kami ✨
-  </p>
+  <p class="favmenu-sub reveal">Pilihan pelanggan setia kami — kue-kue terlaris yang selalu habis lebih cepat dari yang bisa kami panggang.</p>
 
   <div class="favmenu-grid" id="favGrid">
 
-    <?php
-
-    $fav = mysqli_query($koneksi, "
-
-SELECT 
-    produk.produk_id,
-    produk.nama_produk,
-    produk.harga,
-    produk.gambar,
-
-    COALESCE(SUM(order_items.qty),0) as total_terjual,
-
-    COALESCE(AVG(review.rating),0) as rata_rating
-
-FROM produk
-
-LEFT JOIN order_items
-    ON produk.produk_id = order_items.produk_id
-
-LEFT JOIN review
-    ON produk.produk_id = review.produk_id
-    AND review.status='tampil'
-
-GROUP BY produk.produk_id
-
-ORDER BY total_terjual DESC, rata_rating DESC
-
-LIMIT 4
-
-");
-
-    $rank = 1;
-
-    while($f = mysqli_fetch_assoc($fav)){
-
-    ?>
-
+    <!-- Kartu 1 -->
     <div class="fav-card">
-
       <div class="fav-img-ring">
-
-        <span class="fav-rank">
-          #<?= $rank++; ?>
-        </span>
-
-        <img 
-          src="gambar/<?= $f['gambar']; ?>" 
-          alt="<?= $f['nama_produk']; ?>" 
-          loading="lazy"
-        >
-
+        <span class="fav-rank">#1</span>
+        <img src="../gambar/nastar.jpeg" alt="Nastar Klasik" loading="lazy">
       </div>
-
-      <h3 class="fav-name">
-        <?= $f['nama_produk']; ?>
-      </h3>
-
-      <span class="fav-price">
-        Rp <?= number_format($f['harga'],0,',','.'); ?>
-      </span>
-
+      <h3 class="fav-name">Nastar Klasik</h3>
+      <span class="fav-price">Rp 85.000</span>
       <div class="fav-stars">
-
-        <?php
-
-        $rating = round($f['rata_rating']);
-
-        for($i=1; $i<=5; $i++){
-
-            if($i <= $rating){
-                echo "<span>★</span>";
-            } else {
-                echo "<span>☆</span>";
-            }
-
-        }
-
-        ?>
-
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
       </div>
-
     </div>
 
-    <?php } ?>
+    <!-- Kartu 2 -->
+    <div class="fav-card">
+      <div class="fav-img-ring">
+        <span class="fav-rank">#2</span>
+        <img src="../gambar/kastangel.jpeg" alt="Kastengel Keju" loading="lazy">
+      </div>
+      <h3 class="fav-name">Kastengel Keju</h3>
+      <span class="fav-price">Rp 60.000</span>
+      <div class="fav-stars">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+      </div>
+    </div>
+
+    <!-- Kartu 3 -->
+    <div class="fav-card">
+      <div class="fav-img-ring">
+        <span class="fav-rank">#3</span>
+        <img src="../gambar/brownis.jpeg" alt="Brownies Panggang" loading="lazy">
+      </div>
+      <h3 class="fav-name">Brownies Panggang</h3>
+      <span class="fav-price">Rp 95.000</span>
+      <div class="fav-stars">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+      </div>
+    </div>
+
+    <!-- Kartu 4 -->
+    <div class="fav-card">
+      <div class="fav-img-ring">
+        <span class="fav-rank">#4</span>
+        <img src="../gambar/strawberry_thumb.jpeg" alt="Strawberry Thumb" loading="lazy">
+      </div>
+      <h3 class="fav-name">Strawberry Thumb</h3>
+      <span class="fav-price">Rp 72.000</span>
+      <div class="fav-stars">
+        <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+      </div>
+    </div>
 
   </div>
 
   <div class="favmenu-divider reveal">
-    <span class="favmenu-divider-text">
-      Favorit pelanggan kami ✨
-    </span>
+    <span class="favmenu-divider-text">Pesan sebelum kehabisan</span>
   </div>
-
 </section>
 
 <!-- ════ TESTIMONIAL ════ -->
 <section class="testi-section" id="tentang">
-
-  <?php if(isset($_GET['review']) && $_GET['review'] == 'success'){ ?>
-
-  <div class="review-success">
-      ✨ Review berhasil ditambahkan, terima kasih!
-  </div>
-
-  <?php } ?>
 
   <div class="testi-section-label">Toko Kue Fanda</div>
 
@@ -1089,67 +793,53 @@ LIMIT 4
     Ganti src dengan path gambar PNG kamu.
   -->
 
-  <?php
-      $qReview = mysqli_query($koneksi, "
-          SELECT review.*, produk.gambar
-          FROM review
-          JOIN produk ON review.produk_id = produk.produk_id
-          WHERE review.status='tampil'
-      ");
-
-    while($r = mysqli_fetch_assoc($qReview)){
-    ?>
-
-    <div class="testi-slide">
-
-        <div class="testi-food left">
-            <img src="../gambar/?= $r['gambar']; ?>" loading="lazy">
-        </div>
-
-        <div class="testi-center">
-
-            <div class="testi-sub-label">
-                Dari Tetangga Kami
-            </div>
-
-            <p class="testi-quote-text">
-                "<?= $r['review']; ?>"
-            </p>
-
-            <div class="testi-stars">
-                <?php
-                for($i=1; $i<=5; $i++){
-                    if($i <= $r['rating']){
-                        echo "<span>★</span>";
-                    } else {
-                        echo "<span>☆</span>";
-                    }
-                }
-                ?>
-            </div>
-
-            <span class="testi-name">
-                <?= $r['nama_pelanggan']; ?>
-            </span>
-
-        </div>
-
-        <div class="testi-food right">
-            <img src="../gambar/<?= $r['gambar']; ?>" loading="lazy">
-        </div>
-
+  <!-- Slide 1 -->
+  <div class="testi-slide">
+    <div class="testi-food left">
+      <img src="../gambar/nstr.png" alt="Nastar" loading="lazy">
     </div>
-
-    <?php } ?>
-
-    <div class="testi-add-wrap">
-
-        <a href="review_tambah.php" class="testi-add-btn">
-            + Bagikan Pengalaman Anda
-        </a>
-
+    <div class="testi-center">
+      <div class="testi-label-tag">Kata Pelanggan Kami</div><br><br><br><br><br><br>
+      <div class="testi-sub-label">Dari Tetangga Kami</div>
+      <p class="testi-quote-text">"Nastar Klasiknya lembut banget, isian nanasnya pas. Udah langganan tiap minggu, <em>gak pernah kecewa!</em>"</p>
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <span class="testi-name">Niny — Pelanggan Setia</span>
     </div>
+    <div class="testi-food right">
+      <img src="../gambar/rim.png" alt="Kastengel" loading="lazy">
+    </div>
+  </div>
 
+  <!-- Slide 2 -->
+  <div class="testi-slide">
+    <div class="testi-food left">
+      <img src="../gambar/ckis.png" alt="Brownies" loading="lazy">
+    </div>
+    <div class="testi-center">
+      <div class="testi-sub-label">Dari Tetangga Kami</div>
+      <p class="testi-quote-text">"Brownies Panggang-nya <em>juara!</em> Fudgy, coklat pekat, cocok buat oleh-oleh atau hadiah ulang tahun."</p>
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <span class="testi-name">Agan — Food Enthusiast</span>
+    </div>
+    <div class="testi-food right">
+      <img src="../gambar/astr.png" alt="Cookies" loading="lazy">
+    </div>
+  </div>
+
+  <!-- Slide 3 -->
+  <div class="testi-slide">
+    <div class="testi-food left">
+      <img src="../gambar/strb.png" alt="Strawberry" loading="lazy">
+    </div>
+    <div class="testi-center">
+      <div class="testi-sub-label">Dari Tetangga Kami</div>
+      <p class="testi-quote-text">"Kastengel Keju-nya gurih dan <em>renyah banget.</em> Packaging cantik, pengiriman cepat. My go-to kue premium!"</p>
+      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      <span class="testi-name">Ayuna — Pelanggan Setia</span>
+    </div>
+    <div class="testi-food right">
+      <img src="../gambar/slj.png" alt="Putri Salju" loading="lazy">
+    </div>
   </div>
 
 </section>
@@ -1260,9 +950,51 @@ const cio=new IntersectionObserver(entries=>{
 },{threshold:.5});
 const st=document.querySelector('.hero-stats');if(st)cio.observe(st);
 
-/* CART NONAKTIF */
-document.getElementById('cartBadge').textContent = '0';
+/* CART */
+let cart = JSON.parse(localStorage.getItem('fanda_cart')) || {};
 
+function updateBadge(){
+  const badge = document.getElementById('cartBadge');
+  let total = 0;
+  Object.values(cart).forEach(item => { total += item.qty; });
+  badge.textContent = total;
+}
+updateBadge();
+
+document.querySelectorAll('.btn-add-cart').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const card = btn.closest('.c-card');
+    const nama = card.querySelector('.c-name').innerText;
+    const hargaText = card.querySelector('.c-price').innerText;
+    const harga = parseInt(hargaText.replace('Rp','').replace(/\./g,'').replace(/\s/g,''));
+    const gambar = card.querySelector('img').getAttribute('src');
+
+    let produkId = null;
+    switch(nama){
+      case 'Nastar Klasik':         produkId = 1; break;
+      case 'Kastengel Keju':        produkId = 2; break;
+      case 'Putri Salju':           produkId = 3; break;
+      case 'Chocolate Butter Cookies': produkId = 4; break;
+      case 'Brownies Panggang':     produkId = 5; break;
+      case 'Palm Cheese Cookies':   produkId = 6; break;
+      case 'Strawberry Thumb':      produkId = 7; break;
+    }
+    if(produkId === null) return;
+
+    if(cart[produkId]){
+      cart[produkId].qty += 1;
+    } else {
+      cart[produkId] = { nama, harga, gambar, qty: 1 };
+    }
+
+    localStorage.setItem('fanda_cart', JSON.stringify(cart));
+    btn.style.background='var(--gold)';
+    btn.style.color='var(--esp)';
+    setTimeout(()=>{ btn.style.background=''; btn.style.color=''; },350);
+    updateBadge();
+    setTimeout(()=>{ window.location.href='order_tambah.php'; },420);
+  });
+});
 </script>
 </body>
 </html>

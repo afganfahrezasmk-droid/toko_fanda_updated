@@ -26,5 +26,5 @@ VALUES
 )
 ");
 
-header("Location: pengguna.php?review=success#tentang");
+header("Location: index.php?review=success#tentang");
 ?>
