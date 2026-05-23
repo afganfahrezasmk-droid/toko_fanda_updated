@@ -516,6 +516,86 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 .reveal-l{opacity:0;transform:translateX(-36px);transition:opacity .7s var(--es),transform .7s var(--es)}
 .reveal-l.in{opacity:1;transform:translateX(0)}
 
+.testi-add-wrap{
+    text-align:center;
+    padding:50px 20px 70px;
+}
+
+.testi-add-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+
+    padding:15px 34px;
+
+    border-radius:999px;
+
+    background:rgba(255,255,255,.08);
+
+    border:1px solid rgba(255,255,255,.12);
+
+    backdrop-filter:blur(10px);
+
+    color:var(--white);
+
+    font-size:.85rem;
+    font-weight:500;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+
+    transition:all .35s var(--es);
+
+    text-decoration:none;
+}
+
+.testi-add-btn:hover{
+    background:var(--gold);
+    color:var(--esp);
+
+    transform:translateY(-4px);
+
+    box-shadow:0 14px 30px rgba(232,180,109,.28);
+}
+
+/* NOTIF REVIEW */
+.review-success{
+    width:fit-content;
+
+    margin:30px auto 10px;
+
+    padding:14px 26px;
+
+    border-radius:999px;
+
+    background:rgba(232,180,109,.12);
+
+    border:1px solid rgba(232,180,109,.25);
+
+    color:var(--gold);
+
+    font-size:.9rem;
+    font-weight:500;
+
+    letter-spacing:.03em;
+
+    backdrop-filter:blur(10px);
+
+    animation:fadeNotif .5s ease;
+}
+
+@keyframes fadeNotif{
+    from{
+        opacity:0;
+        transform:translateY(-10px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
 /* RESPONSIVE */
 @media(max-width:960px){
   .nav{padding:14px 22px}
@@ -805,6 +885,14 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 <!-- ════ TESTIMONIAL ════ -->
 <section class="testi-section" id="tentang">
 
+  <?php if(isset($_GET['review']) && $_GET['review'] == 'success'){ ?>
+
+  <div class="review-success">
+      ✨ Review berhasil ditambahkan, terima kasih!
+  </div>
+
+  <?php } ?>
+
   <div class="testi-section-label">Toko Kue Fanda</div>
 
   <!-- 
@@ -813,53 +901,67 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
     Ganti src dengan path gambar PNG kamu.
   -->
 
-  <!-- Slide 1 -->
-  <div class="testi-slide">
-    <div class="testi-food left">
-      <img src="gambar/nstr.png" alt="Nastar" loading="lazy">
-    </div>
-    <div class="testi-center">
-      <div class="testi-label-tag">Kata Pelanggan Kami</div><br><br><br><br><br><br>
-      <div class="testi-sub-label">Dari Tetangga Kami</div>
-      <p class="testi-quote-text">"Nastar Klasiknya lembut banget, isian nanasnya pas. Udah langganan tiap minggu, <em>gak pernah kecewa!</em>"</p>
-      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <span class="testi-name">Niny — Pelanggan Setia</span>
-    </div>
-    <div class="testi-food right">
-      <img src="gambar/rim.png" alt="Kastengel" loading="lazy">
-    </div>
-  </div>
+  <?php
+      $qReview = mysqli_query($koneksi, "
+          SELECT review.*, produk.gambar
+          FROM review
+          JOIN produk ON review.produk_id = produk.produk_id
+          WHERE review.status='tampil'
+      ");
 
-  <!-- Slide 2 -->
-  <div class="testi-slide">
-    <div class="testi-food left">
-      <img src="gambar/ckis.png" alt="Brownies" loading="lazy">
-    </div>
-    <div class="testi-center">
-      <div class="testi-sub-label">Dari Tetangga Kami</div>
-      <p class="testi-quote-text">"Brownies Panggang-nya <em>juara!</em> Fudgy, coklat pekat, cocok buat oleh-oleh atau hadiah ulang tahun."</p>
-      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <span class="testi-name">Agan — Food Enthusiast</span>
-    </div>
-    <div class="testi-food right">
-      <img src="gambar/astr.png" alt="Cookies" loading="lazy">
-    </div>
-  </div>
+    while($r = mysqli_fetch_assoc($qReview)){
+    ?>
 
-  <!-- Slide 3 -->
-  <div class="testi-slide">
-    <div class="testi-food left">
-      <img src="gambar/strb.png" alt="Strawberry" loading="lazy">
+    <div class="testi-slide">
+
+        <div class="testi-food left">
+            <img src="gambar/<?= $r['gambar']; ?>" loading="lazy">
+        </div>
+
+        <div class="testi-center">
+
+            <div class="testi-sub-label">
+                Dari Tetangga Kami
+            </div>
+
+            <p class="testi-quote-text">
+                "<?= $r['review']; ?>"
+            </p>
+
+            <div class="testi-stars">
+                <?php
+                for($i=1; $i<=5; $i++){
+                    if($i <= $r['rating']){
+                        echo "<span>★</span>";
+                    } else {
+                        echo "<span>☆</span>";
+                    }
+                }
+                ?>
+            </div>
+
+            <span class="testi-name">
+                <?= $r['nama_pelanggan']; ?>
+            </span>
+
+        </div>
+
+        <div class="testi-food right">
+            <img src="gambar/<?= $r['gambar']; ?>" loading="lazy">
+        </div>
+
     </div>
-    <div class="testi-center">
-      <div class="testi-sub-label">Dari Tetangga Kami</div>
-      <p class="testi-quote-text">"Kastengel Keju-nya gurih dan <em>renyah banget.</em> Packaging cantik, pengiriman cepat. My go-to kue premium!"</p>
-      <div class="testi-stars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-      <span class="testi-name">Ayuna — Pelanggan Setia</span>
+
+    <?php } ?>
+
+    <div class="testi-add-wrap">
+
+        <a href="review_tambah.php" class="testi-add-btn">
+            + Bagikan Pengalaman Anda
+        </a>
+
     </div>
-    <div class="testi-food right">
-      <img src="gambar/slj.png" alt="Putri Salju" loading="lazy">
-    </div>
+
   </div>
 
 </section>
