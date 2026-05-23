@@ -454,10 +454,10 @@ body {
 <nav class="top-nav">
   <a href="#" class="nav-logo">Toko Kue <span>Fanda</span></a>
   <ul class="nav-links">
-    <li><a href="pelanggan.php">Beranda</a></li>
-    <li><a href="pelanggan.php#menu">Menu</a></li>
-    <li><a href="pelanggan.php#footer">Kontak</a></li>
-    <li><a href="pelanggan.php#tentang">Tentang Kami</a></li>
+    <li><a href="pengguna.php">Beranda</a></li>
+    <li><a href="pengguna.php#menu">Menu</a></li>
+    <li><a href="pengguna.php#footer">Kontak</a></li>
+    <li><a href="pengguna.php#tentang">Tentang Kami</a></li>
   </ul>
   <div class="nav-right">
 
