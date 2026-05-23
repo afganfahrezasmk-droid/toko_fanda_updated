@@ -1,5 +1,5 @@
-<?php
-include 'koneksi.php';
+<?php 
+require_once __DIR__ . '/../koneksi.php';
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -59,6 +59,48 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .cart-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--gold);color:var(--esp);font-size:.6rem;font-weight:700;display:flex;align-items:center;justify-content:center}
 .btn-keluar{padding:10px 24px;border-radius:var(--pill);background:transparent;color:var(--white);font-size:.82rem;font-weight:500;border:1.5px solid rgba(255,252,247,.35);transition:all .3s}
 .btn-keluar:hover{background:var(--white);color:var(--esp)}
+
+/* TOAST NOTIFICATION */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: rgba(232, 180, 109, 0.95);
+  color: var(--esp);
+  padding: 16px 24px;
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  z-index: 9999;
+  animation: slideInToast 0.4s ease;
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+
+@keyframes slideInToast {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToast {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+}
+
+.toast.out {
+  animation: slideOutToast 0.4s ease;
+}
 
 /* ══════════════════════════════════════
    HERO — Teks di tengah, gambar natural shape (PNG transparan)
@@ -168,51 +210,26 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
     font-weight:500;
     letter-spacing:.14em;
     text-transform:uppercase;
-
     opacity:.92;
     transition:all .3s ease;
     text-shadow:0 0 8px rgba(255,255,255,.08);
 }
-/* DOT */
 .ticker-dot{
     width:5px;
     height:5px;
     border-radius:50%;
     background:var(--gold);
-
     box-shadow:0 0 10px rgba(255,215,120,.7);
-
     animation:pulse 2s infinite;
 }
-
-/* TICKER JALAN */
 @keyframes marquee{
-    from{
-        transform:translateX(0)
-    }
-    to{
-        transform:translateX(-50%)
-    }
+    from{transform:translateX(0)}
+    to{transform:translateX(-50%)}
 }
-
-/* DOT BERDENYUT */
 @keyframes pulse{
-
-    0%{
-        transform:scale(1);
-        opacity:1;
-    }
-
-    50%{
-        transform:scale(1.5);
-        opacity:.6;
-    }
-
-    100%{
-        transform:scale(1);
-        opacity:1;
-    }
-
+    0%{transform:scale(1);opacity:1}
+    50%{transform:scale(1.5);opacity:.6}
+    100%{transform:scale(1);opacity:1}
 }
 
 /* ══════════════════════════════════════
@@ -244,13 +261,9 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   height:clamp(160px,18vw,230px);
   position:relative;
   flex-shrink:0;
-
   border-radius:50%;
   overflow:hidden;
-
-  transition:
-    transform .45s var(--ease),
-    box-shadow .45s var(--ease);
+  transition: transform .45s var(--ease), box-shadow .45s var(--ease);
 }
 
 .c-card:hover .c-img-wrap{
@@ -275,15 +288,12 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   top:10px;
   right:-10px;
   z-index:20;
-
   font-size:.58rem;
   font-weight:700;
   letter-spacing:.08em;
   text-transform:uppercase;
-
   padding:7px 13px;
   border-radius:999px;
-
   box-shadow:0 8px 20px rgba(0,0,0,.18);
 }
 .stok-aman{background:rgba(255,252,247,.9);color:var(--esp)}
@@ -300,6 +310,7 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   font-size:.75rem;font-weight:500;
   opacity:0;transform:translateY(6px);
   transition:opacity .3s,transform .3s,background .3s;
+  cursor: pointer;
 }
 .c-card:hover .c-add{opacity:1;transform:translateY(0)}
 .c-add:hover{background:var(--car)}
@@ -311,9 +322,7 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .see-all svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2.2}
 
 /* ══════════════════════════════════════
-   PERUBAHAN 2: MENU FAVORIT — Menggantikan Promo Banner
-   Gaya Courante: background cream/putih, gambar produk besar
-   tanpa background, nama & harga di bawah
+   MENU FAVORIT
 ══════════════════════════════════════ */
 .favmenu-section{
   padding:96px 64px 100px;
@@ -321,7 +330,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   position:relative;
   overflow:hidden;
 }
-/* Dekorasi blob di belakang */
 .favmenu-section::before{
   content:'';position:absolute;width:600px;height:600px;
   border-radius:50%;top:-200px;right:-180px;
@@ -357,7 +365,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   font-style:italic;position:relative;z-index:1;
 }
 
-/* Grid 4 kolom — seperti Image 3 (Courante) */
 .favmenu-grid{
   display:grid;
   grid-template-columns:repeat(4,1fr);
@@ -365,7 +372,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   position:relative;z-index:1;
 }
 
-/* Setiap kartu */
 .fav-card{
   display:flex;flex-direction:column;align-items:center;
   cursor:none;
@@ -376,7 +382,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .fav-card:nth-child(3).show{animation-delay:.2s}
 .fav-card:nth-child(4).show{animation-delay:.3s}
 
-/* Lingkaran gambar */
 .fav-img-ring{
   width:clamp(180px,20vw,260px);
   height:clamp(180px,20vw,260px);
@@ -387,16 +392,13 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   position:relative;
   transition:transform .45s var(--ease),box-shadow .45s;
   box-shadow:0 8px 32px rgba(74,37,16,.12);
+  cursor: pointer;
 }
 .fav-card:hover .fav-img-ring{
   transform:translateY(-10px) scale(1.05);
   box-shadow:0 22px 52px rgba(74,37,16,.22);
 }
-/* 
-  Gambar di dalam ring: object-fit cover untuk gambar JPEG biasa.
-  Kalau pakai PNG transparan, ganti .fav-img-ring background menjadi 
-  transparent dan tambahkan class 'fav-card--nobg' di HTML.
-*/
+
 .fav-img-ring img{
   width:100%;height:100%;
   object-fit:cover;
@@ -404,7 +406,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 }
 .fav-card:hover .fav-img-ring img{transform:scale(1.1)}
 
-/* Badge ranking */
 .fav-rank{
   position:absolute;top:14px;left:14px;
   width:28px;height:28px;border-radius:50%;
@@ -430,7 +431,6 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 }
 .fav-stars span{color:var(--gold);font-size:.72rem}
 
-/* Divider dekoratif */
 .favmenu-divider{
   display:flex;align-items:center;gap:18px;
   max-width:320px;margin:60px auto 0;
@@ -445,7 +445,7 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 }
 
 /* ══════════════════════════════════════
-   TESTIMONIAL — PERUBAHAN 3: gambar sisi natural shape
+   TESTIMONIAL
 ══════════════════════════════════════ */
 .testi-section{background:var(--esp-2);overflow:hidden;position:relative}
 
@@ -458,15 +458,10 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 }
 .testi-slide:nth-child(even){background:rgba(0,0,0,.12)}
 
-/* 
-  PERUBAHAN 3: .testi-food img tidak lagi border-radius:50%
-  Pakai object-fit:contain agar ngikutin bentuk PNG transparan
-  Pakai filter:drop-shadow agar shadow ngikutin bentuk gambar
-*/
 .testi-food{
   width:100%;height:100%;
   display:flex;align-items:flex-end;
-  overflow:visible; /* biarkan gambar bisa melampaui batas container */
+  overflow:visible;
   position:relative;
 }
 .testi-food.left{justify-content:flex-end;}
@@ -474,9 +469,9 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
 .testi-food img{
   width:clamp(250px,28vw,380px);
   height:clamp(300px,36vw,460px);
-  object-fit:contain; /* ngikutin bentuk PNG transparan */
+  object-fit:contain;
   flex-shrink:0;
-  filter:drop-shadow(0 24px 60px rgba(0,0,0,.45)); /* shadow ngikutin bentuk */
+  filter:drop-shadow(0 24px 60px rgba(0,0,0,.45));
   transition:transform .6s var(--es), filter .6s var(--es);
 }
 .testi-food.left img{transform:translate(-15%, 15%) rotate(-8deg)}
@@ -529,6 +524,58 @@ body.h #cur-r{width:60px;height:60px;opacity:.18}
   border-top:1px solid rgba(255,252,247,.06);
 }
 
+.testi-add-wrap{
+    text-align:center;
+    padding:50px 20px 70px;
+}
+
+.testi-add-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    padding:15px 34px;
+    border-radius:999px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.12);
+    backdrop-filter:blur(10px);
+    color:var(--white);
+    font-size:.85rem;
+    font-weight:500;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    transition:all .35s var(--es);
+    text-decoration:none;
+    cursor: pointer;
+}
+
+.testi-add-btn:hover{
+    background:var(--gold);
+    color:var(--esp);
+    transform:translateY(-4px);
+    box-shadow:0 14px 30px rgba(232,180,109,.28);
+}
+
+.review-success{
+    width:fit-content;
+    margin:30px auto 10px;
+    padding:14px 26px;
+    border-radius:999px;
+    background:rgba(232,180,109,.12);
+    border:1px solid rgba(232,180,109,.25);
+    color:var(--gold);
+    font-size:.9rem;
+    font-weight:500;
+    letter-spacing:.03em;
+    backdrop-filter:blur(10px);
+    animation:fadeNotif .5s ease;
+}
+
+@keyframes fadeNotif{
+    from{opacity:0;transform:translateY(-10px)}
+    to{opacity:1;transform:translateY(0)}
+}
+
 /* ══════════════════════════════════════
    GALLERY
 ══════════════════════════════════════ */
@@ -570,86 +617,6 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 .reveal-l{opacity:0;transform:translateX(-36px);transition:opacity .7s var(--es),transform .7s var(--es)}
 .reveal-l.in{opacity:1;transform:translateX(0)}
 
-.testi-add-wrap{
-    text-align:center;
-    padding:50px 20px 70px;
-}
-
-.testi-add-btn{
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    gap:10px;
-
-    padding:15px 34px;
-
-    border-radius:999px;
-
-    background:rgba(255,255,255,.08);
-
-    border:1px solid rgba(255,255,255,.12);
-
-    backdrop-filter:blur(10px);
-
-    color:var(--white);
-
-    font-size:.85rem;
-    font-weight:500;
-    letter-spacing:.08em;
-    text-transform:uppercase;
-
-    transition:all .35s var(--es);
-
-    text-decoration:none;
-}
-
-.testi-add-btn:hover{
-    background:var(--gold);
-    color:var(--esp);
-
-    transform:translateY(-4px);
-
-    box-shadow:0 14px 30px rgba(232,180,109,.28);
-}
-
-/* NOTIF REVIEW */
-.review-success{
-    width:fit-content;
-
-    margin:30px auto 10px;
-
-    padding:14px 26px;
-
-    border-radius:999px;
-
-    background:rgba(232,180,109,.12);
-
-    border:1px solid rgba(232,180,109,.25);
-
-    color:var(--gold);
-
-    font-size:.9rem;
-    font-weight:500;
-
-    letter-spacing:.03em;
-
-    backdrop-filter:blur(10px);
-
-    animation:fadeNotif .5s ease;
-}
-
-@keyframes fadeNotif{
-    from{
-        opacity:0;
-        transform:translateY(-10px);
-    }
-
-    to{
-        opacity:1;
-        transform:translateY(0);
-    }
-}
-
 /* RESPONSIVE */
 @media(max-width:960px){
   .nav{padding:14px 22px}
@@ -672,6 +639,7 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
   footer{padding:56px 22px 30px}
   .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
   .footer-bottom{flex-direction:column;gap:8px;text-align:center}
+  .toast{bottom:20px;right:20px}
 }
 </style>
 </head>
@@ -704,11 +672,6 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 <!-- ════ HERO ════ -->
 <section class="hero" id="beranda">
 
-  <!-- 
-    PERUBAHAN 1: Gambar hias hero tidak lagi dipaksa jadi lingkaran.
-    Pastikan gambar yang dipakai sudah di-remove background (PNG transparan).
-    Ganti src dengan path gambar PNG kamu.
-  -->
   <div class="hf-wrap tl">
     <img class="hf-img" src="../gambar/nastar.png" alt="">
   </div>
@@ -731,32 +694,16 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
   <?php
 
 /* TOTAL MENU */
-$qMenu = mysqli_query($koneksi, "
-    SELECT COUNT(*) as total_menu
-    FROM produk
-");
-
+$qMenu = mysqli_query($koneksi, "SELECT COUNT(*) as total_menu FROM produk");
 $dMenu = mysqli_fetch_assoc($qMenu);
 
-
 /* RATING RATA-RATA */
-$qRating = mysqli_query($koneksi, "
-    SELECT AVG(rating) as rating_avg
-    FROM review
-    WHERE status='tampil'
-");
-
+$qRating = mysqli_query($koneksi, "SELECT AVG(rating) as rating_avg FROM review WHERE status='tampil'");
 $dRating = mysqli_fetch_assoc($qRating);
-
 $rating = number_format($dRating['rating_avg'],1);
 
-
 /* PELANGGAN PUAS */
-$qPelanggan = mysqli_query($koneksi, "
-    SELECT COUNT(DISTINCT orders_id) as total_pelanggan
-    FROM order_items
-");
-
+$qPelanggan = mysqli_query($koneksi, "SELECT COUNT(DISTINCT orders_id) as total_pelanggan FROM order_items");
 $dPelanggan = mysqli_fetch_assoc($qPelanggan);
 
 ?>
@@ -764,73 +711,34 @@ $dPelanggan = mysqli_fetch_assoc($qPelanggan);
 <!-- Konten tengah -->
 <div class="hero-inner">
 
-    <h1 class="hero-name">
-        Toko Kue Fanda
-    </h1>
+    <h1 class="hero-name">Toko Kue Fanda</h1>
 
     <a href="#menu" class="hero-tag">
-
         Jelajahi Menu
-
-        <svg viewBox="0 0 24 24">
-            <polyline points="9 18 15 12 9 6"/>
-        </svg>
-
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
     </a>
 
     <div class="hero-stats">
 
-        <!-- MENU -->
         <div class="stat">
-
             <span class="stat-n">
-
-                <span class="ctr"
-                      data-to="<?= $dMenu['total_menu']; ?>">
-                    0
-                </span>
-
+                <span class="ctr" data-to="<?= $dMenu['total_menu']; ?>">0</span>
                 <sup>+</sup>
-
             </span>
-
-            <span class="stat-l">
-                Menu Pilihan
-            </span>
-
+            <span class="stat-l">Menu Pilihan</span>
         </div>
 
-        <!-- RATING -->
         <div class="stat">
-
-            <span class="stat-n">
-                <?= $rating; ?><sup>★</sup>
-            </span>
-
-            <span class="stat-l">
-                Rating Pelanggan
-            </span>
-
+            <span class="stat-n"><?= $rating; ?><sup>★</sup></span>
+            <span class="stat-l">Rating Pelanggan</span>
         </div>
 
-        <!-- PELANGGAN -->
         <div class="stat">
-
             <span class="stat-n">
-
-                <span class="ctr"
-                      data-to="<?= $dPelanggan['total_pelanggan']; ?>">
-                    0
-                </span>
-
+                <span class="ctr" data-to="<?= $dPelanggan['total_pelanggan']; ?>">0</span>
                 <sup>+</sup>
-
             </span>
-
-            <span class="stat-l">
-              Produk Terjual
-          </span>
-
+            <span class="stat-l">Produk Terjual</span>
         </div>
 
     </div>
@@ -841,35 +749,18 @@ $dPelanggan = mysqli_fetch_assoc($qPelanggan);
 <!-- TICKER -->
 <div class="ticker" aria-hidden="true">
   <div class="ticker-track">
-
     <div class="ticker-item">Fresh Baked Daily<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Premium Quality<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Rating Pelanggan 4.9★<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Dipanggang Dengan Cinta<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Bahan Pilihan Berkualitas<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Manisnya Bikin Nagih<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Produk Terlaris Setiap Hari<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Favorit Keluarga Indonesia<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Resep Homemade Spesial<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Lembut, Renyah & Fresh<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Cocok Untuk Hampers & Hadiah<span class="ticker-dot"></span></div>
-
     <div class="ticker-item">Pesan Mudah & Cepat<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Kualitas Rasa Terbaik<span class="ticker-dot"></span></div>
-
-    <div class="ticker-item">Selalu Fresh Dari Oven<span class="ticker-dot"></span></div>
-
   </div>
 </div>
 
@@ -905,7 +796,7 @@ $dPelanggan = mysqli_fetch_assoc($qPelanggan);
     <div class="c-card">
       <div class="c-img-wrap">
 
-        <img src="gambar/<?= $data['gambar']; ?>" 
+        <img src="../gambar/<?= $data['gambar']; ?>" 
             alt="<?= $data['nama_produk']; ?>" 
             loading="lazy">
 
@@ -929,24 +820,23 @@ $dPelanggan = mysqli_fetch_assoc($qPelanggan);
         ?>
       </span>
 
-      <h3 class="c-name">
-        <?= $data['nama_produk']; ?>
-      </h3>
+      <h3 class="c-name"><?= $data['nama_produk']; ?></h3>
 
-      <span class="c-price">
-        Rp <?= number_format($data['harga'],0,',','.'); ?>
-      </span>
+      <span class="c-price">Rp <?= number_format($data['harga'],0,',','.'); ?></span>
 
-      <span class="c-stok <?= $class_stok ?>">
-          <?= $text_stok ?>
-      </span>
+      <span class="c-stok <?= $class_stok ?>"><?= $text_stok ?></span>
 
-      <button class="c-add btn-add-cart">
+      <button class="c-add btn-add-cart" 
+        data-produk-id="<?= $data['produk_id']; ?>" 
+        data-nama="<?= $data['nama_produk']; ?>" 
+        data-harga="<?= $data['harga']; ?>" 
+        data-gambar="<?= $data['gambar']; ?>"
+        data-stok="<?= $stok; ?>">
         <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         Tambah
       </button>
 
-        </div>
+    </div>
 
     <?php } ?>
 
@@ -961,7 +851,7 @@ $dPelanggan = mysqli_fetch_assoc($qPelanggan);
   </div>
 </section>
 
-<!-- ════ MENU FAVORIT OTOMATIS ════ -->
+<!-- ════ MENU FAVORIT ════ -->
 <section class="favmenu-section">
 
   <div class="favmenu-head reveal">
@@ -984,9 +874,8 @@ SELECT
     produk.nama_produk,
     produk.harga,
     produk.gambar,
-
+    produk.stok,
     COALESCE(SUM(order_items.qty),0) as total_terjual,
-
     COALESCE(AVG(review.rating),0) as rata_rating
 
 FROM produk
@@ -1014,27 +903,21 @@ LIMIT 4
 
     <div class="fav-card">
 
-      <div class="fav-img-ring">
+      <div class="fav-img-ring" data-produk-id="<?= $f['produk_id']; ?>" data-nama="<?= $f['nama_produk']; ?>" data-harga="<?= $f['harga']; ?>" data-gambar="<?= $f['gambar']; ?>" data-stok="<?= $f['stok']; ?>" style="cursor: pointer;">
 
-        <span class="fav-rank">
-          #<?= $rank++; ?>
-        </span>
+        <span class="fav-rank">#<?= $rank++; ?></span>
 
         <img 
-          src="gambar/<?= $f['gambar']; ?>" 
+          src="../gambar/<?= $f['gambar']; ?>" 
           alt="<?= $f['nama_produk']; ?>" 
           loading="lazy"
         >
 
       </div>
 
-      <h3 class="fav-name">
-        <?= $f['nama_produk']; ?>
-      </h3>
+      <h3 class="fav-name"><?= $f['nama_produk']; ?></h3>
 
-      <span class="fav-price">
-        Rp <?= number_format($f['harga'],0,',','.'); ?>
-      </span>
+      <span class="fav-price">Rp <?= number_format($f['harga'],0,',','.'); ?></span>
 
       <div class="fav-stars">
 
@@ -1083,12 +966,6 @@ LIMIT 4
 
   <div class="testi-section-label">Toko Kue Fanda</div>
 
-  <!-- 
-    PERUBAHAN 3: Gambar di sisi kiri & kanan testimonial tidak lagi
-    dipaksa jadi lingkaran. Pastikan pakai PNG transparan agar hasilnya natural.
-    Ganti src dengan path gambar PNG kamu.
-  -->
-
   <?php
       $qReview = mysqli_query($koneksi, "
           SELECT review.*, produk.gambar
@@ -1103,7 +980,7 @@ LIMIT 4
     <div class="testi-slide">
 
         <div class="testi-food left">
-            <img src="../gambar/?= $r['gambar']; ?>" loading="lazy">
+            <img src="../gambar/<?= $r['gambar']; ?>" loading="lazy">
         </div>
 
         <div class="testi-center">
@@ -1149,8 +1026,6 @@ LIMIT 4
         </a>
 
     </div>
-
-  </div>
 
 </section>
 
@@ -1234,7 +1109,7 @@ document.querySelectorAll('a,button,.c-card,.fav-card,.g-img,.testi-slide').forE
 const nav=document.getElementById('mainNav');
 window.addEventListener('scroll',()=>nav.classList.toggle('stuck',window.scrollY>55),{passive:true});
 
-/* SCROLL REVEAL — untuk .c-card, .fav-card, .reveal, .reveal-l */
+/* SCROLL REVEAL */
 const io=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(!e.isIntersecting)return;
@@ -1260,8 +1135,76 @@ const cio=new IntersectionObserver(entries=>{
 },{threshold:.5});
 const st=document.querySelector('.hero-stats');if(st)cio.observe(st);
 
-/* CART NONAKTIF */
-document.getElementById('cartBadge').textContent = '0';
+/* ════════════════════════════════════════
+   CART MANAGEMENT
+════════════════════════════════════════ */
+
+let cart = JSON.parse(localStorage.getItem('fanda_cart')) || {};
+
+function updateBadge(){
+  const badge = document.getElementById('cartBadge');
+  let total = 0;
+  Object.values(cart).forEach(item => { total += item.qty; });
+  badge.textContent = total;
+}
+
+function showToast(message){
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.classList.add('out');
+    setTimeout(() => toast.remove(), 400);
+  }, 2000);
+}
+
+function addToCart(produkId, nama, harga, gambar, stok){
+  if(stok <= 0){
+    showToast('❌ Stok habis');
+    return;
+  }
+
+  if(cart[produkId]){
+    cart[produkId].qty += 1;
+  } else {
+    cart[produkId] = { nama, harga, gambar, qty: 1 };
+  }
+
+  localStorage.setItem('fanda_cart', JSON.stringify(cart));
+  updateBadge();
+  showToast(`✓ ${nama} ditambahkan ke keranjang`);
+}
+
+updateBadge();
+
+// EVENT: Tombol tambah di menu regular
+document.querySelectorAll('.btn-add-cart').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const produkId = btn.dataset.produkId;
+    const nama = btn.dataset.nama;
+    const harga = parseInt(btn.dataset.harga);
+    const gambar = btn.dataset.gambar;
+    const stok = parseInt(btn.dataset.stok);
+    
+    addToCart(produkId, nama, harga, gambar, stok);
+  });
+});
+
+// EVENT: Klik di kartu favorit (fav-img-ring)
+document.querySelectorAll('.fav-img-ring').forEach(ring => {
+  ring.addEventListener('click', (e) => {
+    const produkId = ring.dataset.produkId;
+    const nama = ring.dataset.nama;
+    const harga = parseInt(ring.dataset.harga);
+    const gambar = ring.dataset.gambar;
+    const stok = parseInt(ring.dataset.stok);
+    
+    addToCart(produkId, nama, harga, gambar, stok);
+  });
+});
 
 </script>
 </body>
