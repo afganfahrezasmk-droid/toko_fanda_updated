@@ -196,7 +196,8 @@ if ($_SESSION['role'] != 'pelanggan') {
 
     </div>
 
-    <form method="POST" action="keranjang_aksi.php">
+
+    <form method="POST" action="proses_transaksi.php">
 
         <!-- USER -->
         <div class="checkout-box mb-4">
@@ -256,6 +257,35 @@ if ($_SESSION['role'] != 'pelanggan') {
                         </option>
 
                     </select>
+
+                    <div class="mt-3">
+
+                        <label class="form-label">
+                            Jumlah Bayar
+                        </label>
+
+                        <input type="number"
+                            name="bayar"
+                            id="inputBayar"
+                            class="form-control"
+                            placeholder="Masukkan uang pembayaran"
+                            required>
+
+                        <div class="mt-3">
+
+                            <label class="form-label">
+                                Kembalian
+                            </label>
+
+                            <input type="text"
+                                id="viewKembalian"
+                                class="form-control"
+                                value="Rp 0"
+                                readonly>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
@@ -358,5 +388,37 @@ if ($_SESSION['role'] != 'pelanggan') {
     </form>
 
 </div>
+
+<script>
+
+function formatRupiah(angka){
+
+    return 'Rp ' + angka.toLocaleString('id-ID');
+
+}
+
+document.addEventListener('input', function(e){
+
+    if(e.target.id === 'inputBayar'){
+
+        const bayar = parseInt(e.target.value || 0);
+
+        const total = <?= $total ?? 0 ?>;
+
+        let kembali = bayar - total;
+
+        if(kembali < 0){
+
+            kembali = 0;
+
+        }
+
+        document.getElementById('viewKembalian').value =
+            formatRupiah(kembali);
+    }
+
+});
+
+</script>
 
 <?php include 'footer.php'; ?>

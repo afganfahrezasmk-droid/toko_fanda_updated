@@ -1084,84 +1084,76 @@ LIMIT 4
 <!-- ════ TESTIMONIAL ════ -->
 <section class="testi-section" id="tentang">
 
-  <?php if(isset($_GET['review']) && $_GET['review'] == 'success'){ ?>
+<?php if(isset($_GET['review']) && $_GET['review'] == 'success'){ ?>
+    <div class="review-success">
+        ✨ Review berhasil ditambahkan, terima kasih!
+    </div>
+<?php } ?>
 
-  <div class="review-success">
-      ✨ Review berhasil ditambahkan, terima kasih!
-  </div>
+<div class="testi-section-label">Toko Kue Fanda</div>
 
-  <?php } ?>
+<?php
+$qReview = mysqli_query($koneksi, "
+    SELECT 
+        review.*,
+        produk.gambar,
+        produk.gambar_testi
+    FROM review
+    LEFT JOIN produk ON review.produk_id = produk.produk_id
+    WHERE review.status = 'tampil'
+    ORDER BY review.id_review DESC
+");
 
-  <div class="testi-section-label">Toko Kue Fanda</div>
+while($r = mysqli_fetch_assoc($qReview)){
+?>
 
-  <!-- 
-    PERUBAHAN 3: Gambar di sisi kiri & kanan testimonial tidak lagi
-    dipaksa jadi lingkaran. Pastikan pakai PNG transparan agar hasilnya natural.
-    Ganti src dengan path gambar PNG kamu.
-  -->
+<div class="testi-slide">
 
-  <?php
-      $qReview = mysqli_query($koneksi, "
-          SELECT review.*, produk.gambar
-          FROM review
-          JOIN produk ON review.produk_id = produk.produk_id
-          WHERE review.status='tampil'
-      ");
+    <div class="testi-food left">
+        <img src="gambar/<?= $r['gambar_testi']; ?>" loading="lazy">
+    </div>
 
-    while($r = mysqli_fetch_assoc($qReview)){
-    ?>
+    <div class="testi-center">
 
-    <div class="testi-slide">
-
-        <div class="testi-food left">
-            <img src="gambar/<?= $r['gambar']; ?>" loading="lazy">
+        <div class="testi-sub-label">
+            Dari Tetangga Kami
         </div>
 
-        <div class="testi-center">
+        <p class="testi-quote-text">
+            "<?= $r['review']; ?>"
+        </p>
 
-            <div class="testi-sub-label">
-                Dari Tetangga Kami
-            </div>
-
-            <p class="testi-quote-text">
-                "<?= $r['review']; ?>"
-            </p>
-
-            <div class="testi-stars">
-                <?php
-                for($i=1; $i<=5; $i++){
-                    if($i <= $r['rating']){
-                        echo "<span>★</span>";
-                    } else {
-                        echo "<span>☆</span>";
-                    }
+        <div class="testi-stars">
+            <?php
+            for($i=1; $i<=5; $i++){
+                if($i <= $r['rating']){
+                    echo "<span>★</span>";
+                } else {
+                    echo "<span>☆</span>";
                 }
-                ?>
-            </div>
-
-            <span class="testi-name">
-                <?= $r['nama_pelanggan']; ?>
-            </span>
-
+            }
+            ?>
         </div>
 
-        <div class="testi-food right">
-            <img src="gambar/<?= $r['gambar']; ?>" loading="lazy">
-        </div>
+        <span class="testi-name">
+            <?= $r['nama_pelanggan']; ?>
+        </span>
 
     </div>
 
-    <?php } ?>
-
-    <div class="testi-add-wrap">
-
-        <a href="review_tambah.php" class="testi-add-btn">
-            + Bagikan Pengalaman Anda
-        </a>
-
+    <div class="testi-food right">
+        <img src="gambar/<?= $r['gambar_testi']; ?>" loading="lazy">
     </div>
 
-  </div>
+</div>
+
+<?php } ?>
+
+<div class="testi-add-wrap">
+    <a href="review_tambah.php" class="testi-add-btn">
+        + Bagikan Pengalaman Anda
+    </a>
+</div>
 
 </section>
 

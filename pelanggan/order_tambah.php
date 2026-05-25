@@ -159,13 +159,104 @@ include '../koneksi.php';
                     </div>
                 </div>
             </div>
-            <div>
-                <div class="card-summary">
+            <div class="card-summary">
+
                     <h5>Ringkasan Belanja</h5>
-                    <div class="summary-row"><span>Subtotal</span><span id="sumSubtotal">Rp 0</span></div>
-                    <div class="summary-row"><span>Pajak (10%)</span><span id="sumPajak">Rp 0</span></div>
-                    <div class="summary-row total"><span>Total</span><span id="sumTotal">Rp 0</span></div>
+
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span id="sumSubtotal">Rp 0</span>
+                    </div>
+
+                    <div class="summary-row">
+                        <span>Pajak (10%)</span>
+                        <span id="sumPajak">Rp 0</span>
+                    </div>
+
+                    <div class="summary-row total">
+                        <span>Total Belanja</span>
+                        <span id="sumTotal">Rp 0</span>
+                    </div>
+
                 </div>
+
+                <!-- TOTAL BELANJA -->
+                <div style="margin-top:18px">
+
+                    <label style="
+                        font-weight:600;
+                        margin-bottom:8px;
+                        display:block;
+                    ">
+                        Total Yang Harus Dibayar
+                    </label>
+
+                    <input type="text"
+                        id="totalBelanjaView"
+                        readonly
+                        value="Rp 0"
+                        style="
+                        width:100%;
+                        padding:12px;
+                        border-radius:10px;
+                        border:1px solid #ddd;
+                        background:#f8f8f8;
+                        font-weight:700;
+                        ">
+
+                </div>
+
+                <!-- INPUT BAYAR -->
+                <div style="margin-top:15px">
+
+                    <label style="
+                        font-weight:600;
+                        margin-bottom:8px;
+                        display:block;
+                    ">
+                        Uang Pembayaran
+                    </label>
+
+                    <input type="text"
+                        id="inputBayarView"
+                        placeholder="Contoh: 200000"
+                        oninput="formatBayar(this); hitungKembalian();"
+                        style="
+                        width:100%;
+                        padding:12px;
+                        border-radius:10px;
+                        border:1px solid #ddd;
+                        ">
+
+                </div>
+
+                <!-- KEMBALIAN -->
+                <div style="margin-top:15px">
+
+                    <label style="
+                        font-weight:600;
+                        margin-bottom:8px;
+                        display:block;
+                    ">
+                        Kembalian
+                    </label>
+
+                    <input type="text"
+                        id="viewKembalian"
+                        readonly
+                        value="Rp 0"
+                        style="
+                        width:100%;
+                        padding:12px;
+                        border-radius:10px;
+                        border:1px solid #ddd;
+                        background:#f8f8f8;
+                        font-weight:700;
+                        color:green;
+                        ">
+
+                </div>
+
                 <button class="btn-order" id="btnOrder" onclick="submitOrder()" disabled>Buat Pesanan</button>
             </div>
         </div>
@@ -173,10 +264,11 @@ include '../koneksi.php';
 </div>
 
 <!-- Form tersembunyi untuk submit ke order_aksi.php -->
-<form id="formOrder" method="POST" action="order_aksi.php" style="display:none">
+<form id="formOrder" method="POST" action="proses_transaksi.php">
     <input type="hidden" name="user_id" value="<?=htmlspecialchars($_SESSION['user_id'] ?? '')?>">
     <input type="hidden" name="invoice" id="inputInvoice">
     <input type="hidden" name="metode_pembayaran" id="inputMetode">
+    <input type="hidden" name="bayar" id="inputBayar">
     <div id="inputProduk"></div>
 </form>
 
@@ -203,65 +295,160 @@ echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
 let cart      = JSON.parse(localStorage.getItem('fanda_cart')) || {};
 let metodeDipilih = '';
+let totalBelanja = 0;
 
 function fmt(n){ return 'Rp ' + n.toLocaleString('id-ID'); }
 
 function renderKeranjang(){
+
     const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
+
     if(keys.length === 0){
+
         document.getElementById('keranjangKosong').style.display = '';
         document.getElementById('keranjangIsi').style.display = 'none';
+
         const badge = document.getElementById('cartBadge');
+
         if(badge){
             badge.textContent = '0';
         }
+
         return;
     }
+
     document.getElementById('keranjangKosong').style.display = 'none';
     document.getElementById('keranjangIsi').style.display = '';
 
     let html = '';
     let subtotal = 0;
+
     keys.forEach(id => {
+
         const item = cart[id];
         const db   = produkDB[id];
-        if(!db) return; // produk sudah tidak ada di DB
+
+        if(!db) return;
+
         const sub = item.harga * item.qty;
+
         subtotal += sub;
+
         const gambar = `../gambar/${db.gambar}`;
+
         html += `
         <tr id="row-${id}">
+
             <td>
                 <div class="produk-info">
-                    <img src="${gambar}" alt="${item.nama}" class="produk-gambar" onerror="this.src='../gambar/default.jpeg'">
-                    <div><div class="produk-nama">${item.nama}</div><div class="produk-harga">${fmt(item.harga)}</div></div>
+
+                    <img 
+                        src="${gambar}" 
+                        alt="${item.nama}" 
+                        class="produk-gambar"
+                        onerror="this.src='../gambar/default.jpeg'"
+                    >
+
+                    <div>
+                        <div class="produk-nama">
+                            ${item.nama}
+                        </div>
+
+                        <div class="produk-harga">
+                            ${fmt(item.harga)}
+                        </div>
+                    </div>
+
                 </div>
             </td>
-            <td>${fmt(item.harga)}</td>
+
+            <td>
+                ${fmt(item.harga)}
+            </td>
+
             <td>
                 <div class="qty-control">
-                    <button type="button" class="qty-btn" onclick="ubahQty('${id}',-1)">−</button>
-                    <span class="qty-val" id="qty-${id}">${item.qty}</span>
-                    <button type="button" class="qty-btn" onclick="ubahQty('${id}',1)">+</button>
+
+                    <button 
+                        type="button"
+                        class="qty-btn"
+                        onclick="ubahQty('${id}',-1)"
+                    >
+                        −
+                    </button>
+
+                    <span class="qty-val">
+                        ${item.qty}
+                    </span>
+
+                    <button 
+                        type="button"
+                        class="qty-btn"
+                        onclick="ubahQty('${id}',1)"
+                    >
+                        +
+                    </button>
+
                 </div>
             </td>
-            <td class="subtotal" id="sub-${id}">${fmt(sub)}</td>
-            <td><button type="button" class="btn-hapus" onclick="hapusItem('${id}')">🗑 Hapus</button></td>
-        </tr>`;
-        
+
+            <td>
+
+                <div class="subtotal">
+                    ${fmt(sub)}
+                </div>
+
+                <small style="color:#888">
+                    ${item.qty} x ${fmt(item.harga)}
+                </small>
+
+            </td>
+
+            <td>
+
+                <button
+                    type="button"
+                    class="btn-hapus"
+                    onclick="hapusItem('${id}')"
+                >
+                    🗑 Hapus
+                </button>
+
+            </td>
+
+        </tr>
+        `;
     });
+
     document.getElementById('bodyKeranjang').innerHTML = html;
 
+    // HITUNG TOTAL
     const pajak = Math.round(subtotal * 0.1);
-    const total = subtotal + pajak;
-    document.getElementById('sumSubtotal').textContent = fmt(subtotal);
-    document.getElementById('sumPajak').textContent    = fmt(pajak);
-    document.getElementById('sumTotal').textContent    = fmt(total);
 
-    // Update badge
+    const total = subtotal + pajak;
+
+    totalBelanja = total;
+
+    // TAMPILKAN
+    document.getElementById('sumSubtotal').textContent = fmt(subtotal);
+
+    document.getElementById('sumPajak').textContent = fmt(pajak);
+
+    document.getElementById('sumTotal').textContent = fmt(total);
+
+    document.getElementById('totalBelanjaView').value = fmt(total);
+
+    // UPDATE KEMBALIAN
+    hitungKembalian();
+
+    // UPDATE BADGE
     const totalQty = keys.reduce((s,k) => s + cart[k].qty, 0);
+
     const badge = document.getElementById('cartBadge');
-    if(badge) badge.textContent = totalQty;
+
+    if(badge){
+        badge.textContent = totalQty;
+    }
 
     updateTombolOrder();
 }
@@ -295,9 +482,56 @@ function updateTombolOrder(){
     document.getElementById('btnOrder').disabled = !(adaItem && adaMetode);
 }
 
+function hitungKembalian(){
+
+    let bayar = document
+        .getElementById('inputBayarView')
+        .value;
+
+    // hapus semua selain angka
+    bayar = bayar.replace(/\D/g,'');
+
+    bayar = parseInt(bayar) || 0;
+
+    let kembali = bayar - totalBelanja;
+
+    if(kembali < 0){
+
+        kembali = 0;
+
+    }
+
+    document.getElementById('viewKembalian').value =
+        fmt(kembali);
+}
+
+function formatBayar(input){
+
+    let angka = input.value.replace(/\D/g,'');
+
+    input.value = new Intl.NumberFormat('id-ID')
+        .format(angka);
+
+    hitungKembalian();
+}
+
 function submitOrder(){
     if(!metodeDipilih){ alert('Pilih metode pembayaran dulu!'); return; }
     const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
+    const bayar = parseInt(
+        document.getElementById('inputBayarView')
+        .value
+        .replace(/\./g,'')
+    ) || 0;
+
+    if(bayar < totalBelanja){
+
+        alert('Uang pembayaran kurang!');
+
+        return;
+    }
+
+    document.getElementById('inputBayar').value = bayar;
     if(keys.length === 0){ alert('Keranjang kosong!'); return; }
 
     // Generate invoice
