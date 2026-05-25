@@ -304,11 +304,21 @@ body{
     }
 
     .struk{
+
         width:100%;
         max-width:340px;
+        margin:auto;
+
         box-shadow:none;
         border-radius:0;
-        margin:auto;
+
+        border:1.5px dashed #999 !important;
+
+        padding:15px;
+
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+
     }
 
 }

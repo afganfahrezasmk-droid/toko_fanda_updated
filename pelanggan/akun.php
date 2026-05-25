@@ -203,44 +203,45 @@ if (!$d) {
         </div>
 
         <!-- =========================
-             RIWAYAT PESANAN
-        ========================== -->
-        <div class="col-lg-8">
+                RIWAYAT PESANAN
+            ========================== -->
+            <div class="col-lg-8">
 
-            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
 
-                <div class="card-header bg-dark text-white rounded-top-4 d-flex justify-content-between align-items-center">
+                    <!-- HEADER -->
+                    <div class="card-header bg-dark text-white px-4 py-3 d-flex justify-content-between align-items-center">
 
-                    <h5 class="mb-0">
-                        <i class="fa fa-clock-rotate-left me-2"></i>
-                        Riwayat Pesanan
-                    </h5>
+                        <h5 class="mb-0 fw-bold">
+                            <i class="fa fa-clock-rotate-left me-2"></i>
+                            Riwayat Pesanan
+                        </h5>
 
-                    <span class="badge bg-warning text-dark">
-                        <?= mysqli_num_rows($order); ?> Pesanan
-                    </span>
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                            <?= mysqli_num_rows($order); ?> Pesanan
+                        </span>
 
-                </div>
+                    </div>
 
-                <div class="card-body">
+                    <!-- BODY -->
+                    <div class="card-body p-0">
 
-                    <?php if(mysqli_num_rows($order) > 0){ ?>
+                        <?php if(mysqli_num_rows($order) > 0){ ?>
 
                         <div class="table-responsive">
 
-                            <table class="table align-middle table-hover">
+                            <table class="table align-middle mb-0">
 
-                                <thead class="table-light">
+                                <thead style="background:#fff8f0;">
 
-                                    <tr>
+                                    <tr style="border-bottom:2px solid #f1e3d3">
 
-                                        <th>Invoice</th>
-                                        <th>Metode</th>
-                                        <th>Pajak</th>
-                                        <th>Total</th>
-                                        <th>Status</th>
-                                        <th>Tanggal</th>
-                                        <th>Aksi</th>
+                                        <th class="py-3 px-4">Invoice</th>
+                                        <th class="py-3">Pembayaran</th>
+                                        <th class="py-3">Total</th>
+                                        <th class="py-3">Status</th>
+                                        <th class="py-3">Tanggal</th>
+                                        <th class="py-3 text-center">Aksi</th>
 
                                     </tr>
 
@@ -248,122 +249,205 @@ if (!$d) {
 
                                 <tbody>
 
-                                    <?php while($o = mysqli_fetch_assoc($order)){ ?>
+                                <?php while($o = mysqli_fetch_assoc($order)) { ?>
 
-                                    <?php
+                                <?php
 
-                                    /* =========================
-                                    WARNA STATUS
-                                    ========================= */
+                                /*
+                                =========================================
+                                AMBIL DATA PEMBAYARAN DARI TABEL pembayaran
+                                =========================================
+                                */
 
-                                    $status = strtolower($o['status']);
+                                $pay = mysqli_fetch_assoc(mysqli_query($koneksi, "
+                                    SELECT *
+                                    FROM pembayaran
+                                    WHERE orders_id = '".$o['orders_id']."'
+                                "));
 
-                                    if($status == 'pending'){
+                                /*
+                                =========================================
+                                STATUS PESANAN
+                                =========================================
+                                */
 
-                                        $badge = 'warning';
-                                        $icon  = 'clock';
+                                $status = strtolower($o['status'] ?? '');
 
-                                    } elseif($status == 'dibayar'){
+                                $badge = '#888';
+                                $bg    = '#f3f3f3';
+                                $icon  = 'circle-info';
+                                $text  = ucfirst($status);
 
-                                        $badge = 'primary';
-                                        $icon  = 'spinner';
+                                if($status === 'pending'){
 
-                                    } elseif($status == 'selesai'){
+                                    $badge = '#f39c12';
+                                    $bg    = '#fff5df';
+                                    $icon  = 'clock';
+                                    $text  = 'Pending';
 
-                                        $badge = 'success';
-                                        $icon  = 'circle-check';
+                                } elseif($status === 'diproses'){
 
-                                    } elseif($status == 'batal'){
+                                    $badge = '#3498db';
+                                    $bg    = '#eaf4ff';
+                                    $icon  = 'spinner';
+                                    $text  = 'Diproses';
 
-                                        $badge = 'danger';
-                                        $icon  = 'circle-xmark';
+                                } elseif($status === 'dibayar'){
 
-                                    } else {
+                                    $badge = '#2980b9';
+                                    $bg    = '#eaf4ff';
+                                    $icon  = 'money-bill-wave';
+                                    $text  = 'Dibayar';
 
-                                        $badge = 'secondary';
-                                        $icon  = 'circle-info';
-                                    }
+                                } elseif($status === 'selesai'){
 
-                                    ?>
+                                    $badge = '#27ae60';
+                                    $bg    = '#eafaf1';
+                                    $icon  = 'circle-check';
+                                    $text  = 'Selesai';
 
-                                    <tr>
+                                } elseif(in_array($status, ['batal','dibatalkan'])){
 
-                                        <!-- INVOICE -->
-                                        <td>
+                                    $badge = '#e74c3c';
+                                    $bg    = '#ffeaea';
+                                    $icon  = 'circle-xmark';
+                                    $text  = 'Dibatalkan';
+                                }
 
-                                            <span class="fw-bold text-dark">
+                                ?>
 
-                                                <?= htmlspecialchars($o['invoice']); ?>
+                                <tr style="border-bottom:1px solid #f6f6f6">
 
-                                            </span>
+                                    <!-- INVOICE -->
+                                    <td class="px-4 py-3">
 
-                                        </td>
+                                        <div style="font-weight:700;color:#2d1b10;font-size:.96rem">
+                                            <?= htmlspecialchars($o['invoice']) ?>
+                                        </div>
 
-                                        <!-- METODE -->
-                                        <td>
+                                        <small style="color:#999">
+                                            Pajak:
+                                            Rp <?= number_format($o['pajak'],0,',','.') ?>
+                                        </small>
 
-                                            <span class="badge bg-light text-dark border px-3 py-2">
+                                    </td>
 
-                                                <?= htmlspecialchars($o['metode_pembayaran']); ?>
+                                    <!-- METODE PEMBAYARAN -->
+                                    <td class="py-3">
 
-                                            </span>
+                                        <?php
+                                        // ambil metode pembayaran dari tabel pembayaran
+                                        $pembayaran = mysqli_fetch_assoc(mysqli_query($koneksi, "
+                                            SELECT metode
+                                            FROM pembayaran
+                                            WHERE orders_id = '".$o['orders_id']."'
+                                            LIMIT 1
+                                        "));
 
-                                        </td>
+                                        $metode = strtolower($pembayaran['metode'] ?? '-');
 
-                                        <!-- PAJAK -->
-                                        <td>
+                                        // icon metode
+                                        $iconMetode = 'wallet';
 
-                                            Rp <?= number_format($o['pajak'],0,',','.'); ?>
+                                        if($metode == 'cash'){
+                                            $iconMetode = 'money-bill-wave';
+                                        } elseif($metode == 'qris'){
+                                            $iconMetode = 'qrcode';
+                                        } elseif($metode == 'transfer'){
+                                            $iconMetode = 'building-columns';
+                                        }
+                                        ?>
 
-                                        </td>
+                                        <div style="
+                                            background:#fafafa;
+                                            border:1px solid #eee;
+                                            padding:8px 14px;
+                                            border-radius:999px;
+                                            display:inline-flex;
+                                            align-items:center;
+                                            gap:8px;
+                                            font-size:.82rem;
+                                            font-weight:700;
+                                            color:#333;
+                                        ">
 
-                                        <!-- TOTAL -->
-                                        <td>
+                                            <i class="fa-solid fa-<?= $iconMetode ?>"></i>
 
-                                            <span class="fw-bold text-success">
+                                            <?= strtoupper(htmlspecialchars($metode)) ?>
 
-                                                Rp <?= number_format($o['total'],0,',','.'); ?>
+                                        </div>
 
-                                            </span>
+                                    </td>
 
-                                        </td>
+                                    <!-- TOTAL -->
+                                    <td class="py-3">
 
-                                        <!-- STATUS -->
-                                        <td>
+                                        <div style="
+                                            font-weight:800;
+                                            color:#27ae60;
+                                            font-size:1rem;
+                                        ">
+                                            Rp <?= number_format($o['total'],0,',','.') ?>
+                                        </div>
 
-                                            <span class="badge bg-<?= $badge; ?> px-3 py-2">
+                                    </td>
 
-                                                <i class="fa-solid fa-<?= $icon; ?> me-1"></i>
+                                    <!-- STATUS -->
+                                    <td class="py-3">
 
-                                                <?= ucfirst($o['status']); ?>
+                                        <span style="
+                                            background:<?= $bg ?>;
+                                            color:<?= $badge ?>;
+                                            padding:8px 15px;
+                                            border-radius:999px;
+                                            font-size:.82rem;
+                                            font-weight:700;
+                                            display:inline-flex;
+                                            align-items:center;
+                                            gap:7px;
+                                        ">
 
-                                            </span>
+                                            <i class="fa-solid fa-<?= $icon ?>"></i>
 
-                                        </td>
+                                            <?= $text ?>
 
-                                        <!-- TANGGAL -->
-                                        <td>
+                                        </span>
 
-                                            <?= date('d M Y H:i', strtotime($o['created_at'])); ?>
+                                    </td>
 
-                                        </td>
+                                    <!-- TANGGAL -->
+                                    <td class="py-3">
 
-                                        <!-- AKSI -->
-                                        <td>
+                                        <div style="font-weight:600;color:#333">
+                                            <?= date('d M Y', strtotime($o['created_at'])) ?>
+                                        </div>
 
-                                            <a href="invoice.php?invoice=<?= $o['invoice']; ?>"
-                                            class="btn btn-sm btn-dark rounded-pill px-3">
+                                        <small style="color:#999">
+                                            <?= date('H:i', strtotime($o['created_at'])) ?> WIB
+                                        </small>
 
-                                                <i class="fa fa-receipt me-1"></i>
-                                                Invoice
+                                    </td>
 
-                                            </a>
+                                    <!-- AKSI -->
+                                    <td class="text-center py-3">
 
-                                        </td>
+                                        <a href="invoice.php?invoice=<?= urlencode($o['invoice']) ?>"
+                                        class="btn btn-dark rounded-pill px-3 py-2"
+                                        style="
+                                            font-size:.82rem;
+                                            font-weight:600;
+                                        ">
 
-                                    </tr>
+                                            <i class="fa fa-receipt me-1"></i>
+                                            Lihat Struk
 
-                                    <?php } ?>
+                                        </a>
+
+                                    </td>
+
+                                </tr>
+
+                                <?php } ?>
 
                                 </tbody>
 
@@ -371,13 +455,14 @@ if (!$d) {
 
                         </div>
 
-                    <?php } else { ?>
+                        <?php } else { ?>
 
+                        <!-- EMPTY -->
                         <div class="text-center py-5">
 
                             <i class="fa fa-box-open fa-3x text-secondary mb-3"></i>
 
-                            <h5 class="text-muted">
+                            <h5 class="text-muted fw-bold">
                                 Belum ada pesanan
                             </h5>
 
@@ -387,7 +472,9 @@ if (!$d) {
 
                         </div>
 
-                    <?php } ?>
+                        <?php } ?>
+
+                    </div>
 
                 </div>
 
