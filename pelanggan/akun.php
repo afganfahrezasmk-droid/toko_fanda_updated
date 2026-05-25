@@ -351,7 +351,7 @@ if (!$d) {
                                         <!-- AKSI -->
                                         <td>
 
-                                            <a href="order_invoice.php?invoice=<?= $o['invoice']; ?>"
+                                            <a href="invoice.php?invoice=<?= $o['invoice']; ?>"
                                             class="btn btn-sm btn-dark rounded-pill px-3">
 
                                                 <i class="fa fa-receipt me-1"></i>

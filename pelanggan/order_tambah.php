@@ -42,6 +42,14 @@ include '../koneksi.php';
 .btn-order:disabled{opacity:.4;cursor:not-allowed}
 .btn-back{display:inline-flex;align-items:center;gap:6px;color:#888;font-size:.85rem;margin-bottom:20px;cursor:pointer;background:none;border:none;padding:0}
 .btn-back:hover{color:var(--text-dark)}
+/* HIGHLIGHT ANIMASI SAAT SUBTOTAL BERUBAH */
+.subtotal-update {
+    animation: pulse 0.6s ease-in-out;
+}
+@keyframes pulse {
+    0% { background-color: #fff3cd; }
+    100% { background-color: transparent; }
+}
 </style>
 
 <div class="keranjang-wrap">
@@ -377,7 +385,7 @@ function renderKeranjang(){
                         −
                     </button>
 
-                    <span class="qty-val">
+                    <span class="qty-val" id="qty-${id}">
                         ${item.qty}
                     </span>
 
@@ -394,11 +402,11 @@ function renderKeranjang(){
 
             <td>
 
-                <div class="subtotal">
+                <div class="subtotal" id="subtotal-${id}">
                     ${fmt(sub)}
                 </div>
 
-                <small style="color:#888">
+                <small style="color:#888" id="detail-${id}">
                     ${item.qty} x ${fmt(item.harga)}
                 </small>
 
@@ -422,24 +430,8 @@ function renderKeranjang(){
 
     document.getElementById('bodyKeranjang').innerHTML = html;
 
-    // HITUNG TOTAL
-    const pajak = Math.round(subtotal * 0.1);
-
-    const total = subtotal + pajak;
-
-    totalBelanja = total;
-
-    // TAMPILKAN
-    document.getElementById('sumSubtotal').textContent = fmt(subtotal);
-
-    document.getElementById('sumPajak').textContent = fmt(pajak);
-
-    document.getElementById('sumTotal').textContent = fmt(total);
-
-    document.getElementById('totalBelanjaView').value = fmt(total);
-
-    // UPDATE KEMBALIAN
-    hitungKembalian();
+    // ===== HITUNG TOTAL =====
+    hitungTotal();
 
     // UPDATE BADGE
     const totalQty = keys.reduce((s,k) => s + cart[k].qty, 0);
@@ -453,14 +445,105 @@ function renderKeranjang(){
     updateTombolOrder();
 }
 
+// FUNGSI UNTUK MENGHITUNG DAN UPDATE TOTAL
+function hitungTotal(){
+    const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
+    let subtotal = 0;
+
+    // HITUNG SUBTOTAL DARI SEMUA ITEM
+    keys.forEach(id => {
+        const item = cart[id];
+        if(item && item.harga && item.qty){
+            subtotal += (item.harga * item.qty);
+        }
+    });
+
+    // HITUNG PAJAK
+    const pajak = Math.round(subtotal * 0.1);
+
+    // TOTAL BELANJA
+    const total = subtotal + pajak;
+
+    totalBelanja = total;
+
+    // UPDATE DISPLAY DENGAN ANIMASI
+    document.getElementById('sumSubtotal').textContent = fmt(subtotal);
+    document.getElementById('sumPajak').textContent = fmt(pajak);
+    
+    const totalEl = document.getElementById('sumTotal');
+    totalEl.textContent = fmt(total);
+    totalEl.parentElement.classList.remove('subtotal-update');
+    void totalEl.parentElement.offsetWidth; // Trigger reflow
+    totalEl.parentElement.classList.add('subtotal-update');
+
+    document.getElementById('totalBelanjaView').value = fmt(total);
+
+    // UPDATE KEMBALIAN
+    hitungKembalian();
+}
+
 function ubahQty(id, delta){
     if(!cart[id]) return;
+    
     const db   = produkDB[id];
     const maks = db ? db.stok : 99;
-    cart[id].qty = Math.max(0, Math.min(cart[id].qty + delta, maks));
-    if(cart[id].qty === 0){ delete cart[id]; }
+    
+    const qtyBaru = Math.max(0, Math.min(cart[id].qty + delta, maks));
+    
+    // UPDATE QTY DI CART
+    cart[id].qty = qtyBaru;
+    
+    // SIMPAN KE LOCALSTORAGE
     localStorage.setItem('fanda_cart', JSON.stringify(cart));
-    renderKeranjang();
+    
+    // JIKA QTY = 0, HAPUS ITEM
+    if(cart[id].qty === 0){ 
+        delete cart[id]; 
+    }
+    
+    // UPDATE TAMPILAN HANYA ITEM INI (LEBIH CEPAT)
+    updateSubtotalItem(id);
+    
+    // HITUNG TOTAL KESELURUHAN
+    hitungTotal();
+}
+
+// FUNGSI UNTUK UPDATE SUBTOTAL SATU ITEM SAJA
+function updateSubtotalItem(id){
+    const item = cart[id];
+    
+    if(!item || item.qty <= 0){
+        // HAPUS ROW DARI TABEL
+        const row = document.getElementById(`row-${id}`);
+        if(row) row.remove();
+        
+        // JIKA SUDAH TIDAK ADA ITEM, TAMPILKAN KERANJANG KOSONG
+        const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
+        if(keys.length === 0){
+            renderKeranjang();
+        }
+        return;
+    }
+    
+    // UPDATE QTY DISPLAY
+    const qtyEl = document.getElementById(`qty-${id}`);
+    if(qtyEl) qtyEl.textContent = item.qty;
+    
+    // HITUNG SUBTOTAL BARU
+    const subBaru = item.harga * item.qty;
+    
+    // UPDATE SUBTOTAL DISPLAY DENGAN ANIMASI
+    const subtotalEl = document.getElementById(`subtotal-${id}`);
+    if(subtotalEl){
+        subtotalEl.textContent = fmt(subBaru);
+        subtotalEl.classList.remove('subtotal-update');
+        void subtotalEl.offsetWidth; // Trigger reflow
+        subtotalEl.classList.add('subtotal-update');
+    }
+    
+    // UPDATE DETAIL (qty x harga)
+    const detailEl = document.getElementById(`detail-${id}`);
+    if(detailEl) detailEl.textContent = `${item.qty} x ${fmt(item.harga)}`;
 }
 
 function hapusItem(id){
