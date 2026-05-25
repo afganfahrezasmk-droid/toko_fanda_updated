@@ -226,7 +226,7 @@ if (!$d) {
                     <!-- BODY -->
                     <div class="card-body p-0">
 
-                        <?php if(mysqli_num_rows($order) > 0){ ?>
+                        <?php if (mysqli_num_rows($order) > 0) { ?>
 
                         <div class="table-responsive">
 
@@ -235,84 +235,95 @@ if (!$d) {
                                 <thead style="background:#fff8f0;">
 
                                     <tr style="border-bottom:2px solid #f1e3d3">
-
                                         <th class="py-3 px-4">Invoice</th>
                                         <th class="py-3">Pembayaran</th>
                                         <th class="py-3">Total</th>
                                         <th class="py-3">Status</th>
                                         <th class="py-3">Tanggal</th>
                                         <th class="py-3 text-center">Aksi</th>
-
                                     </tr>
 
                                 </thead>
 
                                 <tbody>
 
-                                <?php while($o = mysqli_fetch_assoc($order)) { ?>
+                                <?php while ($o = mysqli_fetch_assoc($order)) { ?>
 
                                 <?php
 
-                                /*
-                                =========================================
-                                AMBIL DATA PEMBAYARAN DARI TABEL pembayaran
-                                =========================================
-                                */
-
-                                $pay = mysqli_fetch_assoc(mysqli_query($koneksi, "
-                                    SELECT *
-                                    FROM pembayaran
-                                    WHERE orders_id = '".$o['orders_id']."'
-                                "));
-
-                                /*
-                                =========================================
+                                /* =========================================
                                 STATUS PESANAN
-                                =========================================
-                                */
+                                Sesuai ENUM DB: pending, diproses, selesai, dibatalkan
+                                + handle string kosong ''
+                                ========================================= */
 
-                                $status = strtolower($o['status'] ?? '');
+                                $status = strtolower(trim($o['status'] ?? ''));
 
+                                // Default (termasuk status kosong '')
                                 $badge = '#888';
                                 $bg    = '#f3f3f3';
                                 $icon  = 'circle-info';
-                                $text  = ucfirst($status);
+                                $text  = 'Tidak Diketahui';
 
-                                if($status === 'pending'){
-
+                                if ($status === 'pending') {
                                     $badge = '#f39c12';
                                     $bg    = '#fff5df';
                                     $icon  = 'clock';
                                     $text  = 'Pending';
 
-                                } elseif($status === 'diproses'){
-
+                                } elseif ($status === 'diproses') {
                                     $badge = '#3498db';
                                     $bg    = '#eaf4ff';
                                     $icon  = 'spinner';
                                     $text  = 'Diproses';
 
-                                } elseif($status === 'dibayar'){
-
-                                    $badge = '#2980b9';
-                                    $bg    = '#eaf4ff';
-                                    $icon  = 'money-bill-wave';
-                                    $text  = 'Dibayar';
-
-                                } elseif($status === 'selesai'){
-
+                                } elseif ($status === 'selesai') {
                                     $badge = '#27ae60';
                                     $bg    = '#eafaf1';
                                     $icon  = 'circle-check';
                                     $text  = 'Selesai';
 
-                                } elseif(in_array($status, ['batal','dibatalkan'])){
-
+                                } elseif ($status === 'dibatalkan') {
                                     $badge = '#e74c3c';
                                     $bg    = '#ffeaea';
                                     $icon  = 'circle-xmark';
                                     $text  = 'Dibatalkan';
                                 }
+
+                                /* =========================================
+                                METODE PEMBAYARAN
+                                Ambil dari orders.metode_pembayaran langsung,
+                                karena tabel pembayaran tidak selalu punya record.
+                                Fallback ke tabel pembayaran jika kolom orders kosong.
+                                ========================================= */
+
+                                $metodeRaw = trim($o['metode_pembayaran'] ?? '');
+
+                                // Jika orders.metode_pembayaran kosong, coba ambil dari tabel pembayaran
+                                if ($metodeRaw === '') {
+                                    $qPay = mysqli_query($koneksi, "
+                                        SELECT metode
+                                        FROM pembayaran
+                                        WHERE orders_id = '" . (int)$o['orders_id'] . "'
+                                        LIMIT 1
+                                    ");
+                                    $rowPay    = mysqli_fetch_assoc($qPay);
+                                    $metodeRaw = $rowPay['metode'] ?? '';
+                                }
+
+                                $metode = strtolower($metodeRaw);
+
+                                // Icon metode — ENUM DB: cash, qris, transfer
+                                $iconMetode = 'wallet';
+                                if ($metode === 'cash') {
+                                    $iconMetode = 'money-bill-wave';
+                                } elseif ($metode === 'qris') {
+                                    $iconMetode = 'qrcode';
+                                } elseif ($metode === 'transfer') {
+                                    $iconMetode = 'building-columns';
+                                }
+
+                                $metodeLabel = $metode !== '' ? strtoupper($metode) : '-';
 
                                 ?>
 
@@ -321,42 +332,28 @@ if (!$d) {
                                     <!-- INVOICE -->
                                     <td class="px-4 py-3">
 
-                                        <div style="font-weight:700;color:#2d1b10;font-size:.96rem">
-                                            <?= htmlspecialchars($o['invoice']) ?>
-                                        </div>
+                                        <?php if (!empty($o['invoice'])) { ?>
+
+                                            <div style="font-weight:700;color:#2d1b10;font-size:.96rem">
+                                                <?= htmlspecialchars($o['invoice']) ?>
+                                            </div>
+
+                                        <?php } else { ?>
+
+                                            <div style="font-weight:600;color:#bbb;font-size:.88rem;font-style:italic">
+                                                — Tidak ada invoice —
+                                            </div>
+
+                                        <?php } ?>
 
                                         <small style="color:#999">
-                                            Pajak:
-                                            Rp <?= number_format($o['pajak'],0,',','.') ?>
+                                            Pajak: Rp <?= number_format($o['pajak'], 0, ',', '.') ?>
                                         </small>
 
                                     </td>
 
                                     <!-- METODE PEMBAYARAN -->
                                     <td class="py-3">
-
-                                        <?php
-                                        // ambil metode pembayaran dari tabel pembayaran
-                                        $pembayaran = mysqli_fetch_assoc(mysqli_query($koneksi, "
-                                            SELECT metode
-                                            FROM pembayaran
-                                            WHERE orders_id = '".$o['orders_id']."'
-                                            LIMIT 1
-                                        "));
-
-                                        $metode = strtolower($pembayaran['metode'] ?? '-');
-
-                                        // icon metode
-                                        $iconMetode = 'wallet';
-
-                                        if($metode == 'cash'){
-                                            $iconMetode = 'money-bill-wave';
-                                        } elseif($metode == 'qris'){
-                                            $iconMetode = 'qrcode';
-                                        } elseif($metode == 'transfer'){
-                                            $iconMetode = 'building-columns';
-                                        }
-                                        ?>
 
                                         <div style="
                                             background:#fafafa;
@@ -370,11 +367,8 @@ if (!$d) {
                                             font-weight:700;
                                             color:#333;
                                         ">
-
                                             <i class="fa-solid fa-<?= $iconMetode ?>"></i>
-
-                                            <?= strtoupper(htmlspecialchars($metode)) ?>
-
+                                            <?= $metodeLabel ?>
                                         </div>
 
                                     </td>
@@ -382,12 +376,8 @@ if (!$d) {
                                     <!-- TOTAL -->
                                     <td class="py-3">
 
-                                        <div style="
-                                            font-weight:800;
-                                            color:#27ae60;
-                                            font-size:1rem;
-                                        ">
-                                            Rp <?= number_format($o['total'],0,',','.') ?>
+                                        <div style="font-weight:800;color:#27ae60;font-size:1rem;">
+                                            Rp <?= number_format($o['total'], 0, ',', '.') ?>
                                         </div>
 
                                     </td>
@@ -406,11 +396,8 @@ if (!$d) {
                                             align-items:center;
                                             gap:7px;
                                         ">
-
                                             <i class="fa-solid fa-<?= $icon ?>"></i>
-
                                             <?= $text ?>
-
                                         </span>
 
                                     </td>
@@ -431,17 +418,22 @@ if (!$d) {
                                     <!-- AKSI -->
                                     <td class="text-center py-3">
 
-                                        <a href="invoice.php?invoice=<?= urlencode($o['invoice']) ?>"
-                                        class="btn btn-dark rounded-pill px-3 py-2"
-                                        style="
-                                            font-size:.82rem;
-                                            font-weight:600;
-                                        ">
+                                        <?php if (!empty($o['invoice'])) { ?>
 
-                                            <i class="fa fa-receipt me-1"></i>
-                                            Lihat Struk
+                                            <a href="invoice.php?invoice=<?= urlencode($o['invoice']) ?>"
+                                            class="btn btn-dark rounded-pill px-3 py-2"
+                                            style="font-size:.82rem;font-weight:600;">
+                                                <i class="fa fa-receipt me-1"></i>
+                                                Lihat Struk
+                                            </a>
 
-                                        </a>
+                                        <?php } else { ?>
+
+                                            <span style="font-size:.8rem;color:#bbb;font-style:italic">
+                                                Tidak tersedia
+                                            </span>
+
+                                        <?php } ?>
 
                                     </td>
 
@@ -477,6 +469,8 @@ if (!$d) {
                     </div>
 
                 </div>
+
+            </div>
 
             </div>
 

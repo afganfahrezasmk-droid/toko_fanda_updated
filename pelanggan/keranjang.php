@@ -225,6 +225,7 @@ if ($_SESSION['role'] != 'pelanggan') {
     font-weight:700;
     transition:.2s;
     font-size:1.05rem;
+    cursor:pointer;
 }
 
 .btn-order:hover{
@@ -252,31 +253,20 @@ if ($_SESSION['role'] != 'pelanggan') {
 
 <div class="container py-5">
 
-   <!-- HEADER -->
+    <!-- HEADER -->
     <div class="top-action">
 
         <div>
             <br><br>
-            <a href="index.php"
-            class="btn btn-outline-dark btn-kembali">
-
+            <a href="index.php" class="btn btn-outline-dark btn-kembali">
                 <i class="fa fa-arrow-left me-2"></i>
                 Kembali
-
             </a>
-
         </div>
 
         <div class="text-center w-100">
-
-            <h2 class="page-title">
-                🛒 Pilih Produk
-            </h2>
-
-            <div class="page-subtitle">
-                Pilih produk favoritmu dan tambahkan ke keranjang
-            </div>
-
+            <h2 class="page-title">🛒 Pilih Produk</h2>
+            <div class="page-subtitle">Pilih produk favoritmu dan tambahkan ke keranjang</div>
         </div>
 
     </div>
@@ -289,9 +279,7 @@ if ($_SESSION['role'] != 'pelanggan') {
     <!-- CHECKOUT SECTION -->
     <div class="checkout-box">
 
-        <div class="checkout-title">
-            📋 Ringkasan Pesanan
-        </div>
+        <div class="checkout-title">📋 Ringkasan Pesanan</div>
 
         <!-- SUMMARY -->
         <div class="summary-section">
@@ -313,155 +301,124 @@ if ($_SESSION['role'] != 'pelanggan') {
 
         </div>
 
-        <!-- FORM PEMBAYARAN -->
-        <form method="POST" action="proses_transaksi.php" id="formCheckout">
+        <!-- FORM TAMPILAN (bukan yang disubmit) -->
+        <div class="row">
 
-            <div class="row">
-
-                <div class="col-md-4 mb-3">
-
-                    <label class="form-label">
-                        Invoice
-                    </label>
-
-                    <input type="text"
-                           name="invoice"
-                           class="form-control"
-                           id="invoiceInput"
-                           readonly>
-
-                </div>
-
-                <div class="col-md-4 mb-3">
-
-                    <label class="form-label">
-                        Metode Pembayaran
-                    </label>
-
-                    <select name="metode_pembayaran"
-                            class="form-select"
-                            id="metodeSelect"
-                            required>
-
-                        <option value="">
-                            -- Pilih Metode --
-                        </option>
-
-                        <option value="Cash">
-                            💵 Cash
-                        </option>
-
-                        <option value="Transfer">
-                            🏦 Transfer
-                        </option>
-
-                        <option value="QRIS">
-                            📱 QRIS
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div class="col-md-4 mb-3">
-
-                    <label class="form-label">
-                        Jumlah Bayar
-                    </label>
-
-                    <input type="text"
-                        name="bayar"
-                        id="inputBayar"
-                        class="form-control"
-                        placeholder="Contoh: 500000"
-                        oninput="formatBayar(this); hitungKembalian();">
-
-                </div>
-
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Invoice</label>
+                <input type="text"
+                       class="form-control"
+                       id="invoiceView"
+                       readonly>
             </div>
 
-            <div class="row">
-
-                <div class="col-md-4 mb-3">
-
-                    <label class="form-label">
-                        Kembalian
-                    </label>
-
-                    <input type="text"
-                        id="viewKembalian"
-                        class="form-control"
-                        value="Rp 0"
-                        readonly
-                        style="background:#f8f8f8;font-weight:700;color:green;">
-
-                </div>
-
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Metode Pembayaran</label>
+                <select class="form-select"
+                        id="metodeSelect"
+                        required>
+                    <option value="">-- Pilih Metode --</option>
+                    <option value="Cash">💵 Cash</option>
+                    <option value="Transfer">🏦 Transfer</option>
+                    <option value="QRIS">📱 QRIS</option>
+                </select>
             </div>
 
-            <!-- HIDDEN INPUTS UNTUK PRODUK -->
-            <div id="inputProduk"></div>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Jumlah Bayar</label>
+                <!-- HANYA tampilan, TIDAK punya name → tidak ikut submit -->
+                <input type="text"
+                       id="inputBayarView"
+                       class="form-control"
+                       placeholder="Contoh: 500000"
+                       oninput="formatBayar(this);">
+            </div>
 
-            <!-- BUTTON SUBMIT -->
-            <button type="submit"
-                    class="btn-order"
-                    id="btnOrder"
-                    disabled>
+        </div>
 
-                <i class="fa fa-cart-shopping me-2"></i>
-                Buat Pesanan
+        <div class="row">
 
-            </button>
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Kembalian</label>
+                <input type="text"
+                       id="viewKembalian"
+                       class="form-control"
+                       value="Rp 0"
+                       readonly
+                       style="background:#f8f8f8;font-weight:700;color:green;">
+            </div>
 
-        </form>
+        </div>
+
+        <!-- BUTTON -->
+        <button type="button"
+                class="btn-order"
+                id="btnOrder"
+                onclick="submitOrder()"
+                disabled>
+            <i class="fa fa-cart-shopping me-2"></i>
+            Buat Pesanan
+        </button>
 
     </div>
 
 </div>
 
+<!-- =============================================
+     FORM TERSEMBUNYI — yang benar-benar disubmit
+     Semua value diisi oleh JS sebelum submit
+     TIDAK ada innerHTML += sehingga nilai aman
+============================================== -->
+<form id="formCheckout" method="POST" action="proses_transaksi.php">
+    <input type="hidden" name="invoice"           id="inputInvoice">
+    <input type="hidden" name="metode_pembayaran" id="inputMetode">
+    <input type="hidden" name="bayar"             id="inputBayar">
+    <!-- produk_id[] dan qty[] diisi dinamis oleh JS -->
+    <div id="inputProduk"></div>
+</form>
+
 <!-- Data produk dari DB -->
 <script>
 const produkDB = <?php
 $data = [];
-$all = mysqli_query($koneksi, "SELECT produk_id, nama_produk, harga, stok, gambar, deskripsi FROM produk");
-
-while($r = mysqli_fetch_assoc($all)){
+$all  = mysqli_query($koneksi, "SELECT produk_id, nama_produk, harga, stok, gambar, deskripsi FROM produk");
+while ($r = mysqli_fetch_assoc($all)) {
     $data[$r['produk_id']] = [
-        "id"     => (int)$r['produk_id'],
-        "nama"   => $r['nama_produk'],
-        "harga"  => (int)$r['harga'],
-        "stok"   => (int)$r['stok'],
-        "gambar" => $r['gambar'],
-        "desc"   => $r['deskripsi']
+        "id"    => (int)$r['produk_id'],
+        "nama"  => $r['nama_produk'],
+        "harga" => (int)$r['harga'],
+        "stok"  => (int)$r['stok'],
+        "gambar"=> $r['gambar'],
+        "desc"  => $r['deskripsi']
     ];
 }
-
 echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 ?>;
 
-let cart = JSON.parse(localStorage.getItem('fanda_cart')) || {};
+let cart         = JSON.parse(localStorage.getItem('fanda_cart')) || {};
 let totalBelanja = 0;
 
-function fmt(n){ 
-    return 'Rp ' + n.toLocaleString('id-ID'); 
+function fmt(n) {
+    return 'Rp ' + n.toLocaleString('id-ID');
 }
 
-function renderProduk(){
+function renderProduk() {
     let html = '';
 
     Object.keys(produkDB).forEach(id => {
-        const p = produkDB[id];
+        const p   = produkDB[id];
         const qty = cart[id]?.qty || 0;
         const sub = p.harga * qty;
 
         html += `
         <div class="produk-card">
-            <img src="../gambar/${p.gambar}" class="produk-img" onerror="this.src='../gambar/default.jpeg'">
-            
+            <img src="../gambar/${p.gambar}" class="produk-img"
+                 onerror="this.src='../gambar/default.jpeg'">
+
             <div class="produk-body">
                 <div class="produk-nama">${p.nama}</div>
                 <div class="produk-desc">${p.desc}</div>
-                
+
                 <div class="produk-info">
                     <div class="harga">${fmt(p.harga)}</div>
                     <div class="stok">Stok ${p.stok}</div>
@@ -476,118 +433,143 @@ function renderProduk(){
                     </div>
                 </div>
 
-                ${qty > 0 ? `<div class="subtotal-item" id="subtotal-${id}">${qty} × ${fmt(p.harga)} = <strong>${fmt(sub)}</strong></div>` : ''}
+                ${qty > 0 ? `<div class="subtotal-item" id="subtotal-${id}">${qty} × ${fmt(p.harga)} = <strong>${fmt(sub)}</strong></div>` : `<div id="subtotal-${id}"></div>`}
             </div>
-        </div>
-        `;
+        </div>`;
     });
 
     document.getElementById('produkGrid').innerHTML = html;
 }
 
-function ubahQty(id, delta){
+function ubahQty(id, delta) {
     const db = produkDB[id];
     const maks = db.stok;
-    
-    if(!cart[id]) cart[id] = { nama: db.nama, harga: db.harga, qty: 0 };
-    
+
+    if (!cart[id]) cart[id] = { nama: db.nama, harga: db.harga, qty: 0 };
+
     const qtyBaru = Math.max(0, Math.min(cart[id].qty + delta, maks));
-    cart[id].qty = qtyBaru;
-    
-    if(cart[id].qty === 0) delete cart[id];
-    
+    cart[id].qty  = qtyBaru;
+
+    if (cart[id].qty === 0) delete cart[id];
+
     localStorage.setItem('fanda_cart', JSON.stringify(cart));
-    
-    renderProduk();
+
+    // Update hanya elemen qty & subtotal item ini (tidak re-render seluruh grid)
+    const qtyEl      = document.getElementById(`qty-${id}`);
+    const subtotalEl = document.getElementById(`subtotal-${id}`);
+
+    if (qtyEl) qtyEl.textContent = qtyBaru;
+
+    if (subtotalEl) {
+        if (qtyBaru > 0) {
+            subtotalEl.innerHTML = `${qtyBaru} × ${fmt(db.harga)} = <strong>${fmt(db.harga * qtyBaru)}</strong>`;
+        } else {
+            subtotalEl.innerHTML = '';
+        }
+    }
+
     hitungTotal();
     updateBtnOrder();
 }
 
-function hitungTotal(){
+function hitungTotal() {
     let subtotal = 0;
-    
+
     Object.keys(cart).forEach(id => {
         const item = cart[id];
         subtotal += (item.harga * item.qty);
     });
-    
+
     const pajak = Math.round(subtotal * 0.1);
-    const total = subtotal + pajak;
+    const total  = subtotal + pajak;
     totalBelanja = total;
-    
+
     document.getElementById('sumSubtotal').textContent = fmt(subtotal);
-    document.getElementById('sumPajak').textContent = fmt(pajak);
-    document.getElementById('sumTotal').textContent = fmt(total);
-    
+    document.getElementById('sumPajak').textContent    = fmt(pajak);
+    document.getElementById('sumTotal').textContent    = fmt(total);
+
     hitungKembalian();
 }
 
-function formatBayar(input){
-    let angka = input.value.replace(/\D/g,'');
-    input.value = new Intl.NumberFormat('id-ID').format(angka);
+function formatBayar(input) {
+    // Simpan angka murni
+    let angka  = input.value.replace(/\D/g, '');
+    // Tampilkan dengan pemisah ribuan
+    input.value = angka ? new Intl.NumberFormat('id-ID').format(parseInt(angka)) : '';
     hitungKembalian();
-}
-
-function hitungKembalian(){
-    let bayar = document.getElementById('inputBayar').value;
-    bayar = parseInt(bayar.replace(/\D/g,'')) || 0;
-    
-    let kembali = bayar - totalBelanja;
-    if(kembali < 0) kembali = 0;
-    
-    document.getElementById('viewKembalian').value = fmt(kembali);
     updateBtnOrder();
 }
 
-function updateBtnOrder(){
-    const adaItem = Object.keys(cart).length > 0;
-    const metodeSelected = document.getElementById('metodeSelect').value !== '';
-    const bayarValid = parseInt(document.getElementById('inputBayar').value.replace(/\D/g,'') || 0) >= totalBelanja;
-    
-    document.getElementById('btnOrder').disabled = !(adaItem && metodeSelected && bayarValid);
+function hitungKembalian() {
+    const raw    = document.getElementById('inputBayarView').value.replace(/\D/g, '');
+    const bayar  = parseInt(raw) || 0;
+    const kembali = Math.max(0, bayar - totalBelanja);
+    document.getElementById('viewKembalian').value = fmt(kembali);
 }
 
-function generateInvoice(){
-    return 'INV-' + new Date().getTime().toString().slice(-10);
+function updateBtnOrder() {
+    const adaItem      = Object.keys(cart).length > 0;
+    const metodeOk     = document.getElementById('metodeSelect').value !== '';
+    const raw          = document.getElementById('inputBayarView').value.replace(/\D/g, '');
+    const bayar        = parseInt(raw) || 0;
+    const bayarCukup   = totalBelanja > 0 && bayar >= totalBelanja;
+
+    document.getElementById('btnOrder').disabled = !(adaItem && metodeOk && bayarCukup);
 }
 
-// Submit form
-document.getElementById('formCheckout').addEventListener('submit', function(e){
-    e.preventDefault();
-    
-    if(Object.keys(cart).length === 0){
-        alert('Keranjang kosong! Pilih produk dulu');
+function generateInvoice() {
+    return 'INV-' + Math.floor(1000 + Math.random() * 9000);
+}
+
+function submitOrder() {
+    if (Object.keys(cart).length === 0) {
+        alert('Keranjang kosong! Pilih produk dulu.');
         return;
     }
-    
-    const invoice = generateInvoice();
-    document.getElementById('invoiceInput').value = invoice;
-    
-    // Build hidden inputs
+
+    const metode = document.getElementById('metodeSelect').value;
+    if (!metode) {
+        alert('Pilih metode pembayaran dulu!');
+        return;
+    }
+
+    const raw   = document.getElementById('inputBayarView').value.replace(/\D/g, '');
+    const bayar = parseInt(raw) || 0;
+
+    if (bayar < totalBelanja) {
+        alert('Uang pembayaran kurang!');
+        return;
+    }
+
+    // =============================================
+    // Isi semua hidden input di formCheckout
+    // Aman: tidak ada innerHTML += pada form,
+    // sehingga nilai yang sudah diset tidak hilang
+    // =============================================
+    document.getElementById('inputInvoice').value = generateInvoice();
+    document.getElementById('inputMetode').value  = metode;
+    document.getElementById('inputBayar').value   = bayar;   // angka murni → PHP (int) aman
+
+    // Build hidden inputs produk & qty
     let inputHtml = '';
     Object.keys(cart).forEach(id => {
         inputHtml += `<input type="hidden" name="produk_id[]" value="${id}">`;
-        inputHtml += `<input type="hidden" name="qty[]" value="${cart[id].qty}">`;
+        inputHtml += `<input type="hidden" name="qty[]"       value="${cart[id].qty}">`;
     });
     document.getElementById('inputProduk').innerHTML = inputHtml;
-    
-    const bayar = parseInt(document.getElementById('inputBayar').value.replace(/\D/g,''));
-    document.getElementById('formCheckout').innerHTML += `<input type="hidden" name="bayar" value="${bayar}">`;
-    
-    this.submit();
-});
 
-// Event listener untuk update tombol
+    document.getElementById('formCheckout').submit();
+}
+
+// Event listeners
 document.getElementById('metodeSelect').addEventListener('change', updateBtnOrder);
-document.getElementById('inputBayar').addEventListener('input', updateBtnOrder);
 
 // Inisialisasi
-document.addEventListener('DOMContentLoaded', function(){
+document.addEventListener('DOMContentLoaded', function () {
     renderProduk();
     hitungTotal();
-    document.getElementById('invoiceInput').value = generateInvoice();
+    document.getElementById('invoiceView').value = generateInvoice();
 });
-
 </script>
 
 <?php include 'footer.php'; ?>
