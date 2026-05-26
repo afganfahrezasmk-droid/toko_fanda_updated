@@ -214,55 +214,40 @@ include '../koneksi.php';
 
                 </div>
 
-                <!-- INPUT BAYAR -->
-                <div style="margin-top:15px">
+                <!-- INPUT BAYAR (hanya tampil jika Cash) -->
+                <div id="sectionCash" style="display:none">
 
-                    <label style="
-                        font-weight:600;
-                        margin-bottom:8px;
-                        display:block;
-                    ">
-                        Uang Pembayaran
-                    </label>
+                    <div style="margin-top:15px">
+                        <label style="font-weight:600;margin-bottom:8px;display:block;">
+                            Uang Pembayaran
+                        </label>
+                        <input type="text"
+                            id="inputBayarView"
+                            placeholder="Contoh: 200000"
+                            oninput="formatBayar(this); hitungKembalian();"
+                            style="width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;">
+                    </div>
 
-                    <input type="text"
-                        id="inputBayarView"
-                        placeholder="Contoh: 200000"
-                        oninput="formatBayar(this); hitungKembalian();"
-                        style="
-                        width:100%;
-                        padding:12px;
-                        border-radius:10px;
-                        border:1px solid #ddd;
-                        ">
+                    <div style="margin-top:15px">
+                        <label style="font-weight:600;margin-bottom:8px;display:block;">
+                            Kembalian
+                        </label>
+                        <input type="text"
+                            id="viewKembalian"
+                            readonly
+                            value="Rp 0"
+                            style="width:100%;padding:12px;border-radius:10px;border:1px solid #ddd;background:#f8f8f8;font-weight:700;color:green;">
+                    </div>
 
                 </div>
 
-                <!-- KEMBALIAN -->
-                <div style="margin-top:15px">
-
-                    <label style="
-                        font-weight:600;
-                        margin-bottom:8px;
-                        display:block;
-                    ">
-                        Kembalian
-                    </label>
-
-                    <input type="text"
-                        id="viewKembalian"
-                        readonly
-                        value="Rp 0"
-                        style="
-                        width:100%;
-                        padding:12px;
-                        border-radius:10px;
-                        border:1px solid #ddd;
-                        background:#f8f8f8;
-                        font-weight:700;
-                        color:green;
-                        ">
-
+                <!-- INFO BOX untuk QRIS / Transfer -->
+                <div id="sectionDigital" style="display:none;margin-top:15px;
+                    background:#fff8ee;border:1.5px solid #f0c97a;border-radius:12px;
+                    padding:14px 16px;font-size:.85rem;color:#7a5500;line-height:1.7">
+                    <strong>💡 Informasi Pembayaran Digital</strong><br>
+                    Kamu akan diarahkan ke halaman pembayaran Midtrans setelah klik tombol di bawah.
+                    Ikuti instruksi yang muncul untuk menyelesaikan pembayaran.
                 </div>
 
                 <button class="btn-order" id="btnOrder" onclick="submitOrder()" disabled>Buat Pesanan</button>
@@ -556,6 +541,20 @@ function pilihMetode(el){
     document.querySelectorAll('.metode-btn').forEach(b => b.classList.remove('active'));
     el.classList.add('active');
     metodeDipilih = el.dataset.metode;
+
+    // Show/hide section berdasarkan metode
+    const isCash = (metodeDipilih === 'Cash');
+    document.getElementById('sectionCash').style.display    = isCash ? 'block' : 'none';
+    document.getElementById('sectionDigital').style.display = isCash ? 'none'  : 'block';
+
+    // Update label tombol
+    const labelMap = {
+        'Cash'     : 'Buat Pesanan',
+        'Transfer' : '🏦 Bayar via Transfer Bank',
+        'QRIS'     : '📱 Bayar dengan QRIS',
+    };
+    document.getElementById('btnOrder').textContent = labelMap[metodeDipilih] || 'Buat Pesanan';
+
     updateTombolOrder();
 }
 
@@ -601,21 +600,24 @@ function formatBayar(input){
 function submitOrder(){
     if(!metodeDipilih){ alert('Pilih metode pembayaran dulu!'); return; }
     const keys = Object.keys(cart).filter(k => cart[k].qty > 0);
-    const bayar = parseInt(
-        document.getElementById('inputBayarView')
-        .value
-        .replace(/\./g,'')
-    ) || 0;
-
-    if(bayar < totalBelanja){
-
-        alert('Uang pembayaran kurang!');
-
-        return;
-    }
-
-    document.getElementById('inputBayar').value = bayar;
     if(keys.length === 0){ alert('Keranjang kosong!'); return; }
+
+    if(metodeDipilih === 'Cash'){
+        // Validasi uang cash
+        const bayar = parseInt(
+            (document.getElementById('inputBayarView').value || '0').replace(/\./g,'')
+        ) || 0;
+
+        if(bayar < totalBelanja){
+            alert('Uang pembayaran kurang!');
+            return;
+        }
+        document.getElementById('inputBayar').value = bayar;
+
+    } else {
+        // QRIS / Transfer: bayar = total, Midtrans yang handle verifikasi
+        document.getElementById('inputBayar').value = totalBelanja;
+    }
 
     // Generate invoice
     const invoice = 'INV-' + Math.floor(1000 + Math.random() * 9000);
