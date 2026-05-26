@@ -1,0 +1,2 @@
+2026-05-26 09:41:25 | HTTP 201 | {"token":"2f3cb23f-9845-4894-b0e9-93374307442c","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/2f3cb23f-9845-4894-b0e9-93374307442c"}
+2026-05-26 09:43:21 | HTTP 201 | {"token":"266b7c9b-9204-4494-a0b0-891f191b20f7","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/266b7c9b-9204-4494-a0b0-891f191b20f7"}

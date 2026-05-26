@@ -7,8 +7,8 @@
 //  Settings → Access Keys
 // ============================================================
 
-define('MIDTRANS_SERVER_KEY', 'SB-Mid-server-GANTI_DENGAN_KEY_KAMU');
-define('MIDTRANS_CLIENT_KEY', 'SB-Mid-client-GANTI_DENGAN_KEY_KAMU');
+define('MIDTRANS_SERVER_KEY', 'Mid-server-PKsxhAPPeFsiOTmUZZj_d06W');
+define('MIDTRANS_CLIENT_KEY', 'Mid-client-FNieV2hGdUA8F3d3');
 
 // false  = Sandbox (testing)
 // true   = Production (live, butuh verifikasi)
@@ -46,17 +46,24 @@ function midtrans_get_snap_token(array $payload): ?string
             'Accept: application/json',
             'Authorization: Basic ' . $auth,
         ],
-        CURLOPT_SSL_VERIFYPEER => false, // matikan di localhost; nyalakan di production
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_SSL_VERIFYHOST => false,
+        CURLOPT_TIMEOUT        => 30,
     ]);
 
     $response = curl_exec($ch);
     $err      = curl_error($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
 
     if ($err) {
         error_log('Midtrans cURL error: ' . $err);
         return null;
     }
+
+    // Tulis log response ke file (hapus setelah testing)
+    $log = date('Y-m-d H:i:s') . " | HTTP $httpCode | " . $response . "\n";
+    file_put_contents(__DIR__ . '/midtrans_log.txt', $log, FILE_APPEND);
 
     $data = json_decode($response, true);
 
