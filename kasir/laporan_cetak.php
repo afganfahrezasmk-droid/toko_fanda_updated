@@ -5,25 +5,12 @@ include '../koneksi.php';
 
 /** @var mysqli $koneksi */
 
-/* =========================
-   CEK LOGIN
-========================= */
 
-if (!isset($_SESSION['role'])) {
+session_name('ADMIN_SESSION');
+session_start();
 
-    header("location:../index.php?pesan=belum_login");
-    exit;
-}
+$current = basename($_SERVER['PHP_SELF']);
 
-/* =========================
-   CEK ROLE KASIR
-========================= */
-
-if ($_SESSION['role'] != 'kasir') {
-
-    header("location:../index.php?pesan=bukan_kasir");
-    exit;
-}
 
 $dari   = $_GET['dari'];
 $sampai = $_GET['sampai'];

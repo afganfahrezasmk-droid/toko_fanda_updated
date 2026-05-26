@@ -2,10 +2,12 @@
 include 'header.php';
 include '../koneksi.php';
 /** @var mysqli $koneksi */
- 
-if (!isset($_SESSION['role'])) { header("location:../index.php?pesan=belum_login"); exit; }
-if ($_SESSION['role'] != 'kasir') { header("location:../index.php?pesan=bukan_kasir"); exit; }
- 
+
+session_name('ADMIN_SESSION');
+session_start();
+
+$current = basename($_SERVER['PHP_SELF']);
+
 $orders = mysqli_query($koneksi, "SELECT * FROM orders");
 $jml_order = mysqli_num_rows($orders);
  

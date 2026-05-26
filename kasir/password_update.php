@@ -1,5 +1,9 @@
 <?php
+
+session_name('ADMIN_SESSION');
 session_start();
+
+$current = basename($_SERVER['PHP_SELF']);
 
 include '../koneksi.php';
 

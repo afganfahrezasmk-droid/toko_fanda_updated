@@ -4,15 +4,11 @@ include '../koneksi.php';
 
 /** @var mysqli $koneksi */
 
-/* =========================
-   CEK LOGIN
-========================= */
+session_name('ADMIN_SESSION');
+session_start();
 
-if (!isset($_SESSION['user_id'])) {
+$current = basename($_SERVER['PHP_SELF']);
 
-    header("location:../index.php?pesan=belum_login");
-    exit;
-}
 ?>
 
 <div class="container mt-5">
