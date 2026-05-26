@@ -1,4 +1,5 @@
 <?php
+
 /** @var mysqli $koneksi */
 
 session_name('PELANGGAN_SESSION');

@@ -5,6 +5,7 @@ session_start();
 
 $current = basename($_SERVER['PHP_SELF']);
 
+include 'header.php';
 include '../koneksi.php';
 /** @var mysqli $koneksi */
 

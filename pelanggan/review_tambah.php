@@ -1,4 +1,6 @@
-<?php include '../koneksi.php';
+<?php 
+include 'header.php';
+include '../koneksi.php';
 /** @var mysqli $koneksi */
 ?>
 <!DOCTYPE html>

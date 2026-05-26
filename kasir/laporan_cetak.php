@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+include 'header.php';
 include '../koneksi.php';
 
 /** @var mysqli $koneksi */

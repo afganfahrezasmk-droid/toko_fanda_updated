@@ -1,4 +1,6 @@
 <?php
+include 'header.php';
+include '../koneksi.php';
 
 session_name('PELANGGAN_SESSION');
 session_start();
