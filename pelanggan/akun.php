@@ -226,245 +226,245 @@ if (!$d) {
                     <!-- BODY -->
                     <div class="card-body p-0">
 
-                        <?php if (mysqli_num_rows($order) > 0) { ?>
+                    <?php if (mysqli_num_rows($order) > 0) { ?>
 
-                        <div class="table-responsive">
+                    <div class="table-responsive">
 
-                            <table class="table align-middle mb-0">
+                        <table class="table align-middle mb-0">
 
-                                <thead style="background:#fff8f0;">
+                            <thead style="background:#fff8f0;">
 
-                                    <tr style="border-bottom:2px solid #f1e3d3">
-                                        <th class="py-3 px-4">Invoice</th>
-                                        <th class="py-3">Pembayaran</th>
-                                        <th class="py-3">Total</th>
-                                        <th class="py-3">Status</th>
-                                        <th class="py-3">Tanggal</th>
-                                        <th class="py-3 text-center">Aksi</th>
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                <?php while ($o = mysqli_fetch_assoc($order)) { ?>
-
-                                <?php
-
-                                /* =========================================
-                                STATUS PESANAN
-                                Sesuai ENUM DB: pending, diproses, selesai, dibatalkan
-                                + handle string kosong ''
-                                ========================================= */
-
-                                $status = strtolower(trim($o['status'] ?? ''));
-
-                                // Default (termasuk status kosong '')
-                                $badge = '#888';
-                                $bg    = '#f3f3f3';
-                                $icon  = 'circle-info';
-                                $text  = 'Tidak Diketahui';
-
-                                if ($status === 'pending') {
-                                    $badge = '#f39c12';
-                                    $bg    = '#fff5df';
-                                    $icon  = 'clock';
-                                    $text  = 'Pending';
-
-                                } elseif ($status === 'diproses') {
-                                    $badge = '#3498db';
-                                    $bg    = '#eaf4ff';
-                                    $icon  = 'spinner';
-                                    $text  = 'Diproses';
-
-                                } elseif ($status === 'selesai') {
-                                    $badge = '#27ae60';
-                                    $bg    = '#eafaf1';
-                                    $icon  = 'circle-check';
-                                    $text  = 'Selesai';
-
-                                } elseif ($status === 'dibatalkan') {
-                                    $badge = '#e74c3c';
-                                    $bg    = '#ffeaea';
-                                    $icon  = 'circle-xmark';
-                                    $text  = 'Dibatalkan';
-                                }
-
-                                /* =========================================
-                                METODE PEMBAYARAN
-                                Ambil dari orders.metode_pembayaran langsung,
-                                karena tabel pembayaran tidak selalu punya record.
-                                Fallback ke tabel pembayaran jika kolom orders kosong.
-                                ========================================= */
-
-                                $metodeRaw = trim($o['metode_pembayaran'] ?? '');
-
-                                // Jika orders.metode_pembayaran kosong, coba ambil dari tabel pembayaran
-                                if ($metodeRaw === '') {
-                                    $qPay = mysqli_query($koneksi, "
-                                        SELECT metode
-                                        FROM pembayaran
-                                        WHERE orders_id = '" . (int)$o['orders_id'] . "'
-                                        LIMIT 1
-                                    ");
-                                    $rowPay    = mysqli_fetch_assoc($qPay);
-                                    $metodeRaw = $rowPay['metode'] ?? '';
-                                }
-
-                                $metode = strtolower($metodeRaw);
-
-                                // Icon metode — ENUM DB: cash, qris, transfer
-                                $iconMetode = 'wallet';
-                                if ($metode === 'cash') {
-                                    $iconMetode = 'money-bill-wave';
-                                } elseif ($metode === 'qris') {
-                                    $iconMetode = 'qrcode';
-                                } elseif ($metode === 'transfer') {
-                                    $iconMetode = 'building-columns';
-                                }
-
-                                $metodeLabel = $metode !== '' ? strtoupper($metode) : '-';
-
-                                ?>
-
-                                <tr style="border-bottom:1px solid #f6f6f6">
-
-                                    <!-- INVOICE -->
-                                    <td class="px-4 py-3">
-
-                                        <?php if (!empty($o['invoice'])) { ?>
-
-                                            <div style="font-weight:700;color:#2d1b10;font-size:.96rem">
-                                                <?= htmlspecialchars($o['invoice']) ?>
-                                            </div>
-
-                                        <?php } else { ?>
-
-                                            <div style="font-weight:600;color:#bbb;font-size:.88rem;font-style:italic">
-                                                — Tidak ada invoice —
-                                            </div>
-
-                                        <?php } ?>
-
-                                        <small style="color:#999">
-                                            Pajak: Rp <?= number_format($o['pajak'], 0, ',', '.') ?>
-                                        </small>
-
-                                    </td>
-
-                                    <!-- METODE PEMBAYARAN -->
-                                    <td class="py-3">
-
-                                        <div style="
-                                            background:#fafafa;
-                                            border:1px solid #eee;
-                                            padding:8px 14px;
-                                            border-radius:999px;
-                                            display:inline-flex;
-                                            align-items:center;
-                                            gap:8px;
-                                            font-size:.82rem;
-                                            font-weight:700;
-                                            color:#333;
-                                        ">
-                                            <i class="fa-solid fa-<?= $iconMetode ?>"></i>
-                                            <?= $metodeLabel ?>
-                                        </div>
-
-                                    </td>
-
-                                    <!-- TOTAL -->
-                                    <td class="py-3">
-
-                                        <div style="font-weight:800;color:#27ae60;font-size:1rem;">
-                                            Rp <?= number_format($o['total'], 0, ',', '.') ?>
-                                        </div>
-
-                                    </td>
-
-                                    <!-- STATUS -->
-                                    <td class="py-3">
-
-                                        <span style="
-                                            background:<?= $bg ?>;
-                                            color:<?= $badge ?>;
-                                            padding:8px 15px;
-                                            border-radius:999px;
-                                            font-size:.82rem;
-                                            font-weight:700;
-                                            display:inline-flex;
-                                            align-items:center;
-                                            gap:7px;
-                                        ">
-                                            <i class="fa-solid fa-<?= $icon ?>"></i>
-                                            <?= $text ?>
-                                        </span>
-
-                                    </td>
-
-                                    <!-- TANGGAL -->
-                                    <td class="py-3">
-
-                                        <div style="font-weight:600;color:#333">
-                                            <?= date('d M Y', strtotime($o['created_at'])) ?>
-                                        </div>
-
-                                        <small style="color:#999">
-                                            <?= date('H:i', strtotime($o['created_at'])) ?> WIB
-                                        </small>
-
-                                    </td>
-
-                                    <!-- AKSI -->
-                                    <td class="text-center py-3">
-
-                                        <?php if (!empty($o['invoice'])) { ?>
-
-                                            <a href="invoice.php?invoice=<?= urlencode($o['invoice']) ?>"
-                                            class="btn btn-dark rounded-pill px-3 py-2"
-                                            style="font-size:.82rem;font-weight:600;">
-                                                <i class="fa fa-receipt me-1"></i>
-                                                Lihat Struk
-                                            </a>
-
-                                        <?php } else { ?>
-
-                                            <span style="font-size:.8rem;color:#bbb;font-style:italic">
-                                                Tidak tersedia
-                                            </span>
-
-                                        <?php } ?>
-
-                                    </td>
-
+                                <tr style="border-bottom:2px solid #f1e3d3">
+                                    <th class="py-3 px-4">Invoice</th>
+                                    <th class="py-3">Pembayaran</th>
+                                    <th class="py-3">Total</th>
+                                    <th class="py-3">Status Pesanan</th>
+                                    <th class="py-3">Tanggal</th>
+                                    <th class="py-3 text-center">Aksi</th>
                                 </tr>
 
-                                <?php } ?>
+                            </thead>
 
-                                </tbody>
+                            <tbody>
 
-                            </table>
+                            <?php while ($o = mysqli_fetch_assoc($order)) { ?>
 
-                        </div>
+                            <?php
 
-                        <?php } else { ?>
+                            /* =========================
+                            STATUS PESANAN
+                            ========================= */
 
-                        <!-- EMPTY -->
-                        <div class="text-center py-5">
+                            $status = strtolower(trim($o['status'] ?? ''));
 
-                            <i class="fa fa-box-open fa-3x text-secondary mb-3"></i>
+                            $badge = '#888';
+                            $bg    = '#f3f3f3';
+                            $icon  = 'circle-question';
+                            $text  = 'Pending';
 
-                            <h5 class="text-muted fw-bold">
-                                Belum ada pesanan
-                            </h5>
+                            if (
+                                $status == 'pending' ||
+                                $status == ''
+                            ) {
 
-                            <p class="text-secondary mb-0">
-                                Riwayat pembelian kamu akan muncul di sini.
-                            </p>
+                                $badge = '#f39c12';
+                                $bg    = '#fff5df';
+                                $icon  = 'clock';
+                                $text  = 'Pending';
 
-                        </div>
+                            } elseif (
+                                $status == 'diproses' ||
+                                $status == 'proses'
+                            ) {
 
-                        <?php } ?>
+                                $badge = '#3498db';
+                                $bg    = '#eaf4ff';
+                                $icon  = 'spinner';
+                                $text  = 'Diproses';
+
+                            } elseif ($status == 'selesai') {
+
+                                $badge = '#27ae60';
+                                $bg    = '#eafaf1';
+                                $icon  = 'circle-check';
+                                $text  = 'Selesai';
+
+                            } elseif (
+                                $status == 'dibatalkan' ||
+                                $status == 'batal'
+                            ) {
+
+                                $badge = '#e74c3c';
+                                $bg    = '#ffeaea';
+                                $icon  = 'circle-xmark';
+                                $text  = 'Dibatalkan';
+                            }
+
+                            /* =========================
+                            METODE PEMBAYARAN
+                            ========================= */
+
+                            $metode = strtolower(trim($o['metode_pembayaran'] ?? ''));
+
+                            $iconMetode = 'wallet';
+
+                            if ($metode == 'cash') {
+
+                                $iconMetode = 'money-bill-wave';
+
+                            } elseif ($metode == 'qris') {
+
+                                $iconMetode = 'qrcode';
+
+                            } elseif ($metode == 'transfer') {
+
+                                $iconMetode = 'building-columns';
+                            }
+
+                            $metodeLabel = $metode != '' ? strtoupper($metode) : '-';
+
+                            ?>
+
+                            <tr style="border-bottom:1px solid #f6f6f6">
+
+                                <!-- INVOICE -->
+                                <td class="px-4 py-3">
+
+                                    <?php if (!empty($o['invoice'])) { ?>
+
+                                        <div style="font-weight:700;color:#2d1b10;font-size:.96rem">
+                                            <?= htmlspecialchars($o['invoice']) ?>
+                                        </div>
+
+                                    <?php } else { ?>
+
+                                        <div style="font-weight:600;color:#bbb;font-size:.88rem;font-style:italic">
+                                            — Tidak ada invoice —
+                                        </div>
+
+                                    <?php } ?>
+
+                                    <small style="color:#999">
+                                        Pajak: Rp <?= number_format($o['pajak'], 0, ',', '.') ?>
+                                    </small>
+
+                                </td>
+
+                                <!-- METODE PEMBAYARAN -->
+                                <td class="py-3">
+
+                                    <div style="
+                                        background:#fafafa;
+                                        border:1px solid #eee;
+                                        padding:8px 14px;
+                                        border-radius:999px;
+                                        display:inline-flex;
+                                        align-items:center;
+                                        gap:8px;
+                                        font-size:.82rem;
+                                        font-weight:700;
+                                        color:#333;
+                                    ">
+                                        <i class="fa-solid fa-<?= $iconMetode ?>"></i>
+                                        <?= $metodeLabel ?>
+                                    </div>
+
+                                </td>
+
+                                <!-- TOTAL -->
+                                <td class="py-3">
+
+                                    <div style="font-weight:800;color:#27ae60;font-size:1rem;">
+                                        Rp <?= number_format($o['total'], 0, ',', '.') ?>
+                                    </div>
+
+                                </td>
+
+                                <!-- STATUS PESANAN -->
+                                <td class="py-3">
+
+                                    <span style="
+                                        background:<?= $bg ?>;
+                                        color:<?= $badge ?>;
+                                        padding:8px 15px;
+                                        border-radius:999px;
+                                        font-size:.82rem;
+                                        font-weight:700;
+                                        display:inline-flex;
+                                        align-items:center;
+                                        gap:7px;
+                                    ">
+                                        <i class="fa-solid fa-<?= $icon ?>"></i>
+                                        <?= $text ?>
+                                    </span>
+
+                                </td>
+
+                                <!-- TANGGAL -->
+                                <td class="py-3">
+
+                                    <div style="font-weight:600;color:#333">
+                                        <?= date('d M Y', strtotime($o['created_at'])) ?>
+                                    </div>
+
+                                    <small style="color:#999">
+                                        <?= date('H:i', strtotime($o['created_at'])) ?> WIB
+                                    </small>
+
+                                </td>
+
+                                <!-- AKSI -->
+                                <td class="text-center py-3">
+
+                                    <?php if (!empty($o['invoice'])) { ?>
+
+                                        <a href="invoice.php?invoice=<?= urlencode($o['invoice']) ?>"
+                                        class="btn btn-dark rounded-pill px-3 py-2"
+                                        style="font-size:.82rem;font-weight:600;">
+                                            <i class="fa fa-receipt me-1"></i>
+                                            Lihat Struk
+                                        </a>
+
+                                    <?php } else { ?>
+
+                                        <span style="font-size:.8rem;color:#bbb;font-style:italic">
+                                            Tidak tersedia
+                                        </span>
+
+                                    <?php } ?>
+
+                                </td>
+
+                            </tr>
+
+                            <?php } ?>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <?php } else { ?>
+
+                    <!-- EMPTY -->
+                    <div class="text-center py-5">
+
+                        <i class="fa fa-box-open fa-3x text-secondary mb-3"></i>
+
+                        <h5 class="text-muted fw-bold">
+                            Belum ada pesanan
+                        </h5>
+
+                        <p class="text-secondary mb-0">
+                            Riwayat pembelian kamu akan muncul di sini.
+                        </p>
+
+                    </div>
+
+                    <?php } ?>
+
+                    </div>
 
                     </div>
 

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+    <title>Toko Kue Fanda —Pelanggan</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 

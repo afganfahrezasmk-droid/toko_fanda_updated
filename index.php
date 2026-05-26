@@ -1150,7 +1150,9 @@ while($r = mysqli_fetch_assoc($qReview)){
 <?php } ?>
 
 <div class="testi-add-wrap">
-    <a href="review_tambah.php" class="testi-add-btn">
+    <a href="login.php"
+      class="testi-add-btn
+      onclick="alert('Silakan login atau buat akun terlebih dahulu!')">
         + Bagikan Pengalaman Anda
     </a>
 </div>
