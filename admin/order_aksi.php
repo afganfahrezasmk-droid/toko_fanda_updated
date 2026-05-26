@@ -3,7 +3,10 @@ include '../koneksi.php';
 
 /** @var mysqli $koneksi */
 
+session_name('ADMIN_SESSION');
 session_start();
+
+$current = basename($_SERVER['PHP_SELF']);
 
 /* ===============================
    AMBIL DATA FORM

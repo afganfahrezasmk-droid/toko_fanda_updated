@@ -4,15 +4,10 @@ include '../koneksi.php';
 
 /** @var mysqli $koneksi */
 
-if (!isset($_SESSION['role'])) {
-    header("location:../index.php?pesan=belum_login");
-    exit;
-}
+session_name('ADMIN_SESSION');
+session_start();
 
-if ($_SESSION['role'] != 'admin') {
-    header("location:../index.php?pesan=bukan_admin");
-    exit;
-}
+$current = basename($_SERVER['PHP_SELF']);
 
 ?>
 

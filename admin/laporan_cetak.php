@@ -4,10 +4,11 @@ session_start();
 include '../koneksi.php';
 /** @var mysqli $koneksi */
 
-if (!isset($_SESSION['role'])) {
-header("location:../index.php");
-exit;
-}
+session_name('ADMIN_SESSION');
+session_start();
+
+$current = basename($_SERVER['PHP_SELF']);
+
 
 $dari=$_GET['dari'];
 $sampai=$_GET['sampai'];
