@@ -112,30 +112,32 @@ $jml_kategori = mysqli_num_rows($kategori);
                     <td style="font-weight:600;">Rp <?= number_format($d['total']) ?></td>
                     <td><?= htmlspecialchars($d['metode_pembayaran']) ?></td>
                     <td>
-                        <?php
-                        switch ($status) {
-                            case 'pending':
-                                echo '<span class="badge bg-warning text-dark">Menunggu</span>';
-                                break;
 
-                            case 'dibayar':
-                                echo '<span class="badge bg-info">Dibayar</span>';
-                                break;
+                            <?php
+                            if($d['status']=="pending"){
 
-                            case 'selesai':
-                                echo '<span class="badge bg-success">Selesai</span>';
-                                break;
+                                echo "<span class='badge bg-warning text-dark'>Pending</span>";
 
-                            case 'batal':
-                                echo '<span class="badge bg-danger">Dibatalkan</span>';
-                                break;
+                            }elseif($d['status']=="diproses"){
 
-                            default:
-                                echo '<span class="badge bg-secondary">' . ucfirst($status) . '</span>';
-                                break;
-                        }
-                        ?>
-                    </td>
+                                echo "<span class='badge bg-info'>DiProses</span>";
+
+                            }elseif($d['status']=="selesai"){
+
+                                echo "<span class='badge bg-success'>Selesai</span>";
+
+                            }elseif($d['status']=="dibatalkan"){
+
+                                echo "<span class='badge bg-danger'>DiBatalkan</span>";
+
+                            }else{
+
+                                echo "<span class='badge bg-dark'>Unknown</span>";
+
+                            }
+                            ?>
+
+                        </td>
                     <td style="font-size:.82rem;color:var(--text-muted);"><?= $d['created_at'] ?></td>
                     <td>
                         <a href="order_invoice.php?id=<?= $d['orders_id'] ?>" class="btn btn-sm btn-primary">

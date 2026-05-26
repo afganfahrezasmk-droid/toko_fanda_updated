@@ -1,19 +1,9 @@
 <?php
-session_start();
-
-include '../koneksi.php';
-
 /** @var mysqli $koneksi */
 
-/* ===============================
-   CEK LOGIN
-================================ */
+session_name('PELANGGAN_SESSION');
+session_start();
 
-if(!isset($_SESSION['user_id'])){
-
-    header("location:../login_fanda.php");
-    exit;
-}
 
 /* ===============================
    AMBIL DATA FORM

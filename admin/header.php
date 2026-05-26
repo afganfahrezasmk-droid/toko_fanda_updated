@@ -23,6 +23,8 @@
 <body>
 
 <?php
+
+session_name('ADMIN_SESSION');
 session_start();
 
 if (!isset($_SESSION['role'])) {
@@ -34,6 +36,8 @@ if ($_SESSION['role'] != "admin") {
     header("location:../index.php?pesan=bukan_admin");
     exit;
 }
+
+session_write_close();
 
 $current = basename($_SERVER['PHP_SELF']);
 ?>

@@ -1,18 +1,8 @@
 <?php
-include 'header.php';
-include '../koneksi.php';
-
 /** @var mysqli $koneksi */
 
-/* =========================
-   CEK LOGIN
-========================= */
-
-if (!isset($_SESSION['role'])) {
-
-    header("location:../index.php?pesan=belum_login");
-    exit;
-}
+session_name('PELANGGAN_SESSION');
+session_start();
 
 /* =========================
    CEK SESSION USER ID

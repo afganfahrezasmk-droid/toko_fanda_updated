@@ -100,21 +100,26 @@ if ($_SESSION['role'] != 'admin') {
                         <td>
 
                             <?php
-                            if($d['status'] == 'pending'){
+                            if($d['status']=="pending"){
 
                                 echo "<span class='badge bg-warning text-dark'>Pending</span>";
 
-                            }elseif($d['status'] == 'dibayar'){
+                            }elseif($d['status']=="diproses"){
 
-                                echo "<span class='badge bg-info'>Dibayar</span>";
+                                echo "<span class='badge bg-info'>DiProses</span>";
 
-                            }elseif($d['status'] == 'selesai'){
+                            }elseif($d['status']=="selesai"){
 
                                 echo "<span class='badge bg-success'>Selesai</span>";
 
+                            }elseif($d['status']=="dibatalkan"){
+
+                                echo "<span class='badge bg-danger'>DiBatalkan</span>";
+
                             }else{
 
-                                echo "<span class='badge bg-danger'>Batal</span>";
+                                echo "<span class='badge bg-dark'>Unknown</span>";
+
                             }
                             ?>
 

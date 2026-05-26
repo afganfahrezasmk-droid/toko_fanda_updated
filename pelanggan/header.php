@@ -19,6 +19,8 @@ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
 <body>
 
 <?php
+
+session_name('PELANGGAN_SESSION');
 session_start();
 
 if (!isset($_SESSION['role'])) {
@@ -30,6 +32,8 @@ if ($_SESSION['role'] != "pelanggan") {
     header("location:../index.php?pesan=bukan_pelanggan");
     exit;
 }
+
+session_write_close();
 
 $current = basename($_SERVER['PHP_SELF']);
 ?>

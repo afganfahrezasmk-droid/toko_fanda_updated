@@ -1,16 +1,15 @@
 <?php
-session_start();
-include 'koneksi.php';
-/** @var mysqli $koneksi */
 
 $pesan = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    include 'koneksi.php';
+    /** @var mysqli $koneksi */
+
     $login    = trim($_POST['login'] ?? '');
     $password = md5($_POST['password'] ?? '');
 
-    // Prepared statement
     $stmt = $koneksi->prepare(
         "SELECT * FROM user
          WHERE (username = ? OR email = ?)
@@ -27,12 +26,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $u = $result->fetch_assoc();
 
+        /* =========================
+           SESSION BERDASARKAN ROLE
+        ========================= */
+
+        if ($u['role'] == 'admin') {
+
+            session_name('ADMIN_SESSION');
+
+        } elseif ($u['role'] == 'kasir') {
+
+            session_name('KASIR_SESSION');
+
+        } else {
+
+            session_name('PELANGGAN_SESSION');
+        }
+
+        session_start();
+
         $_SESSION['user_id']  = $u['user_id'];
         $_SESSION['nama']     = $u['nama'];
         $_SESSION['username'] = $u['username'];
         $_SESSION['role']     = $u['role'];
 
-        $_SESSION['flash_success'] = "Selamat datang, {$u['nama']} 👋 Login berhasil!";
+        $_SESSION['flash_success'] =
+            "Selamat datang, {$u['nama']} 👋 Login berhasil!";
+
+        session_write_close();
 
         switch ($u['role']) {
 
@@ -44,7 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 header("Location: kasir/index.php");
                 break;
 
-            case 'pelanggan':
             default:
                 header("Location: pelanggan/index.php");
                 break;
@@ -54,8 +74,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     } else {
 
+        session_start();
         $pesan = 'Username / email atau password salah.';
     }
+
+} else {
+
+    session_start();
 }
 
 $flash = $_GET['pesan'] ?? '';

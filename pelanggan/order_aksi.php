@@ -1,4 +1,7 @@
 <?php
+/** @var mysqli $koneksi */
+
+session_name('PELANGGAN_SESSION');
 session_start();
 
 include '../koneksi.php';

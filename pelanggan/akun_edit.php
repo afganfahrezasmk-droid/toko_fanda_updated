@@ -1,28 +1,9 @@
 <?php
-include 'header.php';
-include '../koneksi.php';
-
 /** @var mysqli $koneksi */
 
-/* =========================
-   CEK LOGIN
-========================= */
+session_name('PELANGGAN_SESSION');
+session_start();
 
-if (!isset($_SESSION['role'])) {
-
-    header("location:../index.php?pesan=belum_login");
-    exit;
-}
-
-/* =========================
-   CEK ROLE PELANGGAN
-========================= */
-
-if ($_SESSION['role'] != 'pelanggan') {
-
-    header("location:../index.php?pesan=bukan_pelanggan");
-    exit;
-}
 ?>
 
 <style>

@@ -124,44 +124,28 @@ if ($_SESSION['role'] != 'admin') {
                         <label>Status Order</label>
 
                         <select name="status"
-                                class="form-control"
-                                required>
+                            class="form-control"
+                            required>
 
-                            <option value="pending"
-                                <?php
-                                if($d['status'] == 'pending'){
-                                    echo "selected";
-                                }
-                                ?>>
-                                Pending
-                            </option>
+                        <option value="pending"
+                            <?= ($d['status']=="pending")?"selected":"" ?>>
+                            Pending
+                        </option>
 
-                            <option value="dibayar"
-                                <?php
-                                if($d['status'] == 'dibayar'){
-                                    echo "selected";
-                                }
-                                ?>>
-                                Dibayar
-                            </option>
+                        <option value="diproses"
+                            <?= ($d['status']=="diproses")?"selected":"" ?>>
+                            Diproses
+                        </option>
 
-                            <option value="selesai"
-                                <?php
-                                if($d['status'] == 'selesai'){
-                                    echo "selected";
-                                }
-                                ?>>
-                                Selesai
-                            </option>
+                        <option value="selesai"
+                            <?= ($d['status']=="selesai")?"selected":"" ?>>
+                            Selesai
+                        </option>
 
-                            <option value="batal"
-                                <?php
-                                if($d['status'] == 'batal'){
-                                    echo "selected";
-                                }
-                                ?>>
-                                Batal
-                            </option>
+                        <option value="dibatalkan"
+                            <?= ($d['status']=="dibatalkan")?"selected":"" ?>>
+                            DiBatalkan
+                        </option>
 
                         </select>
 

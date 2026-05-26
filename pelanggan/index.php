@@ -1,5 +1,8 @@
 <?php
-require_once __DIR__ . '/../koneksi.php';
+include '../koneksi.php';
+/** @var mysqli $koneksi */
+
+session_name('PELANGGAN_SESSION');
 session_start();
 
 $flash_success = $_SESSION['flash_success'] ?? null;

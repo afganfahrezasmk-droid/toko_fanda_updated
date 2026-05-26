@@ -9,8 +9,8 @@ include '../koneksi.php';
 
 $orders_id          = $_POST['orders_id'];
 $invoice            = $_POST['invoice'];
-$metode_pembayaran  = $_POST['metode_pembayaran'];
-$status             = $_POST['status'];
+$metode_pembayaran=trim($_POST['metode_pembayaran']);
+$status = strtolower(trim($_POST['status']));
 
 /* ===============================
    UPDATE ORDER
