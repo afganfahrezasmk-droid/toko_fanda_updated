@@ -156,7 +156,7 @@ mysqli_query(
         '$total',
         '$pajak',
         '$metode',
-        'dibayar',
+        'pending',
         NOW()
     )"
 );

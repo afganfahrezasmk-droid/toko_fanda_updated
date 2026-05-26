@@ -6,326 +6,495 @@ include '../koneksi.php';
 $invoice = $_GET['invoice'] ?? '';
 
 $order = mysqli_fetch_assoc(mysqli_query($koneksi, "
-SELECT * FROM orders
-WHERE invoice='$invoice'
+    SELECT * FROM orders
+    WHERE invoice = '" . mysqli_real_escape_string($koneksi, $invoice) . "'
 "));
 
-if(!$order){
-    echo "<h3 style='padding:40px'>Invoice tidak ditemukan</h3>";
+if (!$order) {
+    echo "<h3 style='padding:40px;text-align:center'>Invoice tidak ditemukan</h3>";
     exit;
 }
 
 $detail = mysqli_query($koneksi, "
-SELECT 
-    od.*, 
-    p.nama_produk,
-    p.gambar,
-    p.deskripsi
-FROM order_items od
-JOIN produk p ON od.produk_id = p.produk_id
-WHERE od.orders_id = '{$order['orders_id']}'
+    SELECT
+        oi.*,
+        p.nama_produk
+    FROM order_items oi
+    JOIN produk p ON oi.produk_id = p.produk_id
+    WHERE oi.orders_id = '{$order['orders_id']}'
 ");
 
-function rupiah($n){
-    return 'Rp ' . number_format($n,0,',','.');
-}
+$pembayaran = mysqli_fetch_assoc(mysqli_query($koneksi, "
+    SELECT * FROM pembayaran
+    WHERE orders_id = '{$order['orders_id']}'
+"));
 
-/* =========================
-   STATUS COLOR
-========================= */
+function rupiah($n) {
+    return 'Rp ' . number_format($n, 0, ',', '.');
+}
 
 $status = strtolower($order['status']);
 
-if($status == 'pending'){
-    $statusClass = 'status-pending';
-}
-elseif($status == 'diproses'){
-    $statusClass = 'status-proses';
-}
-elseif($status == 'selesai'){
-    $statusClass = 'status-selesai';
-}
-elseif($status == 'dibatalkan'){
-    $statusClass = 'status-batal';
-}
-else{
-    $statusClass = 'status-default';
-}
+$statusMap = [
+    'pending'    => ['label' => 'Pending',    'color' => '#f39c12'],
+    'diproses'   => ['label' => 'Diproses',   'color' => '#3498db'],
+    'selesai'    => ['label' => 'Selesai',    'color' => '#27ae60'],
+    'dibayar'    => ['label' => 'Dibayar',    'color' => '#27ae60'],
+    'dibatalkan' => ['label' => 'Dibatalkan', 'color' => '#e74c3c'],
+];
+
+$statusInfo = $statusMap[$status] ?? [
+    'label' => ucfirst($status),
+    'color' => '#888'
+];
 ?>
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>
+Struk <?= htmlspecialchars($order['invoice']) ?>
+</title>
+
 <style>
+@media print{
+
+    header,
+    footer{
+        display:none !important;
+    }
+
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
 body{
-    background:#e5e5e5;
-    font-family:Arial,sans-serif;
-}
-
-.receipt-wrap{
-    width:380px;
-    margin:30px auto;
-}
-
-.receipt{
-    background:#fff;
+    background:#f5f5f5;
+    font-family:'Courier New', monospace;
     padding:25px;
-    color:#000;
-    box-shadow:0 3px 15px rgba(0,0,0,.1);
+}
+
+/* ===== STRUK ===== */
+
+.struk{
+    width:340px;
+    margin:auto;
+    background:#fff;
+    padding:20px;
+    border-radius:6px;
+    box-shadow:0 4px 18px rgba(0,0,0,.08);
     position:relative;
 }
 
-/* zigzag atas bawah */
-.receipt:before,
-.receipt:after{
+/* efek sobek */
+
+.struk::before,
+.struk::after{
     content:"";
     position:absolute;
     left:0;
     width:100%;
     height:12px;
     background:
-    linear-gradient(
-        -45deg,
-        transparent 75%,
-        #fff 75%
-    ) 0 0/15px 15px;
+        radial-gradient(circle, transparent 7px, #fff 8px);
+    background-size:20px 20px;
 }
 
-.receipt:before{
-    top:-12px;
+.struk::before{
+    top:-10px;
 }
 
-.receipt:after{
-    bottom:-12px;
+.struk::after{
+    bottom:-10px;
     transform:rotate(180deg);
 }
 
-.center{
+/* ===== HEADER ===== */
+
+.header{
     text-align:center;
+    border-bottom:1px dashed #999;
+    padding-bottom:14px;
+    margin-bottom:14px;
 }
 
-.shop-name{
-    font-size:30px;
+.logo{
+    font-size:22px;
     font-weight:bold;
 }
 
-.address{
-    font-size:14px;
-    margin-top:5px;
-    line-height:1.5;
+.tagline{
+    font-size:12px;
+    color:#777;
+    margin-top:4px;
 }
 
-.line{
-    border-top:2px dashed #777;
-    margin:18px 0;
+.alamat{
+    font-size:12px;
+    margin-top:6px;
+    color:#777;
 }
 
-.row{
+/* ===== INFO ===== */
+
+.info{
+    font-size:12px;
+    margin-bottom:15px;
+}
+
+.info-row{
     display:flex;
     justify-content:space-between;
-    margin:4px 0;
+    margin-bottom:5px;
 }
 
-.small{
-    font-size:14px;
+.status{
+    font-weight:bold;
+    color:<?= $statusInfo['color'] ?>;
+}
+
+/* ===== ITEM ===== */
+
+.items{
+    border-top:1px dashed #999;
+    border-bottom:1px dashed #999;
+    padding:12px 0;
 }
 
 .item{
-    margin-bottom:18px;
+    margin-bottom:14px;
+}
+
+.item:last-child{
+    margin-bottom:0;
 }
 
 .item-name{
-    font-size:20px;
+    font-size:13px;
     font-weight:bold;
 }
 
 .item-detail{
-    color:#444;
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
     margin-top:4px;
 }
 
-.total-area .row{
-    margin:10px 0;
-    font-size:18px;
+/* ===== TOTAL ===== */
+
+.total-box{
+    margin-top:14px;
 }
 
-.total{
+.total-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin-bottom:7px;
+}
+
+.grand-total{
+    border-top:1px dashed #999;
+    padding-top:10px;
+    margin-top:8px;
+    font-size:15px;
     font-weight:bold;
-    font-size:22px;
 }
 
-.print-btn{
+/* ===== PAYMENT ===== */
+
+.payment{
+    border-top:1px dashed #999;
+    margin-top:15px;
+    padding-top:12px;
+}
+
+.payment h4{
+    font-size:13px;
+    margin-bottom:10px;
+}
+
+.payment-row{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    margin-bottom:6px;
+}
+
+.kembalian{
+    font-weight:bold;
+    color:green;
+}
+
+/* ===== FOOTER ===== */
+
+.footer{
+    text-align:center;
+    margin-top:18px;
+    border-top:1px dashed #999;
+    padding-top:14px;
+}
+
+.footer p{
+    font-size:12px;
+    margin-bottom:4px;
+}
+
+.footer small{
+    color:#777;
+    font-size:11px;
+}
+
+/* ===== BUTTON ===== */
+
+.action{
     text-align:center;
     margin-top:25px;
 }
 
-.print-btn button,
-.print-btn a{
-    border:none;
+.btn{
+    display:inline-block;
     padding:10px 18px;
-    border-radius:10px;
+    border:none;
+    border-radius:8px;
     cursor:pointer;
     text-decoration:none;
+    font-size:13px;
     margin:5px;
 }
 
 .btn-back{
-    background:#ddd;
-    color:black;
+    background:#eaeaea;
+    color:#333;
 }
 
 .btn-print{
-    background:#222;
-    color:white;
+    background:#2d1b10;
+    color:#fff;
 }
+
+/* ===== PRINT ===== */
 
 @media print{
 
-    .print-btn,
+    header,
+    footer,
     .navbar,
-    footer{
-        display:none;
+    .sidebar,
+    .topbar{
+        display:none !important;
     }
 
     body{
-        background:white;
+        background:#fff;
+        padding:0;
+        margin:0;
     }
 
-    .receipt{
+    .action{
+        display:none;
+    }
+
+    .struk{
+
+        width:100%;
+        max-width:340px;
+        margin:auto;
+
         box-shadow:none;
+        border-radius:0;
+
+        border:1.5px dashed #999 !important;
+
+        padding:15px;
+
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+
+    }
+
+    .invoice-container{
+        width:80mm;
+        margin:auto;
+        box-shadow:none;
+        border:none;
+    }
+
+    @page{
+        size:80mm auto;
+        margin:0;
     }
 
 }
 
 </style>
+</head>
 
+<body>
+<div class="invoice-container">
 
-<div class="receipt-wrap">
+<div class="struk">
 
-<div class="receipt">
+    <!-- HEADER -->
+    <div class="header">
 
-<div class="center">
-<br>
-<div class="shop-name">
-Toko Kue Fanda
+        <div class="logo">
+            🎂 TOKO KUE FANDA
+        </div>
+
+        <div class="tagline">
+            Bakery & Pastry
+        </div>
+
+        <div class="alamat">
+            Semarang, Jawa Tengah
+        </div>
+
+    </div>
+
+    <!-- INFO -->
+    <div class="info">
+
+        <div class="info-row">
+            <span>Invoice</span>
+            <span><?= htmlspecialchars($order['invoice']) ?></span>
+        </div>
+
+        <div class="info-row">
+            <span>Tanggal</span>
+            <span><?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></span>
+        </div>
+
+        <div class="info-row">
+            <span>Status</span>
+            <span class="status"><?= $statusInfo['label'] ?></span>
+        </div>
+
+        <div class="info-row">
+            <span>Metode</span>
+            <span><?= htmlspecialchars($order['metode_pembayaran']) ?></span>
+        </div>
+
+    </div>
+
+    <!-- ITEMS -->
+    <div class="items">
+
+        <?php
+        $subtotal = 0;
+
+        while($d = mysqli_fetch_assoc($detail)) :
+
+            $sub = $d['harga'] * $d['qty'];
+            $subtotal += $sub;
+        ?>
+
+        <div class="item">
+
+            <div class="item-name">
+                <?= htmlspecialchars($d['nama_produk']) ?>
+            </div>
+
+            <div class="item-detail">
+
+                <span>
+                    <?= $d['qty'] ?> x <?= rupiah($d['harga']) ?>
+                </span>
+
+                <span>
+                    <?= rupiah($sub) ?>
+                </span>
+
+            </div>
+
+        </div>
+
+        <?php endwhile; ?>
+
+    </div>
+
+    <!-- TOTAL -->
+    <div class="total-box">
+
+        <div class="total-row">
+            <span>Subtotal</span>
+            <span><?= rupiah($subtotal) ?></span>
+        </div>
+
+        <div class="total-row">
+            <span>Pajak</span>
+            <span><?= rupiah($order['pajak']) ?></span>
+        </div>
+
+        <div class="total-row grand-total">
+            <span>TOTAL</span>
+            <span><?= rupiah($order['total']) ?></span>
+        </div>
+
+    </div>
+
+    <!-- PEMBAYARAN -->
+    <?php if($pembayaran): ?>
+
+    <div class="payment">
+
+        <h4>Pembayaran</h4>
+
+        <div class="payment-row">
+            <span>Bayar</span>
+            <span><?= rupiah($pembayaran['bayar']) ?></span>
+        </div>
+
+        <div class="payment-row kembalian">
+            <span>Kembalian</span>
+            <span><?= rupiah($pembayaran['kembalian']) ?></span>
+        </div>
+
+    </div>
+
+    <?php endif; ?>
+
+    <!-- FOOTER -->
+    <div class="footer">
+
+        <p>
+            Terima kasih ❤️
+        </p>
+
+        <small>
+            Simpan struk ini sebagai bukti pembayaran
+        </small>
+
+    </div>
+
+</div>
+</div>
+<!-- BUTTON -->
+<div class="action">
+
+    <a href="index.php" class="btn btn-back">
+        ← Kembali
+    </a>
+
+    <button onclick="window.print()" class="btn btn-print">
+        🖨 Cetak Struk
+    </button>
+
 </div>
 
-<div class="address">
-Semarang <br>
-Invoice: <?= htmlspecialchars($order['invoice']) ?>
-</div>
+<script>
+localStorage.removeItem('fanda_cart');
+</script>
 
-</div>
-
-<div class="line"></div>
-
-<div class="row">
-
-<div>
-<?= date('Y-m-d',strtotime($order['created_at'])) ?>
-<br>
-<?= date('H:i:s',strtotime($order['created_at'])) ?>
-</div>
-
-<div style="text-align:right">
-
-<?= htmlspecialchars($order['metode_pembayaran']) ?>
-<br>
-
-<?= htmlspecialchars($order['status']) ?>
-
-</div>
-
-</div>
-
-<div class="line"></div>
-
-<?php
-$subtotal=0;
-
-while($d=mysqli_fetch_assoc($detail)):
-
-$sub=$d['harga']*$d['qty'];
-$subtotal+=$sub;
-?>
-
-<div class="item">
-
-<div class="item-name">
-
-<?= htmlspecialchars($d['nama_produk']) ?>
-
-</div>
-
-<div class="row item-detail">
-
-<div>
-
-<?= $d['qty'] ?> x <?= number_format($d['harga'],0,',','.') ?>
-
-</div>
-
-<div>
-
-<?= rupiah($sub) ?>
-
-</div>
-
-</div>
-
-</div>
-
-<?php endwhile; ?>
-
-<div class="line"></div>
-
-<div class="total-area">
-
-<div class="row">
-
-<span>Subtotal</span>
-<span><?= rupiah($subtotal) ?></span>
-
-</div>
-
-<div class="row">
-
-<span>Pajak</span>
-<span><?= rupiah($order['pajak']) ?></span>
-
-</div>
-
-<div class="row total">
-
-<span>Total</span>
-<span><?= rupiah($order['total']) ?></span>
-
-</div>
-
-</div>
-
-<div class="line"></div>
-
-<div class="center small">
-
-Terima kasih sudah berbelanja ❤️
-
-</div>
-
-<div class="print-btn">
-
-<a href="index.php" class="btn-back">
-Kembali
-</a>
-
-<button onclick="window.print()"
-class="btn-print">
-
-Print
-
-</button>
-
-</div>
-
-</div>
-</div>
+</body>
+</html>
 
 <?php include 'footer.php'; ?>

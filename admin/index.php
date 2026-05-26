@@ -26,6 +26,27 @@ $jml_user = mysqli_num_rows($user);
 
 $kategori = mysqli_query($koneksi, "SELECT * FROM kategori");
 $jml_kategori = mysqli_num_rows($kategori);
+
+$q_pending = mysqli_fetch_assoc(mysqli_query(
+    $koneksi,
+    "SELECT COUNT(*) as total FROM orders WHERE status='pending'"
+));
+
+$q_diproses = mysqli_fetch_assoc(mysqli_query(
+    $koneksi,
+    "SELECT COUNT(*) as total FROM orders WHERE status='diproses'"
+));
+
+$q_selesai = mysqli_fetch_assoc(mysqli_query(
+    $koneksi,
+    "SELECT COUNT(*) as total FROM orders WHERE status='selesai'"
+));
+
+$q_batal = mysqli_fetch_assoc(mysqli_query(
+    $koneksi,
+    "SELECT COUNT(*) as total FROM orders WHERE status='dibatalkan'"
+));
+
 ?>
 
 <!-- Page Title -->
@@ -37,30 +58,115 @@ $jml_kategori = mysqli_num_rows($kategori);
 <!-- STAT CARDS -->
 <div class="stat-cards-row">
 
+    <!-- TOTAL ORDER -->
     <div class="stat-card">
-        <div class="stat-icon brown"><i class="fas fa-cart-shopping"></i></div>
+        <div class="stat-icon brown">
+            <i class="fas fa-cart-shopping"></i>
+        </div>
+
         <div class="stat-info">
             <div class="stat-value"><?= $jml_order ?></div>
             <div class="stat-label">Total Order</div>
-            <div class="stat-change"><i class="fas fa-arrow-up"></i> Semua order</div>
+            <div class="stat-change">
+                <i class="fas fa-arrow-up"></i>
+                Semua order
+            </div>
         </div>
     </div>
 
+    <!-- TOTAL PRODUK -->
     <div class="stat-card">
-        <div class="stat-icon gold"><i class="fas fa-box-open"></i></div>
+        <div class="stat-icon gold">
+            <i class="fas fa-box-open"></i>
+        </div>
+
         <div class="stat-info">
             <div class="stat-value"><?= $jml_produk ?></div>
             <div class="stat-label">Total Produk</div>
-            <div class="stat-change"><i class="fas fa-layer-group"></i> <?= $jml_kategori ?> Kategori</div>
+            <div class="stat-change">
+                <i class="fas fa-layer-group"></i>
+                <?= $jml_kategori ?> Kategori
+            </div>
         </div>
     </div>
 
+    <!-- TOTAL CUSTOMER -->
     <div class="stat-card">
-        <div class="stat-icon green"><i class="fas fa-users"></i></div>
+        <div class="stat-icon green">
+            <i class="fas fa-users"></i>
+        </div>
+
         <div class="stat-info">
             <div class="stat-value"><?= $jml_user ?></div>
             <div class="stat-label">Total Pelanggan</div>
-            <div class="stat-change"><i class="fas fa-user-plus"></i> Terdaftar</div>
+            <div class="stat-change">
+                <i class="fas fa-user-plus"></i>
+                Terdaftar
+            </div>
+        </div>
+    </div>
+
+    <!-- PENDING -->
+    <div class="stat-card">
+        <div class="stat-icon yellow">
+            <i class="fas fa-clock"></i>
+        </div>
+
+        <div class="stat-info">
+            <div class="stat-value"><?= $q_pending['total'] ?></div>
+            <div class="stat-label">Pending</div>
+            <div class="stat-change">
+                <i class="fas fa-hourglass-half"></i>
+                Menunggu proses
+            </div>
+        </div>
+    </div>
+
+    <!-- DIPROSES -->
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fas fa-spinner"></i>
+        </div>
+
+        <div class="stat-info">
+            <div class="stat-value"><?= $q_diproses['total'] ?></div>
+            <div class="stat-label">Diproses</div>
+            <div class="stat-change">
+                <i class="fas fa-fire"></i>
+                Sedang dibuat
+            </div>
+        </div>
+    </div>
+
+    <!-- SELESAI -->
+    <div class="stat-card">
+        <div class="stat-icon success">
+            <i class="fas fa-circle-check"></i>
+        </div>
+
+        <div class="stat-info">
+            <div class="stat-value"><?= $q_selesai['total'] ?></div>
+            <div class="stat-label">Selesai</div>
+            <div class="stat-change">
+                <i class="fas fa-check"></i>
+                Pesanan selesai
+            </div>
+        </div>
+    </div>
+
+    <!-- DIBATALKAN -->
+    <div class="stat-card">
+        <div class="stat-icon danger">
+            <i class="fas fa-circle-xmark"></i>
+        </div>
+
+        <div class="stat-info">
+            <div class="stat-value"><?= $q_batal['total'] ?></div>
+            <div class="stat-label">Dibatalkan</div>
+            <div class="stat-change">
+                <i class="fas fa-ban"></i>
+                Order dibatalkan
+            </div>
         </div>
     </div>
 
@@ -139,11 +245,13 @@ $jml_kategori = mysqli_num_rows($kategori);
 
                         </td>
                     <td style="font-size:.82rem;color:var(--text-muted);"><?= $d['created_at'] ?></td>
-                    <td>
-                        <a href="order_invoice.php?id=<?= $d['orders_id'] ?>" class="btn btn-sm btn-primary">
-                            <i class="fas fa-file-invoice me-1"></i>Invoice
-                        </a>
-                    </td>
+                    <!-- DETAIL -->
+                                <td><a href="order_detail.php?id=<?php echo $d['orders_id']; ?>"
+                                class="btn btn-sm btn-warning">
+
+                                    Detail
+
+                                </a></td>
                 </tr>
                 <?php endwhile; ?>
             </tbody>

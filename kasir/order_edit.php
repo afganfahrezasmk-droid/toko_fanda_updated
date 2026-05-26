@@ -122,13 +122,13 @@ $current = basename($_SERVER['PHP_SELF']);
                                 Pending
                             </option>
 
-                            <option value="dibayar"
+                            <option value="diproses"
                                 <?php
-                                if($d['status'] == 'dibayar'){
+                                if($d['status'] == 'diproses'){
                                     echo "selected";
                                 }
                                 ?>>
-                                Dibayar
+                                DiProses
                             </option>
 
                             <option value="selesai"
@@ -140,13 +140,13 @@ $current = basename($_SERVER['PHP_SELF']);
                                 Selesai
                             </option>
 
-                            <option value="batal"
+                            <option value="dibatalkan"
                                 <?php
-                                if($d['status'] == 'batal'){
+                                if($d['status'] == 'dibatalkan'){
                                     echo "selected";
                                 }
                                 ?>>
-                                Batal
+                                Dibatalkan
                             </option>
 
                         </select>

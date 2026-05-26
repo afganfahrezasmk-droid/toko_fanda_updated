@@ -10,31 +10,95 @@ $current = basename($_SERVER['PHP_SELF']);
 
 $orders = mysqli_query($koneksi, "SELECT * FROM orders");
 $jml_order = mysqli_num_rows($orders);
- 
+
 $user = mysqli_query($koneksi, "SELECT * FROM user WHERE role='pelanggan'");
 $jml_user = mysqli_num_rows($user);
+
+
+$q_pending = mysqli_fetch_assoc(
+    mysqli_query($koneksi,
+    "SELECT COUNT(*) as total FROM orders WHERE status='pending'")
+);
+
+$q_diproses = mysqli_fetch_assoc(
+    mysqli_query($koneksi,
+    "SELECT COUNT(*) as total FROM orders WHERE status='diproses'")
+);
+
+$q_selesai = mysqli_fetch_assoc(
+    mysqli_query($koneksi,
+    "SELECT COUNT(*) as total FROM orders WHERE status='selesai'")
+);
+
 ?>
- 
+
 <div class="page-title">
     <h2>Dashboard Kasir</h2>
     <p>Selamat datang, <?= htmlspecialchars($_SESSION['username']) ?>!</p>
 </div>
- 
+
 <div class="stat-cards-row">
+
+    <!-- TOTAL ORDER -->
     <div class="stat-card">
-        <div class="stat-icon gold"><i class="fas fa-cart-shopping"></i></div>
+        <div class="stat-icon gold">
+            <i class="fas fa-cart-shopping"></i>
+        </div>
+
         <div class="stat-info">
             <div class="stat-value"><?= $jml_order ?></div>
             <div class="stat-label">Total Order</div>
         </div>
     </div>
+
+    <!-- TOTAL CUSTOMER -->
     <div class="stat-card">
-        <div class="stat-icon green"><i class="fas fa-users"></i></div>
+        <div class="stat-icon green">
+            <i class="fas fa-users"></i>
+        </div>
+
         <div class="stat-info">
             <div class="stat-value"><?= $jml_user ?></div>
             <div class="stat-label">Total Customer</div>
         </div>
     </div>
+
+    <!-- PENDING -->
+    <div class="stat-card">
+        <div class="stat-icon yellow">
+            <i class="fas fa-clock"></i>
+        </div>
+
+        <div class="stat-info">
+            <div class="stat-value"><?= $q_pending['total'] ?></div>
+            <div class="stat-label">Pending</div>
+        </div>
+    </div>
+
+    <!-- DIPROSES -->
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <i class="fas fa-spinner"></i>
+        </div>
+
+        <div class="stat-info">
+            <div class="stat-value"><?= $q_diproses['total'] ?></div>
+            <div class="stat-label">Diproses</div>
+        </div>
+    </div>
+
+    <!-- SELESAI -->
+    <div class="stat-card">
+        <div class="stat-icon success">
+            <i class="fas fa-circle-check"></i>
+        </div>
+
+        <div class="stat-info">
+            <div class="stat-value"><?= $q_selesai['total'] ?></div>
+            <div class="stat-label">Selesai</div>
+        </div>
+    </div>
+
 </div>
  
 <div class="card">
@@ -79,10 +143,10 @@ $jml_user = mysqli_num_rows($user);
                         $s = $d['status'];
 
                         if ($s == 'pending') {
-                            echo "<span class='badge bg-warning text-dark'>Menunggu</span>";
+                            echo "<span class='badge bg-warning text-dark'>Pending</span>";
 
-                        } elseif ($s == 'dibayar') {
-                            echo "<span class='badge bg-info'>Dibayar</span>";
+                        } elseif ($s == 'diproses') {
+                            echo "<span class='badge bg-info'>Diproses</span>";
 
                         } elseif ($s == 'selesai') {
                             echo "<span class='badge bg-success'>Selesai</span>";

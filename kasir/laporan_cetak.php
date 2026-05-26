@@ -1,8 +1,7 @@
 <?php
-session_start();
+
 include 'header.php';
 include '../koneksi.php';
-
 /** @var mysqli $koneksi */
 
 session_name('KASIR_SESSION');
@@ -11,23 +10,34 @@ session_start();
 $current = basename($_SERVER['PHP_SELF']);
 
 
-$dari   = $_GET['dari'];
-$sampai = $_GET['sampai'];
+$dari=$_GET['dari'];
+$sampai=$_GET['sampai'];
+
+$status=$_GET['status'] ?? '';
+$metode=$_GET['metode_pembayaran'] ?? '';
+
+$filter="";
+
+if($status!=""){
+$filter.=" AND orders.status='$status'";
+}
+
+if($metode!=""){
+$filter.=" AND orders.metode_pembayaran='$metode'";
+}
+
 ?>
 
 <!DOCTYPE html>
-<html lang="id">
+<html>
 
 <head>
 
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cetak Laporan</title>
 
-    <title>Cetak Laporan Order</title>
-
-    <!-- BOOTSTRAP -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-          rel="stylesheet">
+<link
+href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+rel="stylesheet">
 
 </head>
 
@@ -35,126 +45,87 @@ $sampai = $_GET['sampai'];
 
 <div class="container mt-4">
 
-    <!-- JUDUL -->
-    <center>
+<center>
 
-        <h3>
-            LAPORAN ORDER
-        </h3>
+<h3>LAPORAN ORDER</h3>
 
-        <p>
-            Dari Tanggal
-            <b><?php echo $dari; ?></b>
+<p>
 
-            sampai
+<?= $dari ?>
+sampai
+<?= $sampai ?>
 
-            <b><?php echo $sampai; ?></b>
-        </p>
+</p>
 
-    </center>
+</center>
 
-    <br>
+<table class="table table-bordered">
 
-    <!-- TABEL -->
-    <table class="table table-bordered table-striped">
+<thead>
 
-        <thead class="table-dark">
+<tr>
 
-            <tr>
-                <th>No</th>
-                <th>ID Order</th>
-                <th>Tanggal</th>
-                <th>Customer</th>
-                <th>Total Harga</th>
-                <th>Status</th>
-            </tr>
+<th>No</th>
+<th>ID</th>
+<th>Tanggal</th>
+<th>Customer</th>
+<th>Total</th>
+<th>Status</th>
+<th>Pembayaran</th>
 
-        </thead>
+</tr>
 
-        <tbody>
+</thead>
 
-        <?php
-        $no = 1;
+<tbody>
 
-        $data = mysqli_query($koneksi,"
-            SELECT orders.*, user.nama
-            FROM orders
-            JOIN user
-            ON orders.user_id = user.user_id
-            WHERE DATE(orders.created_at)
-            BETWEEN '$dari' AND '$sampai'
-            ORDER BY orders.orders_id DESC
-        ");
+<?php
 
-        while($d = mysqli_fetch_array($data)){
-        ?>
+$no=1;
 
-            <tr>
+$data=mysqli_query($koneksi,"
+SELECT orders.*,user.nama
+FROM orders
+JOIN user
+ON orders.user_id=user.user_id
+WHERE DATE(orders.created_at)
+BETWEEN '$dari' AND '$sampai'
+$filter
+ORDER BY orders.orders_id DESC
+");
 
-                <td>
-                    <?php echo $no++; ?>
-                </td>
+while($d=mysqli_fetch_array($data)){
 
-                <td>
-                    <?php echo $d['orders_id']; ?>
-                </td>
+?>
 
-                <td>
-                    <?php echo $d['created_at']; ?>
-                </td>
+<tr>
 
-                <td>
-                    <?php echo $d['nama']; ?>
-                </td>
+<td><?= $no++ ?></td>
 
-                <td>
-                    Rp <?php echo number_format($d['total']); ?>
-                </td>
+<td><?= $d['orders_id'] ?></td>
 
-                <td>
+<td><?= $d['created_at'] ?></td>
 
-                    <?php
-                    if($d['status'] == 'pending'){
+<td><?= $d['nama'] ?></td>
 
-                        echo "<span class='badge bg-warning text-dark'>Pending</span>";
+<td>Rp <?= number_format($d['total']) ?></td>
 
-                    }elseif($d['status'] == 'selesai'){
+<td><?= ucfirst($d['status']) ?></td>
 
-                        echo "<span class='badge bg-success'>Selesai</span>";
+<td><?= strtoupper($d['metode_pembayaran']) ?></td>
 
-                    }else{
+</tr>
 
-                        echo "<span class='badge bg-danger'>Dibatalkan</span>";
-                    }
-                    ?>
+<?php } ?>
 
-                </td>
+</tbody>
 
-            </tr>
-
-        <?php
-        }
-        ?>
-
-        </tbody>
-
-    </table>
-
-    <br>
-
-    <center>
-
-        <i>
-            "Terima Kasih Sudah Order di CELINDEO"
-        </i>
-
-    </center>
+</table>
 
 </div>
 
-<!-- AUTO PRINT -->
 <script>
-    window.print();
+window.print();
 </script>
 
 </body>

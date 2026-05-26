@@ -731,5 +731,32 @@ textarea.form-control { min-height: 100px; resize: vertical; }
 ::-webkit-scrollbar-thumb { background: var(--cream-border); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--brown-light); }
 
+.stat-cards-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-bottom:25px;
+}
+
+.yellow{
+    background:#fff8e1;
+    color:#d4a017;
+}
+
+.blue{
+    background:#eaf4ff;
+    color:#3498db;
+}
+
+.success{
+    background:#ecfff1;
+    color:#27ae60;
+}
+
+.danger{
+    background:#ffecec;
+    color:#e74c3c;
+}
+
 /* ── Override inline styles ── */
 body { background: var(--cream-bg) !important; }

@@ -126,14 +126,6 @@ $current = basename($_SERVER['PHP_SELF']);
 
                                 </a>
 
-                                <!-- INVOICE -->
-                                <a href="order_invoice.php?id=<?php echo $d['orders_id']; ?>"
-                                class="btn btn-sm btn-primary">
-
-                                    Invoice
-
-                                </a>
-
                                 <!-- EDIT -->
                                 <a href="order_edit.php?id=<?php echo $d['orders_id']; ?>"
                                 class="btn btn-sm btn-info">
