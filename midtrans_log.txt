@@ -1,2 +1,9 @@
 2026-05-26 09:41:25 | HTTP 201 | {"token":"2f3cb23f-9845-4894-b0e9-93374307442c","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/2f3cb23f-9845-4894-b0e9-93374307442c"}
 2026-05-26 09:43:21 | HTTP 201 | {"token":"266b7c9b-9204-4494-a0b0-891f191b20f7","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/266b7c9b-9204-4494-a0b0-891f191b20f7"}
+2026-05-27 13:11:06 | HTTP 201 | {"token":"4b21daa5-c262-4922-b0a2-75e6a452af26","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/4b21daa5-c262-4922-b0a2-75e6a452af26"}
+2026-05-27 13:11:42 | HTTP 201 | {"token":"61be68c2-5fcd-47bc-b385-c3e6318b76a0","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/61be68c2-5fcd-47bc-b385-c3e6318b76a0"}
+2026-05-27 14:25:40 | HTTP 201 | {"token":"5dc73482-c93a-4831-ad52-ff48252c871b","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/5dc73482-c93a-4831-ad52-ff48252c871b"}
+2026-05-27 14:27:16 | HTTP 201 | {"token":"7114ec20-62e7-46ee-bbf5-ec80a2bc39fd","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/7114ec20-62e7-46ee-bbf5-ec80a2bc39fd"}
+2026-05-27 14:28:34 | HTTP 400 | {"error_messages":["transaction_details.gross_amount harus sama atau lebih besar dari 0.01"]}
+2026-05-27 14:29:59 | HTTP 201 | {"token":"87ae7567-b3f1-4a28-bedf-979688e11666","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/87ae7567-b3f1-4a28-bedf-979688e11666"}
+2026-05-27 14:30:47 | HTTP 201 | {"token":"1be1c0be-7df0-4302-bf42-5728271c7b97","redirect_url":"https://app.sandbox.midtrans.com/snap/v4/redirection/1be1c0be-7df0-4302-bf42-5728271c7b97"}

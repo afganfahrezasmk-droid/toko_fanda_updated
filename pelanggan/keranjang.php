@@ -317,9 +317,9 @@ session_start();
                 </select>
             </div>
 
-            <div class="col-md-4 mb-3">
+            <!-- Bayar (hanya tampil saat Cash) -->
+            <div class="col-md-4 mb-3" id="sectionBayar" style="display:none">
                 <label class="form-label">Jumlah Bayar</label>
-                <!-- HANYA tampilan, TIDAK punya name → tidak ikut submit -->
                 <input type="text"
                        id="inputBayarView"
                        class="form-control"
@@ -331,7 +331,8 @@ session_start();
 
         <div class="row">
 
-            <div class="col-md-4 mb-3">
+            <!-- Kembalian (hanya tampil saat Cash) -->
+            <div class="col-md-4 mb-3" id="sectionKembalian" style="display:none">
                 <label class="form-label">Kembalian</label>
                 <input type="text"
                        id="viewKembalian"
@@ -339,6 +340,16 @@ session_start();
                        value="Rp 0"
                        readonly
                        style="background:#f8f8f8;font-weight:700;color:green;">
+            </div>
+
+            <!-- Info digital (tampil saat QRIS/Transfer) -->
+            <div class="col-md-8 mb-3" id="sectionDigital" style="display:none">
+                <div style="background:#fff8ee;border:1.5px solid #f0c97a;border-radius:12px;
+                            padding:14px 16px;font-size:.88rem;color:#7a5500;line-height:1.7;">
+                    <strong>💡 Pembayaran Digital</strong><br>
+                    Setelah klik tombol, kamu akan diarahkan ke halaman pembayaran Midtrans.
+                    Ikuti instruksi untuk menyelesaikan pembayaran via QRIS atau Transfer Bank.
+                </div>
             </div>
 
         </div>
@@ -501,13 +512,30 @@ function hitungKembalian() {
 }
 
 function updateBtnOrder() {
-    const adaItem      = Object.keys(cart).length > 0;
-    const metodeOk     = document.getElementById('metodeSelect').value !== '';
-    const raw          = document.getElementById('inputBayarView').value.replace(/\D/g, '');
-    const bayar        = parseInt(raw) || 0;
-    const bayarCukup   = totalBelanja > 0 && bayar >= totalBelanja;
+    const adaItem  = Object.keys(cart).length > 0;
+    const metode   = document.getElementById('metodeSelect').value;
+    const metodeOk = metode !== '';
+    const isCash   = metode === 'Cash';
 
-    document.getElementById('btnOrder').disabled = !(adaItem && metodeOk && bayarCukup);
+    // Show/hide sections
+    document.getElementById('sectionBayar').style.display    = isCash ? 'block' : 'none';
+    document.getElementById('sectionKembalian').style.display = isCash ? 'block' : 'none';
+    document.getElementById('sectionDigital').style.display  = (!isCash && metodeOk) ? 'block' : 'none';
+
+    // Update label tombol
+    const labelMap = { 'Cash': 'Buat Pesanan', 'Transfer': '🏦 Bayar via Transfer Bank', 'QRIS': '📱 Bayar dengan QRIS' };
+    document.getElementById('btnOrder').textContent = labelMap[metode] || 'Buat Pesanan';
+
+    let siapBayar = false;
+    if (isCash) {
+        const raw   = (document.getElementById('inputBayarView').value || '').replace(/\D/g,'');
+        const bayar = parseInt(raw) || 0;
+        siapBayar   = totalBelanja > 0 && bayar >= totalBelanja;
+    } else {
+        siapBayar = metodeOk && totalBelanja > 0;
+    }
+
+    document.getElementById('btnOrder').disabled = !(adaItem && siapBayar);
 }
 
 function generateInvoice() {
@@ -515,42 +543,29 @@ function generateInvoice() {
 }
 
 function submitOrder() {
-    if (Object.keys(cart).length === 0) {
-        alert('Keranjang kosong! Pilih produk dulu.');
-        return;
-    }
-
+    if (Object.keys(cart).length === 0) { alert('Keranjang kosong! Pilih produk dulu.'); return; }
     const metode = document.getElementById('metodeSelect').value;
-    if (!metode) {
-        alert('Pilih metode pembayaran dulu!');
-        return;
+    if (!metode) { alert('Pilih metode pembayaran dulu!'); return; }
+
+    if (metode === 'Cash') {
+        const raw   = document.getElementById('inputBayarView').value.replace(/\D/g, '');
+        const bayar = parseInt(raw) || 0;
+        if (bayar < totalBelanja) { alert('Uang pembayaran kurang!'); return; }
+        document.getElementById('inputBayar').value = bayar;
+    } else {
+        // QRIS / Transfer — bayar diisi total, Midtrans yang verifikasi
+        document.getElementById('inputBayar').value = totalBelanja;
     }
 
-    const raw   = document.getElementById('inputBayarView').value.replace(/\D/g, '');
-    const bayar = parseInt(raw) || 0;
-
-    if (bayar < totalBelanja) {
-        alert('Uang pembayaran kurang!');
-        return;
-    }
-
-    // =============================================
-    // Isi semua hidden input di formCheckout
-    // Aman: tidak ada innerHTML += pada form,
-    // sehingga nilai yang sudah diset tidak hilang
-    // =============================================
     document.getElementById('inputInvoice').value = generateInvoice();
     document.getElementById('inputMetode').value  = metode;
-    document.getElementById('inputBayar').value   = bayar;   // angka murni → PHP (int) aman
 
-    // Build hidden inputs produk & qty
     let inputHtml = '';
     Object.keys(cart).forEach(id => {
         inputHtml += `<input type="hidden" name="produk_id[]" value="${id}">`;
         inputHtml += `<input type="hidden" name="qty[]"       value="${cart[id].qty}">`;
     });
     document.getElementById('inputProduk').innerHTML = inputHtml;
-
     document.getElementById('formCheckout').submit();
 }
 
