@@ -8,7 +8,6 @@ session_name('KASIR_SESSION');
 session_start();
 
 $current = basename($_SERVER['PHP_SELF']);
-
 ?>
 
 <style>
@@ -136,54 +135,74 @@ $current = basename($_SERVER['PHP_SELF']);
     </div>
 
     <div class="mb-4">
-
-        <a href="produk.php"
-           class="btn btn-outline-dark btn-kembali">
-
+        <a href="produk.php" class="btn btn-outline-dark btn-kembali">
             <i class="fa fa-arrow-left me-2"></i>
             Kembali
-
         </a>
-
     </div>
 
     <div class="order-card">
 
         <form method="POST" action="order_aksi.php">
 
-                <div class="col-md-6 mb-4">
-                    <input type="hidden"
-                        name="user_id"
-                        value="<?= $_SESSION['user_id']; ?>">
+            <div class="row">
+
+                <input type="hidden" name="user_id" value="<?= $_SESSION['user_id']; ?>">
+
                 <!-- INVOICE -->
                 <div class="col-md-4 mb-4">
-
-                    <label class="form-label">
-                        Invoice
-                    </label>
-
+                    <label class="form-label">Invoice</label>
                     <input type="text"
                            name="invoice"
                            class="form-control"
                            value="INV-<?= rand(1000,9999); ?>"
                            readonly>
-
                 </div>
 
-                <!-- METODE -->\r\n                <div class=\"col-md-4 mb-4\">\r\n\r\n                    <label class=\"form-label\">\r\n                        Metode Pembayaran\r\n                    </label>\r\n\r\n                    <select name=\"metode_pembayaran\"\r\n                            id=\"metodeSelect\"\r\n                            class=\"form-select\"\r\n                            onchange=\"gantiMetode(this.value)\"\r\n                            required>\r\n\r\n                        <option value=\"\">\r\n                            -- Pilih Metode --\r\n                        </option>\r\n\r\n                        <option value=\"Cash\">\r\n                            💵 Cash\r\n                        </option>\r\n\r\n                        <option value=\"Transfer\">\r\n                            🏦 Transfer\r\n                        </option>\r\n\r\n                        <option value=\"QRIS\">\r\n                            📱 QRIS\r\n                        </option>\r\n\r\n                    </select>\r\n\r\n                </div>\r\n\r\n                <!-- BAYAR (hanya muncul saat Cash) -->\r\n                <div class=\"col-md-4 mb-4\" id=\"sectionBayar\" style=\"display:none\">\r\n                    <label class=\"form-label\">Jumlah Bayar (Rp)</label>\r\n                    <input type=\"text\"\r\n                           id=\"inputBayarView\"\r\n                           class=\"form-control\"\r\n                           placeholder=\"Contoh: 100000\"\r\n                           oninput=\"formatBayar(this)\">\r\n                    <input type=\"hidden\" name=\"bayar\" id=\"inputBayar\" value=\"0\">\r\n                </div>\r\n\r\n                <!-- INFO digital -->\r\n                <div class=\"col-md-8 mb-4\" id=\"sectionDigital\" style=\"display:none\">\r\n                    <div style=\"background:#fff8ee;border:1.5px solid #f0c97a;border-radius:12px;\r\n                                padding:14px 16px;font-size:.88rem;color:#7a5500;line-height:1.7;margin-top:32px\">\r\n                        <strong>💡 Pembayaran Digital</strong><br>\r\n                        Kasir akan diarahkan ke halaman Midtrans untuk scan QRIS atau Transfer Bank.\r\n                    </div>\r\n                </div>
+                <!-- METODE PEMBAYARAN -->
+                <div class="col-md-4 mb-4">
+                    <label class="form-label">Metode Pembayaran</label>
+                    <select name="metode_pembayaran"
+                            id="metodeSelect"
+                            class="form-select"
+                            onchange="gantiMetode(this.value)"
+                            required>
+                        <option value="">-- Pilih Metode --</option>
+                        <option value="Cash">💵 Cash</option>
+                        <option value="Transfer">🏦 Transfer Bank (Midtrans)</option>
+                        <option value="QRIS">📱 QRIS (Midtrans)</option>
+                    </select>
+                </div>
 
-            </div>
+                <!-- JUMLAH BAYAR — hanya muncul saat Cash -->
+                <div class="col-md-4 mb-4" id="sectionBayar" style="display:none">
+                    <label class="form-label">Jumlah Bayar (Rp)</label>
+                    <input type="text"
+                           id="inputBayarView"
+                           class="form-control"
+                           placeholder="Contoh: 100.000"
+                           oninput="formatBayar(this)">
+                    <input type="hidden" name="bayar" id="inputBayar" value="0">
+                </div>
+
+                <!-- INFO DIGITAL — muncul saat Transfer / QRIS -->
+                <div class="col-md-8 mb-4" id="sectionDigital" style="display:none">
+                    <div style="background:#fff8ee;border:1.5px solid #f0c97a;border-radius:12px;
+                                padding:14px 16px;font-size:.88rem;color:#7a5500;line-height:1.7;margin-top:32px">
+                        <strong>💡 Pembayaran Digital via Midtrans</strong><br>
+                        Setelah klik <em>Simpan Order</em>, kasir akan diarahkan ke halaman
+                        Midtrans untuk menyelesaikan pembayaran QRIS atau Transfer Bank.
+                    </div>
+                </div>
+
+            </div><!-- /.row -->
 
             <hr>
 
-            <h5 class="mb-4">
-                Data Produk
-            </h5>
+            <h5 class="mb-4">Data Produk</h5>
 
             <div class="table-responsive">
-
                 <table class="table align-middle">
-
                     <thead>
                         <tr>
                             <th>Produk</th>
@@ -191,103 +210,101 @@ $current = basename($_SERVER['PHP_SELF']);
                             <th width="20%">Qty</th>
                         </tr>
                     </thead>
-
                     <tbody>
-
                     <?php
-                    $produk = mysqli_query($koneksi,
-                        "SELECT * FROM produk");
-
-                    while($p = mysqli_fetch_array($produk)){
+                    $produk = mysqli_query($koneksi, "SELECT * FROM produk ORDER BY nama_produk ASC");
+                    while ($p = mysqli_fetch_array($produk)):
                     ?>
-
                     <tr>
-
                         <td>
-
                             <div class="produk-box">
-
-                                <img src="../gambar/<?= $p['gambar']; ?>"
+                                <img src="../gambar/<?= htmlspecialchars($p['gambar']); ?>"
                                      class="produk-img"
                                      onerror="this.src='../gambar/default.jpeg'">
-
                                 <div>
-
-                                    <div class="produk-nama">
-                                        <?= htmlspecialchars($p['nama_produk']); ?>
-                                    </div>
-
-                                    <div class="produk-harga">
-                                        Stok:
-                                        <?= $p['stok']; ?>
-                                    </div>
-
+                                    <div class="produk-nama"><?= htmlspecialchars($p['nama_produk']); ?></div>
+                                    <div class="produk-harga">Stok: <?= (int)$p['stok']; ?></div>
                                 </div>
-
                             </div>
-
-                            <input type="hidden"
-                                   name="produk_id[]"
-                                   value="<?= $p['produk_id']; ?>">
-
+                            <input type="hidden" name="produk_id[]" value="<?= (int)$p['produk_id']; ?>">
                         </td>
-
+                        <td>Rp <?= number_format($p['harga'], 0, ',', '.'); ?></td>
                         <td>
-
-                            Rp <?= number_format($p['harga']); ?>
-
-                        </td>
-
-                        <td>
-
                             <input type="number"
                                    name="qty[]"
                                    class="form-control qty-input"
                                    min="0"
-                                   max="<?= $p['stok']; ?>"
-                                   value="0">
-
+                                   max="<?= (int)$p['stok']; ?>"
+                                   value="0"
+                                   data-harga="<?= (int)$p['harga']; ?>"
+                                   onchange="hitungTotal()">
                         </td>
-
                     </tr>
-
-                    <?php } ?>
-
+                    <?php endwhile; ?>
                     </tbody>
-
                 </table>
+            </div>
 
+            <!-- RINGKASAN TOTAL -->
+            <div class="mt-3 mb-4 p-3" style="background:#fafafa;border-radius:12px;max-width:340px;margin-left:auto">
+                <div class="d-flex justify-content-between mb-2 text-muted" style="font-size:.9rem">
+                    <span>Subtotal</span>
+                    <span id="lblSubtotal">Rp 0</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 text-muted" style="font-size:.9rem">
+                    <span>Pajak (10%)</span>
+                    <span id="lblPajak">Rp 0</span>
+                </div>
+                <div class="d-flex justify-content-between fw-bold" style="font-size:1rem;border-top:1px solid #ddd;padding-top:8px">
+                    <span>Total</span>
+                    <span id="lblTotal" style="color:#c59d5f">Rp 0</span>
+                </div>
             </div>
 
             <div class="mt-4">
-
-                <button type="submit"
-                        class="btn-simpan">
-
+                <button type="submit" class="btn-simpan" id="btnSimpan">
                     <i class="fa fa-save me-2"></i>
                     Simpan Order
-
                 </button>
-
             </div>
 
         </form>
 
-    </div>
+    </div><!-- /.order-card -->
 
-</div>
+</div><!-- /.order-wrap -->
 
 <script>
+/* ── Ganti tampilan saat metode berubah ── */
 function gantiMetode(val) {
     const isCash = val === 'Cash';
-    document.getElementById('sectionBayar').style.display   = isCash ? 'block' : 'none';
+    document.getElementById('sectionBayar').style.display   = isCash    ? 'block' : 'none';
     document.getElementById('sectionDigital').style.display = (!isCash && val) ? 'block' : 'none';
 }
 
+/* ── Format angka bayar (Cash) ── */
 function formatBayar(input) {
     let angka = input.value.replace(/\D/g, '');
     input.value = angka ? new Intl.NumberFormat('id-ID').format(parseInt(angka)) : '';
     document.getElementById('inputBayar').value = angka || '0';
+}
+
+/* ── Hitung subtotal / pajak / total secara live ── */
+function hitungTotal() {
+    let subtotal = 0;
+    document.querySelectorAll('input[name="qty[]"]').forEach(function(inp) {
+        const qty   = parseInt(inp.value) || 0;
+        const harga = parseInt(inp.dataset.harga) || 0;
+        subtotal += qty * harga;
+    });
+
+    const pajak = Math.round(subtotal * 0.10);
+    const total = subtotal + pajak;
+
+    const fmt = n => 'Rp ' + new Intl.NumberFormat('id-ID').format(n);
+    document.getElementById('lblSubtotal').textContent = fmt(subtotal);
+    document.getElementById('lblPajak').textContent    = fmt(pajak);
+    document.getElementById('lblTotal').textContent    = fmt(total);
 }
 </script>
 

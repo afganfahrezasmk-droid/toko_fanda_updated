@@ -1,6 +1,6 @@
 <?php
 include '../koneksi.php';
-include '../midtrans_config.php';
+include '../xendit_config.php';
 
 session_name('PELANGGAN_SESSION');
 session_start();
@@ -17,17 +17,9 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 $user_id = $_SESSION['user_id'] ?? 0;
 
-$invoice = mysqli_real_escape_string(
-    $koneksi,
-    $_POST['invoice'] ?? ''
-);
-
-$metode = mysqli_real_escape_string(
-    $koneksi,
-    $_POST['metode_pembayaran'] ?? ''
-);
-
-$bayar = (int)($_POST['bayar'] ?? 0);
+$invoice = mysqli_real_escape_string($koneksi, $_POST['invoice'] ?? '');
+$metode  = mysqli_real_escape_string($koneksi, $_POST['metode_pembayaran'] ?? '');
+$bayar   = (int)($_POST['bayar'] ?? 0);
 
 $produk_id = $_POST['produk_id'] ?? [];
 $qty       = $_POST['qty'] ?? [];
@@ -40,7 +32,7 @@ if (empty($produk_id) || empty($qty)) {
     die("Keranjang kosong!");
 }
 
-$subtotal = 0;
+$subtotal     = 0;
 $detailProduk = [];
 
 /* =========================
@@ -48,32 +40,28 @@ $detailProduk = [];
 ========================= */
 
 for ($i = 0; $i < count($produk_id); $i++) {
-
     $idProduk = (int)$produk_id[$i];
     $jumlah   = (int)$qty[$i];
-
     if ($jumlah <= 0) continue;
 
     $query  = mysqli_query($koneksi, "SELECT * FROM produk WHERE produk_id = '$idProduk'");
     $produk = mysqli_fetch_assoc($query);
 
     if (!$produk) die("Produk tidak ditemukan!");
-
     if ($produk['stok'] < $jumlah) {
         die("Stok produk {$produk['nama_produk']} tidak mencukupi!");
     }
 
-    $harga = (int)$produk['harga'];
-    $sub   = $harga * $jumlah;
-
+    $harga     = (int)$produk['harga'];
+    $sub       = $harga * $jumlah;
     $subtotal += $sub;
 
     $detailProduk[] = [
-        'produk_id'    => $idProduk,
-        'qty'          => $jumlah,
-        'harga'        => $harga,
-        'subtotal'     => $sub,
-        'nama_produk'  => $produk['nama_produk'],
+        'produk_id'   => $idProduk,
+        'qty'         => $jumlah,
+        'harga'       => $harga,
+        'subtotal'    => $sub,
+        'nama_produk' => $produk['nama_produk'],
     ];
 }
 
@@ -85,12 +73,11 @@ $pajak = round($subtotal * 0.10);
 $total = $subtotal + $pajak;
 
 /* ========================================================
-   CABANG: CASH  vs  QRIS / TRANSFER
+   CABANG: CASH  vs  QRIS / TRANSFER BANK
 ======================================================== */
 
 if ($metode === 'Cash') {
 
-    /* ----- VALIDASI CASH ----- */
     if ($bayar < $total) {
         echo "<script>alert('Uang pembayaran kurang!'); window.history.back();</script>";
         exit;
@@ -98,36 +85,26 @@ if ($metode === 'Cash') {
 
     $kembalian = $bayar - $total;
 
-    /* ----- SIMPAN ORDER ----- */
     mysqli_query($koneksi, "
         INSERT INTO orders (invoice, user_id, total, pajak, metode_pembayaran, status, created_at)
         VALUES ('$invoice', '$user_id', '$total', '$pajak', '$metode', 'dibayar', NOW())
     ");
-
     $orders_id = mysqli_insert_id($koneksi);
 
-    /* ----- SIMPAN ITEMS & UPDATE STOK ----- */
     foreach ($detailProduk as $item) {
-        $pid  = $item['produk_id'];
-        $jml  = $item['qty'];
-        $hrg  = $item['harga'];
-        $sub  = $item['subtotal'];
-
-        mysqli_query($koneksi, "
-            INSERT INTO order_items (orders_id, produk_id, qty, harga, subtotal)
-            VALUES ('$orders_id', '$pid', '$jml', '$hrg', '$sub')
-        ");
-
+        $pid = $item['produk_id'];
+        $jml = $item['qty'];
+        $hrg = $item['harga'];
+        $sub = $item['subtotal'];
+        mysqli_query($koneksi, "INSERT INTO order_items (orders_id, produk_id, qty, harga, subtotal) VALUES ('$orders_id', '$pid', '$jml', '$hrg', '$sub')");
         mysqli_query($koneksi, "UPDATE produk SET stok = stok - $jml WHERE produk_id = '$pid'");
     }
 
-    /* ----- SIMPAN PEMBAYARAN ----- */
     mysqli_query($koneksi, "
         INSERT INTO pembayaran (orders_id, metode, bayar, kembalian, created_at)
         VALUES ('$orders_id', '$metode', '$bayar', '$kembalian', NOW())
     ");
 
-    /* ----- TAMPILKAN HALAMAN SUKSES (Cash) ----- */
     ?>
     <!DOCTYPE html>
     <html lang="id">
@@ -164,103 +141,95 @@ if ($metode === 'Cash') {
 } else {
 
     /* ========================================================
-       QRIS / TRANSFER BANK  →  Midtrans Snap
+       QRIS / TRANSFER BANK → Xendit Invoice
     ======================================================== */
 
-    /* ----- SIMPAN ORDER (status: pending, bayar nanti via Midtrans) ----- */
+    // Simpan order dulu dengan status pending
     mysqli_query($koneksi, "
         INSERT INTO orders (invoice, user_id, total, pajak, metode_pembayaran, status, created_at)
         VALUES ('$invoice', '$user_id', '$total', '$pajak', '$metode', 'pending', NOW())
     ");
-
     $orders_id = mysqli_insert_id($koneksi);
 
-    /* ----- SIMPAN ITEMS & UPDATE STOK ----- */
     foreach ($detailProduk as $item) {
         $pid = $item['produk_id'];
         $jml = $item['qty'];
         $hrg = $item['harga'];
         $sub = $item['subtotal'];
-
-        mysqli_query($koneksi, "
-            INSERT INTO order_items (orders_id, produk_id, qty, harga, subtotal)
-            VALUES ('$orders_id', '$pid', '$jml', '$hrg', '$sub')
-        ");
-
+        mysqli_query($koneksi, "INSERT INTO order_items (orders_id, produk_id, qty, harga, subtotal) VALUES ('$orders_id', '$pid', '$jml', '$hrg', '$sub')");
         mysqli_query($koneksi, "UPDATE produk SET stok = stok - $jml WHERE produk_id = '$pid'");
     }
 
-    /* ----- SIMPAN PEMBAYARAN (bayar & kembalian diisi 0 dulu, diupdate via webhook) ----- */
     mysqli_query($koneksi, "
         INSERT INTO pembayaran (orders_id, metode, bayar, kembalian, created_at)
         VALUES ('$orders_id', '$metode', '0', '0', NOW())
     ");
 
-    /* ----- SIAPKAN PAYLOAD MIDTRANS ----- */
-
-    // Item detail untuk Midtrans
-    $items = [];
-    foreach ($detailProduk as $item) {
-        $items[] = [
-            'id'       => 'PROD-' . $item['produk_id'],
-            'price'    => $item['harga'],
-            'quantity' => $item['qty'],
-            'name'     => substr($item['nama_produk'], 0, 50), // maks 50 char
-        ];
-    }
-
-    // Tambah pajak sebagai item tersendiri
-    if ($pajak > 0) {
-        $items[] = [
-            'id'       => 'PAJAK',
-            'price'    => $pajak,
-            'quantity' => 1,
-            'name'     => 'Pajak (10%)',
-        ];
-    }
-
-    // Ambil data user untuk customer_details
+    // Ambil data user
     $user_row = mysqli_fetch_assoc(mysqli_query($koneksi,
         "SELECT * FROM user WHERE user_id = '$user_id'"
     ));
 
+    // Siapkan item untuk Xendit
+    $items = [];
+    foreach ($detailProduk as $item) {
+        $items[] = [
+            'name'     => substr($item['nama_produk'], 0, 255),
+            'quantity' => $item['qty'],
+            'price'    => $item['harga'],
+        ];
+    }
+    if ($pajak > 0) {
+        $items[] = [
+            'name'     => 'Pajak (10%)',
+            'quantity' => 1,
+            'price'    => $pajak,
+        ];
+    }
+
+    // Buat customer — mobile_number hanya diisi kalau ada isinya
+    $customer = [
+        'given_names' => !empty($user_row['nama'])  ? $user_row['nama']  : 'Pelanggan',
+        'email'       => !empty($user_row['email']) ? $user_row['email'] : 'pelanggan@tokokuefanda.com',
+    ];
+    if (!empty($user_row['hp'])) {
+        $customer['mobile_number'] = $user_row['hp'];
+    }
+
+    // Payload Xendit — TANPA payment_methods
+    // Biarkan Xendit tampilkan semua metode yang tersedia (QRIS, VA, dll)
     $payload = [
-        'transaction_details' => [
-            'order_id'    => $invoice,   // pakai invoice sebagai order_id di Midtrans
-            'gross_amount' => $total,
-        ],
-        'item_details' => $items,
-        'customer_details' => [
-            'first_name' => $user_row['nama']  ?? 'Pelanggan',
-            'email'      => $user_row['email'] ?? 'pelanggan@tokokuefanda.com',
-            'phone'      => $user_row['hp']    ?? '',
-        ],
-        // Batasi metode pembayaran sesuai pilihan user
-        'enabled_payments' => $metode === 'QRIS'
-            ? ['qris']
-            : ['bca_va', 'bni_va', 'bri_va', 'permata_va', 'mandiri_bill'],
+        'external_id'          => $invoice,
+        'amount'               => $total,
+        'description'          => 'Pembayaran Toko Kue Fanda - ' . $invoice,
+        'payer_email'          => !empty($user_row['email']) ? $user_row['email'] : 'pelanggan@tokokuefanda.com',
+        'customer'             => $customer,
+        'items'                => $items,
+        'invoice_duration'     => 86400,
+        'currency'             => 'IDR',
+        'success_redirect_url' => 'http://localhost/toko_fanda_fix/pelanggan/invoice.php?invoice=' . urlencode($invoice) . '&paid=1',
+        'failure_redirect_url' => 'http://localhost/toko_fanda_fix/pelanggan/invoice.php?invoice=' . urlencode($invoice) . '&paid=gagal',
     ];
 
-    /* ----- PANGGIL MIDTRANS API ----- */
-    $snap_token = midtrans_get_snap_token($payload);
+    // Panggil Xendit API
+    $result = xendit_create_invoice($payload);
 
-    if (!$snap_token) {
-        // Kalau API gagal (misal belum set key), tampilkan error informatif
+    if (!$result) {
         echo "<div style='font-family:Arial;padding:40px;text-align:center'>
-            <h2 style='color:#e74c3c'>⚠️ Gagal terhubung ke Midtrans</h2>
-            <p>Pastikan <strong>MIDTRANS_SERVER_KEY</strong> sudah diisi di <code>midtrans_config.php</code></p>
+            <h2 style='color:#e74c3c'>⚠️ Gagal terhubung ke Xendit</h2>
+            <p>Pastikan <strong>XENDIT_SECRET_KEY</strong> sudah diisi di <code>xendit_config.php</code></p>
             <p style='margin-top:10px'>Order sudah tersimpan dengan invoice: <strong>$invoice</strong></p>
             <a href='index.php' style='color:#d4a25a'>← Kembali</a>
         </div>";
         exit;
     }
 
-    /* ----- SIMPAN TOKEN KE SESSION LALU REDIRECT ----- */
-    $_SESSION['snap_token']   = $snap_token;
-    $_SESSION['snap_invoice'] = $invoice;
-    $_SESSION['snap_total']   = $total;
-    $_SESSION['snap_metode']  = $metode;
+    // Simpan ke session lalu redirect ke halaman bayar
+    $_SESSION['xendit_invoice_url'] = $result['invoice_url'];
+    $_SESSION['xendit_invoice']     = $invoice;
+    $_SESSION['xendit_total']       = $total;
+    $_SESSION['xendit_metode']      = $metode;
 
-    header('Location: bayar_midtrans.php');
+    header('Location: bayar_xendit.php');
     exit;
 }

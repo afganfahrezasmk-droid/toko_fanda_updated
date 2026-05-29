@@ -296,3 +296,19 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+-- ============================================================
+--  Tabel review (dipakai oleh pelanggan/review_aksi.php)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS `review` (
+  `review_id`       int(11)      NOT NULL AUTO_INCREMENT,
+  `nama_pelanggan`  varchar(100) NOT NULL,
+  `produk_id`       int(11)      NOT NULL,
+  `review`          text         NOT NULL,
+  `rating`          tinyint(1)   NOT NULL DEFAULT 5,
+  `status`          enum('pending','tampil') NOT NULL DEFAULT 'pending',
+  `created_at`      datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`review_id`),
+  KEY `produk_id` (`produk_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
