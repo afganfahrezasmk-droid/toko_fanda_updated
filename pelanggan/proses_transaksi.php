@@ -11,10 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     die('Akses tidak valid!');
 }
 
-/* =========================
-   AMBIL DATA
-========================= */
-
 $user_id = $_SESSION['user_id'] ?? 0;
 
 $invoice = mysqli_real_escape_string($koneksi, $_POST['invoice'] ?? '');
@@ -24,20 +20,12 @@ $bayar   = (int)($_POST['bayar'] ?? 0);
 $produk_id = $_POST['produk_id'] ?? [];
 $qty       = $_POST['qty'] ?? [];
 
-/* =========================
-   VALIDASI
-========================= */
-
 if (empty($produk_id) || empty($qty)) {
     die("Keranjang kosong!");
 }
 
 $subtotal     = 0;
 $detailProduk = [];
-
-/* =========================
-   CEK PRODUK & STOK
-========================= */
 
 for ($i = 0; $i < count($produk_id); $i++) {
     $idProduk = (int)$produk_id[$i];
@@ -65,16 +53,8 @@ for ($i = 0; $i < count($produk_id); $i++) {
     ];
 }
 
-/* =========================
-   HITUNG TOTAL
-========================= */
-
 $pajak = round($subtotal * 0.10);
 $total = $subtotal + $pajak;
-
-/* ========================================================
-   CABANG: CASH  vs  QRIS / TRANSFER BANK
-======================================================== */
 
 if ($metode === 'Cash') {
 
@@ -140,11 +120,6 @@ if ($metode === 'Cash') {
 
 } else {
 
-    /* ========================================================
-       QRIS / TRANSFER BANK → Xendit Invoice
-    ======================================================== */
-
-    // Simpan order dulu dengan status pending
     mysqli_query($koneksi, "
         INSERT INTO orders (invoice, user_id, total, pajak, metode_pembayaran, status, created_at)
         VALUES ('$invoice', '$user_id', '$total', '$pajak', '$metode', 'pending', NOW())
@@ -165,7 +140,6 @@ if ($metode === 'Cash') {
         VALUES ('$orders_id', '$metode', '0', '0', NOW())
     ");
 
-    // Ambil data user
     $user_row = mysqli_fetch_assoc(mysqli_query($koneksi,
         "SELECT * FROM user WHERE user_id = '$user_id'"
     ));
@@ -187,22 +161,21 @@ if ($metode === 'Cash') {
         ];
     }
 
-    // Buat customer — mobile_number hanya diisi kalau ada isinya
+    // Buat customer data — mobile_number hanya diisi kalau ada
     $customer = [
-        'given_names' => !empty($user_row['nama'])  ? $user_row['nama']  : 'Pelanggan',
-        'email'       => !empty($user_row['email']) ? $user_row['email'] : 'pelanggan@tokokuefanda.com',
+        'given_names' => $user_row['nama']  ?? 'Pelanggan',
+        'email'       => $user_row['email'] ?? 'pelanggan@tokokuefanda.com',
     ];
     if (!empty($user_row['hp'])) {
         $customer['mobile_number'] = $user_row['hp'];
     }
 
-    // Payload Xendit — TANPA payment_methods
-    // Biarkan Xendit tampilkan semua metode yang tersedia (QRIS, VA, dll)
+    // Payload Xendit — TANPA payment_methods, biar Xendit tampilkan semua
     $payload = [
         'external_id'          => $invoice,
         'amount'               => $total,
         'description'          => 'Pembayaran Toko Kue Fanda - ' . $invoice,
-        'payer_email'          => !empty($user_row['email']) ? $user_row['email'] : 'pelanggan@tokokuefanda.com',
+        'payer_email'          => $user_row['email'] ?? 'pelanggan@tokokuefanda.com',
         'customer'             => $customer,
         'items'                => $items,
         'invoice_duration'     => 86400,
@@ -211,7 +184,6 @@ if ($metode === 'Cash') {
         'failure_redirect_url' => 'http://localhost/toko_fanda_fix/pelanggan/invoice.php?invoice=' . urlencode($invoice) . '&paid=gagal',
     ];
 
-    // Panggil Xendit API
     $result = xendit_create_invoice($payload);
 
     if (!$result) {
@@ -224,7 +196,6 @@ if ($metode === 'Cash') {
         exit;
     }
 
-    // Simpan ke session lalu redirect ke halaman bayar
     $_SESSION['xendit_invoice_url'] = $result['invoice_url'];
     $_SESSION['xendit_invoice']     = $invoice;
     $_SESSION['xendit_total']       = $total;
