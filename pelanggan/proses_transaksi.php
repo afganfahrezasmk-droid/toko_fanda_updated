@@ -207,8 +207,8 @@ if ($metode === 'Cash') {
         'items'                => $items,
         'invoice_duration'     => 86400,
         'currency'             => 'IDR',
-        'success_redirect_url' => 'http://localhost/toko_fanda_fix/pelanggan/invoice.php?invoice=' . urlencode($invoice) . '&paid=1',
-        'failure_redirect_url' => 'http://localhost/toko_fanda_fix/pelanggan/invoice.php?invoice=' . urlencode($invoice) . '&paid=gagal',
+        'success_redirect_url' => 'http://localhost/toko_fanda_updated/pelanggan/invoice.php?invoice=' . urlencode($invoice) . '&paid=1',
+        'failure_redirect_url' => 'http://localhost/toko_fanda_updated/pelanggan/invoice.php?invoice=' . urlencode($invoice) . '&paid=gagal',
     ];
 
     // Panggil Xendit API

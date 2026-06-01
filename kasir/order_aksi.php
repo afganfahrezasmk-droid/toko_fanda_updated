@@ -160,8 +160,8 @@ if ($metode === 'Cash') {
         'items'                => $items,
         'invoice_duration'     => 86400,
         'currency'             => 'IDR',
-        'success_redirect_url' => 'http://localhost/toko_fanda_fix/kasir/order_invoice.php?invoice=' . urlencode($invoice) . '&paid=1',
-        'failure_redirect_url' => 'http://localhost/toko_fanda_fix/kasir/order_invoice.php?invoice=' . urlencode($invoice) . '&paid=gagal',
+        'success_redirect_url' => 'http://localhost/toko_fanda_updated/kasir/order_invoice.php?invoice=' . urlencode($invoice) . '&paid=1',
+        'failure_redirect_url' => 'http://localhost/toko_fanda_updated/kasir/order_invoice.php?invoice=' . urlencode($invoice) . '&paid=gagal',
     ];
 
     $result = xendit_create_invoice($payload);
