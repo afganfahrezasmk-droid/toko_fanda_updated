@@ -17,14 +17,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="pelanggan/style.css">
 </head>
 
 <body>
 
 <?php
 session_start();
-
 $current = basename($_SERVER['PHP_SELF']);
 ?>
 
@@ -47,5 +46,8 @@ $current = basename($_SERVER['PHP_SELF']);
         </div>
     </nav>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
+    <!-- LAYOUT WRAPPER -->
+    <div class="layout-wrapper no-sidebar">
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content centered-content">

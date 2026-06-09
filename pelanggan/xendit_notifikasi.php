@@ -1,5 +1,4 @@
 <?php
-// Bypass ngrok browser warning
 header('ngrok-skip-browser-warning: true');
 
 include '../koneksi.php';
@@ -7,7 +6,6 @@ include '../xendit_config.php';
 
 /** @var mysqli $koneksi */
 
-// Hanya terima POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     exit('Method not allowed');
@@ -30,53 +28,73 @@ if (empty($data)) {
     exit('Invalid payload');
 }
 
-$external_id = $data['external_id'] ?? '';
-$status      = $data['status']      ?? '';
-$paid_amount = $data['paid_amount'] ?? 0;
+$external_id      = $data['external_id']       ?? '';
+$status           = $data['status']            ?? '';
+$paid_amount      = $data['paid_amount']       ?? 0;
+$payment_method   = $data['payment_method']    ?? '';  // e.g. BANK_TRANSFER, QR_CODE, EWALLET
+$payment_channel  = $data['payment_channel']   ?? '';  // e.g. BNI, BCA, OVO, dll
 
-// 3. MAPPING STATUS XENDIT → STATUS ENUM DATABASE
-// Database ENUM: 'pending','diproses','selesai','dibatalkan'
-$new_status = null;
+// 3. MAPPING STATUS
+$order_status    = null;
+$payment_status  = null;
 
 if ($status === 'PAID') {
-    $new_status = 'selesai';
+    $order_status   = 'selesai';
+    $payment_status = 'lunas';
 } elseif ($status === 'EXPIRED' || $status === 'FAILED') {
-    $new_status = 'dibatalkan';
+    $order_status   = 'dibatalkan';
+    $payment_status = 'gagal';
 } elseif ($status === 'PENDING') {
-    $new_status = 'pending';
+    $order_status   = 'pending';
+    $payment_status = 'pending';
 }
 
 // 4. UPDATE DATABASE
-if ($new_status !== null && !empty($external_id)) {
+if ($order_status !== null && !empty($external_id)) {
 
     $invoice_esc = mysqli_real_escape_string($koneksi, $external_id);
-    $status_esc  = mysqli_real_escape_string($koneksi, $new_status);
+    $ostatus_esc = mysqli_real_escape_string($koneksi, $order_status);
+    $pstatus_esc = mysqli_real_escape_string($koneksi, $payment_status);
 
+    // Tentukan nama metode yang lebih deskriptif
+    // Xendit kirim payment_channel berisi nama bank/dompet (BNI, BCA, OVO, dll)
+    if (!empty($payment_channel)) {
+        $metode_label = strtoupper($payment_channel); // BNI, BCA, DANA, dll
+    } elseif (!empty($payment_method)) {
+        $metode_label = $payment_method; // QR_CODE, BANK_TRANSFER, dll
+    } else {
+        $metode_label = '';
+    }
+    $metode_esc = mysqli_real_escape_string($koneksi, $metode_label);
+
+    // Update status order
     mysqli_query($koneksi, "
         UPDATE orders
-        SET status = '$status_esc'
+        SET status = '$ostatus_esc'
         WHERE invoice = '$invoice_esc'
     ");
 
-    if ($new_status === 'selesai') {
+    // Ambil orders_id
+    $row = mysqli_fetch_assoc(mysqli_query($koneksi, "
+        SELECT orders_id FROM orders WHERE invoice = '$invoice_esc'
+    "));
+
+    if ($row) {
+        $oid   = (int)$row['orders_id'];
         $gross = (int)$paid_amount;
 
-        $row = mysqli_fetch_assoc(mysqli_query($koneksi, "
-            SELECT orders_id FROM orders WHERE invoice = '$invoice_esc'
-        "));
+        // Update tabel pembayaran — bayar, status, dan metode (nama bank/dompet)
+        $update_sql = "UPDATE pembayaran SET
+            bayar              = '$gross',
+            kembalian          = 0,
+            status_pembayaran  = '$pstatus_esc'
+            " . (!empty($metode_esc) ? ", metode = '$metode_esc'" : "") . "
+        WHERE orders_id = '$oid'";
 
-        if ($row) {
-            $oid = (int)$row['orders_id'];
-            mysqli_query($koneksi, "
-                UPDATE pembayaran
-                SET bayar     = '$gross',
-                    kembalian = 0
-                WHERE orders_id = '$oid'
-            ");
-        }
+        mysqli_query($koneksi, $update_sql);
     }
 }
 
-// 5. BALAS 200 OK
+// 5. BALAS 200 OK ke Xendit
 http_response_code(200);
 echo 'OK';

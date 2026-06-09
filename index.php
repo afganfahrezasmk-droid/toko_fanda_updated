@@ -694,7 +694,7 @@ footer{background:var(--esp);padding:76px 64px 38px;border-top:1px solid rgba(23
 
     <button class="nav-icon" title="Akun" onclick="alert('Anda belum login!'); window.location.href='login.php'"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></button>
     
-    <button class="btn-keluar" onclick="window.location.href='login.php'">Keluar</button>
+    <button class="btn-keluar" onclick="window.location.href='login.php'">Masuk</button>
   </div>
 </nav>
 
@@ -1083,6 +1083,14 @@ LIMIT 4
 
 <!-- ════ TESTIMONIAL ════ -->
 <section class="testi-section" id="tentang">
+<style>
+.testi-header{display:flex;align-items:center;justify-content:flex-end;padding:40px 64px 0}
+.btn-lainnya{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;border-radius:100px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:rgba(255,252,247,.7);font-size:.8rem;font-weight:500;transition:all .3s;text-decoration:none}
+.btn-lainnya:hover{background:#E8B46D;color:#1C0A00}
+</style>
+<div class="testi-header">
+  <a href="semua_review.php" class="btn-lainnya">Lainnya &rarr;</a>
+</div>
 
 <?php if(isset($_GET['review']) && $_GET['review'] == 'success'){ ?>
     <div class="review-success">

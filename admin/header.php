@@ -106,6 +106,13 @@ $current = basename($_SERVER['PHP_SELF']);
                     </a>
                 </li>
 
+                <!-- Review Management -->
+                <li>
+                    <a href="review.php" class="<?= (strpos($current,'review')!==false)?'active':'' ?>">
+                        <i class="fas fa-star"></i> Kelola Review
+                    </a>
+                </li>
+
                 <!-- Reports -->
                 <li>
                     <a href="laporan.php" class="<?= (strpos($current,'laporan')!==false)?'active':'' ?>">

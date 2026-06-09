@@ -1,11 +1,10 @@
-    </main><!-- end .main-content -->
-</div><!-- end .layout-wrapper -->
+</main><!-- end .main-content -->
+    </div><!-- end .layout-wrapper -->
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
-// Smooth sidebar link active on click
 document.querySelectorAll('.sidebar-nav a').forEach(link => {
     link.addEventListener('click', () => {
         document.querySelectorAll('.sidebar-nav a').forEach(l => l.classList.remove('active'));
@@ -13,7 +12,6 @@ document.querySelectorAll('.sidebar-nav a').forEach(link => {
     });
 });
 
-// Animate stat cards counter (if any .stat-value elements exist)
 document.querySelectorAll('.stat-value[data-count]').forEach(el => {
     const target = parseInt(el.dataset.count);
     let current = 0;

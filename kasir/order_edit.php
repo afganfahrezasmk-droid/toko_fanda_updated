@@ -70,7 +70,7 @@ $current = basename($_SERVER['PHP_SELF']);
                         <label>Metode Pembayaran</label>
 
                         <select name="metode_pembayaran"
-                                class="form-control"
+                                class="form-select"
                                 required>
 
                             <option value="Cash"
@@ -110,7 +110,7 @@ $current = basename($_SERVER['PHP_SELF']);
                         <label>Status Order</label>
 
                         <select name="status"
-                                class="form-control"
+                                class="form-select"
                                 required>
 
                             <option value="pending"
@@ -183,5 +183,19 @@ $current = basename($_SERVER['PHP_SELF']);
     </div>
 
 </div>
+
+<style>
+select.form-select, select.form-control {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  background-color: #fff !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23555' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 14px center !important;
+  background-size: 16px !important;
+  padding-right: 40px !important;
+}
+</style>
 
 <?php include 'footer.php'; ?>

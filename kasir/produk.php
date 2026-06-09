@@ -162,7 +162,7 @@ body{
         <div>
 
             <h2 class="page-title">
-                🍰 Dashboard Produk
+                 Dashboard Produk
             </h2>
 
             <div class="page-subtitle">
@@ -184,7 +184,7 @@ body{
 
     <!-- PRODUK -->
     <div class="section-title">
-        🧁 Data Produk
+         Data Produk
     </div>
 
     <div class="produk-grid">
