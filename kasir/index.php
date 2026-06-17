@@ -117,7 +117,7 @@ $q_selesai = mysqli_fetch_assoc(
                     <th>Pelanggan</th>
                     <th>Total</th>
                     <th>Metode</th>
-                    <th>Status</th>
+                    <th>Status Pesanan</th>
                     <th>Tanggal</th>
                     <th>Aksi</th>
                 </tr>

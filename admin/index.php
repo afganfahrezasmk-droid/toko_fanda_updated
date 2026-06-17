@@ -98,7 +98,7 @@ $q_batal = mysqli_fetch_assoc(mysqli_query(
 
         <div class="stat-info">
             <div class="stat-value"><?= $jml_user ?></div>
-            <div class="stat-label">Total Pelanggan</div>
+            <div class="stat-label">Total User</div>
             <div class="stat-change">
                 <i class="fas fa-user-plus"></i>
                 Terdaftar
@@ -114,7 +114,7 @@ $q_batal = mysqli_fetch_assoc(mysqli_query(
 
         <div class="stat-info">
             <div class="stat-value"><?= $q_pending['total'] ?></div>
-            <div class="stat-label">Pending</div>
+            <div class="stat-label">Status Pemesanan Pending</div>
             <div class="stat-change">
                 <i class="fas fa-hourglass-half"></i>
                 Menunggu proses
@@ -130,7 +130,7 @@ $q_batal = mysqli_fetch_assoc(mysqli_query(
 
         <div class="stat-info">
             <div class="stat-value"><?= $q_diproses['total'] ?></div>
-            <div class="stat-label">Diproses</div>
+            <div class="stat-label">Status Pemesanan Diproses</div>
             <div class="stat-change">
                 <i class="fas fa-fire"></i>
                 Sedang dibuat
@@ -146,7 +146,7 @@ $q_batal = mysqli_fetch_assoc(mysqli_query(
 
         <div class="stat-info">
             <div class="stat-value"><?= $q_selesai['total'] ?></div>
-            <div class="stat-label">Selesai</div>
+            <div class="stat-label">Status Pemesanan Selesai</div>
             <div class="stat-change">
                 <i class="fas fa-check"></i>
                 Pesanan selesai
@@ -162,7 +162,7 @@ $q_batal = mysqli_fetch_assoc(mysqli_query(
 
         <div class="stat-info">
             <div class="stat-value"><?= $q_batal['total'] ?></div>
-            <div class="stat-label">Dibatalkan</div>
+            <div class="stat-label">Status Pemesanan Dibatalkan</div>
             <div class="stat-change">
                 <i class="fas fa-ban"></i>
                 Order dibatalkan
@@ -192,7 +192,7 @@ $q_batal = mysqli_fetch_assoc(mysqli_query(
                     <th>Email</th>
                     <th>Total</th>
                     <th>Metode</th>
-                    <th>Status</th>
+                    <th>Status Pesanan</th>
                     <th>Tanggal</th>
                     <th>Aksi</th>
                 </tr>

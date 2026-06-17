@@ -96,7 +96,7 @@ if($query){
     $_SESSION['nama']     = $user['nama'];
     $_SESSION['role']     = $user['role'];
 
-    header("location:pelanggan/login.php");
+    header("location:pelanggan/index.php");
     exit;
 
 }else{

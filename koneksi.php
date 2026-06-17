@@ -1,9 +1,9 @@
 <?php
 
-$koneksi= mysqli_connect("localhost","root","","db_toko");
+$koneksi = mysqli_connect("localhost", "root", "", "db_toko");
 
-if (mysqli_connect_errno()){
-    echo "koneksi database gagal :".mysqli_connect_error();
+if (mysqli_connect_errno()) {
+    echo "koneksi database gagal: " . mysqli_connect_error();
 }
 
 ?>

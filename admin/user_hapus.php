@@ -5,7 +5,7 @@ include '../koneksi.php';
 
 $id = $_GET['id'];
 
-/* HAPUS DATA ORDER ITEMS DULU */
+/* HAPUS DATA ORDER ITEMS */
 mysqli_query($koneksi, "
 DELETE order_items
 FROM order_items
@@ -13,15 +13,23 @@ JOIN orders ON order_items.orders_id = orders.orders_id
 WHERE orders.user_id = '$id'
 ");
 
+/* HAPUS DATA PEMBAYARAN */
+mysqli_query($koneksi, "
+DELETE pembayaran
+FROM pembayaran
+JOIN orders ON pembayaran.orders_id = orders.orders_id
+WHERE orders.user_id = '$id'
+");
+
 /* HAPUS DATA ORDERS */
 mysqli_query($koneksi, "
-DELETE FROM orders 
+DELETE FROM orders
 WHERE user_id = '$id'
 ");
 
-/* BARU HAPUS USER */
+/* HAPUS USER */
 mysqli_query($koneksi, "
-DELETE FROM user 
+DELETE FROM user
 WHERE user_id = '$id'
 ");
 
