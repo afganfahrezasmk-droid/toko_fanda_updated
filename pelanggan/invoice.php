@@ -100,7 +100,11 @@ body { background:#f5f5f5; font-family:'Courier New', monospace; padding:25px; }
 <div class="struk">
 
     <div class="header">
+<<<<<<< HEAD
         <div class="logo"> TOKO KUE FANDA</div>
+=======
+        <div class="logo">🎂 TOKO KUE FANDA</div>
+>>>>>>> ce5bdb00b2118cf11ff4795877541f55c33b7be4
         <div class="tagline">Bakery & Pastry</div>
         <div class="alamat">Semarang, Jawa Tengah</div>
     </div>
